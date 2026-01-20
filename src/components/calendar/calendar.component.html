@@ -1,0 +1,184 @@
+<div class="h-full flex flex-col bg-dark-900" (contextmenu)="onContextMenu($event)">
+  
+  <!-- Calendar Toolbar -->
+  <div class="h-14 flex items-center justify-between px-6 border-b border-dark-700 bg-dark-800 shrink-0 z-30 relative shadow-sm">
+    <div class="flex items-center gap-4">
+      <h2 class="text-white font-bold font-display text-lg">October 2023</h2>
+      <div class="flex items-center bg-dark-700 rounded-md p-0.5">
+        <button class="p-1 hover:text-white text-slate-400"><span class="material-symbols-rounded text-lg">chevron_left</span></button>
+        <button class="p-1 hover:text-white text-slate-400"><span class="material-symbols-rounded text-lg">chevron_right</span></button>
+      </div>
+      <button class="text-xs font-semibold text-brand-500 bg-brand-500/10 px-3 py-1.5 rounded-md hover:bg-brand-500/20">Today</button>
+    </div>
+    
+    <!-- Legend -->
+    <div class="flex gap-4 text-xs font-medium text-slate-400">
+         <div class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-emerald-500"></span> Confirmed
+         </div>
+         <div class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-amber-500"></span> Pending
+         </div>
+         <div class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-slate-600"></span> Blocked
+         </div>
+         <div class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-red-500"></span> Conflict
+         </div>
+    </div>
+  </div>
+
+  <!-- Main Scrollable Grid Area -->
+  <div class="flex-1 overflow-auto calendar-grid relative" cdkScrollable>
+    
+    <!-- Header Row (Sticky Top) -->
+    <div class="flex min-w-max sticky top-0 z-20 bg-dark-800 border-b border-dark-700 shadow-md h-12">
+       <!-- Corner (Sticky Left) -->
+       <div class="w-64 sticky left-0 z-30 bg-dark-800 border-r border-dark-700 flex items-center px-4 font-bold text-slate-400 text-xs uppercase tracking-wider">
+         Property / Unit
+       </div>
+       
+       <!-- Date Columns -->
+       @for (day of days(); track day.iso) {
+         <div class="flex-shrink-0 border-r border-dark-700 flex flex-col items-center justify-center"
+              [style.width.px]="CELL_WIDTH"
+              [class.bg-dark-800]="!day.isWeekend"
+              [class.bg-dark-700]="day.isWeekend">
+            <span class="text-[10px] font-bold text-slate-500 uppercase">{{ day.dayName }}</span>
+            <span class="text-sm font-bold text-white leading-none">{{ day.dayNum }}</span>
+         </div>
+       }
+    </div>
+
+    <!-- Hierarchy Rows -->
+    @for (group of groups(); track group.id) {
+        
+        <!-- Group Header Row -->
+        <div class="flex min-w-max border-b border-dark-700 bg-dark-800/50 h-10 group hover:bg-dark-800 transition-colors">
+             <!-- Sticky Sidebar Cell -->
+             <div class="w-64 sticky left-0 z-10 bg-dark-800/95 backdrop-blur-sm border-r border-dark-700 flex items-center px-3 gap-2 cursor-pointer" 
+                  (click)="toggleGroup(group.id)">
+                <span class="material-symbols-rounded text-slate-400 transition-transform duration-200 text-lg" 
+                      [class.rotate-90]="group.expanded">chevron_right</span>
+                <span class="font-bold text-slate-200 text-sm">{{ group.name }}</span>
+                <span class="ml-auto text-[10px] bg-dark-700 text-slate-400 px-1.5 py-0.5 rounded-md font-mono">{{ group.units.length }}</span>
+             </div>
+
+             <!-- Grid Cells (Empty for groups, mainly for visuals) -->
+             @for (day of days(); track day.iso) {
+                <div class="flex-shrink-0 border-r border-dark-700/50" [style.width.px]="CELL_WIDTH"></div>
+             }
+        </div>
+
+        @if (group.expanded) {
+            <!-- Unit Rows -->
+            @for (unit of group.units; track unit.id) {
+                <div class="flex min-w-max border-b border-dark-700 h-16 relative group/row bg-dark-900 hover:bg-dark-800/30 transition-colors"
+                     cdkDropList
+                     cdkDropListOrientation="horizontal"
+                     [id]="unit.id"
+                     (cdkDropListDropped)="onDrop($event)">
+                    
+                    <!-- Sticky Sidebar Unit Cell -->
+                    <div class="w-64 sticky left-0 z-10 bg-dark-900 group-hover/row:bg-dark-800 transition-colors border-r border-dark-700 flex items-center px-4 justify-between">
+                        <div class="flex flex-col">
+                            <span class="text-sm font-medium text-slate-300">{{ unit.name }}</span>
+                            <!-- Cleaning Status Indicator -->
+                            <div class="flex items-center gap-1 mt-0.5">
+                                @if(unit.cleaningStatus === 'clean') {
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                    <span class="text-[10px] text-emerald-500 font-medium">Clean</span>
+                                } @else if (unit.cleaningStatus === 'dirty') {
+                                    <span class="material-symbols-rounded text-red-500 text-[12px]">cleaning_services</span>
+                                    <span class="text-[10px] text-red-400 font-medium">Dirty</span>
+                                } @else {
+                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                                    <span class="text-[10px] text-amber-500 font-medium">Check</span>
+                                }
+                            </div>
+                        </div>
+                        @if (unit.status === 'maintenance') {
+                             <span class="material-symbols-rounded text-amber-500 text-lg" title="Maintenance">build</span>
+                        }
+                    </div>
+
+                    <!-- Grid Columns -->
+                    @for (day of days(); track day.iso) {
+                        <div class="flex-shrink-0 border-r border-dark-700 h-full relative" 
+                             [style.width.px]="CELL_WIDTH"
+                             [class.bg-dark-800-20]="day.isWeekend">
+                             <!-- Grid Lines only, content is absolute -->
+                        </div>
+                    }
+
+                    <!-- Bookings Overlay (Absolute Positioned) -->
+                    @for (booking of bookings(); track booking.id) {
+                        @if (booking.unitId === unit.id) {
+                            <div class="absolute top-2 bottom-2 rounded-md shadow-sm border text-xs flex flex-col justify-center px-2 cursor-grab active:cursor-grabbing overflow-hidden whitespace-nowrap booking-pill z-0"
+                                 cdkDrag
+                                 [cdkDragData]="booking"
+                                 (contextmenu)="onContextMenu($event, booking.id)"
+                                 [style.left]="getBookingStyle(booking).left"
+                                 [style.width]="getBookingStyle(booking).width"
+                                 
+                                 [class.bg-emerald-500-20]="booking.status === 'confirmed'"
+                                 [class.border-emerald-500]="booking.status === 'confirmed'"
+                                 [class.text-emerald-100]="booking.status === 'confirmed'"
+
+                                 [class.bg-amber-500-20]="booking.status === 'payment-pending'"
+                                 [class.border-amber-500]="booking.status === 'payment-pending'"
+                                 [class.text-amber-100]="booking.status === 'payment-pending'"
+
+                                 [class.bg-red-500-20]="booking.status === 'conflict'"
+                                 [class.border-red-500]="booking.status === 'conflict'"
+                                 [class.text-red-100]="booking.status === 'conflict'"
+                                 
+                                 [class.bg-slate-700]="booking.status === 'blocked'"
+                                 [class.border-slate-500]="booking.status === 'blocked'"
+                                 [class.text-slate-300]="booking.status === 'blocked'">
+                                 
+                                 <div class="font-bold truncate flex items-center gap-1">
+                                    {{ booking.guestName }}
+                                    @if(booking.status === 'conflict') {
+                                        <span class="material-symbols-rounded text-sm">warning</span>
+                                    }
+                                 </div>
+                                 @if (booking.status !== 'blocked') {
+                                    <div class="flex items-center gap-1 opacity-80 text-[10px]">
+                                        @if (booking.source === 'Airbnb') {
+                                             <span class="text-[#FF5A5F] font-bold">Abnb</span>
+                                        } @else if (booking.source === 'Booking') {
+                                             <span class="text-[#003580] bg-white px-0.5 rounded-[1px] font-bold">B.</span>
+                                        } @else {
+                                             <span class="material-symbols-rounded text-[10px]">person</span>
+                                        }
+                                        <span>• ${{booking.price}}</span>
+                                    </div>
+                                 }
+
+                                 <!-- Drag Preview (What follows the mouse) -->
+                                 <div *cdkDragPreview class="bg-brand-600 text-white p-2 rounded-lg shadow-xl opacity-90 text-xs font-bold w-48">
+                                     Moving {{ booking.guestName }}...
+                                 </div>
+                            </div>
+                        }
+                    }
+
+                </div>
+            }
+        }
+    }
+  </div>
+
+  <!-- Context Menu -->
+  @if (contextMenu()) {
+      <app-calendar-context-menu 
+        [x]="contextMenu()!.x" 
+        [y]="contextMenu()!.y"
+        [bookingId]="contextMenu()!.bookingId"
+        (close)="contextMenu.set(null)"
+        (action)="handleMenuAction($event)"
+      />
+  }
+
+</div>
