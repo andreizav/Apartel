@@ -21,7 +21,7 @@ export class SuperbaseComponent {
   activeTable = signal<string>('tenants');
   sqlQuery = signal('SELECT * FROM users WHERE tenant_id = \'t-001\'');
   sqlResult = signal<any[] | null>(null);
-  realtimeLogs = signal<{ time: string, event: string, table: string }[]>([]);
+
 
   // --- Auth Module State ---
   activeAuthSection = signal<'users' | 'policies'>('users');
@@ -112,7 +112,7 @@ export class SuperbaseComponent {
   });
 
   constructor() {
-    this.addLog('Connect', 'system', 'Established connection to database');
+
   }
 
   // --- Actions ---
@@ -120,7 +120,7 @@ export class SuperbaseComponent {
   setActiveTable(name: string) {
     this.activeTable.set(name);
     this.activeView.set('table');
-    this.addLog('SELECT', name, `Fetched ${this.tableData().length} rows`);
+
   }
 
   runSql() {
@@ -129,7 +129,7 @@ export class SuperbaseComponent {
     // Destructive Commands Check
     if (query.includes('drop database') || query.includes('truncate')) {
       this.portfolioService.clearData().subscribe(() => {
-        this.addLog('SQL_EXEC', 'DDL', 'Executed destructive command (Data Cleared)');
+
         this.sqlResult.set([{ status: 'SUCCESS', message: 'Data cleared successfully.' }]);
       });
       return;
@@ -149,18 +149,18 @@ export class SuperbaseComponent {
     if (query.includes('where')) data = data.slice(0, 1);
 
     this.sqlResult.set(data);
-    this.addLog('SQL_EXEC', 'query', `Query executed successfully (${data.length} rows)`);
+
   }
 
   saveToDisk() {
-    this.addLog('PERSIST', 'system', 'Data is stored on the server.');
+
     alert('Data is synced with the server.');
   }
 
   createMockData() {
     if (confirm('This will RESET all data to default demo values. Continue?')) {
       this.portfolioService.resetData().subscribe(() => {
-        this.addLog('SYSTEM', 'reset', 'Data reset to defaults');
+
       });
     }
   }
@@ -168,7 +168,7 @@ export class SuperbaseComponent {
   deleteAllData() {
     if (confirm('This will DELETE ALL data. Continue?')) {
       this.portfolioService.clearData().subscribe(() => {
-        this.addLog('SYSTEM', 'clear', 'All data deleted');
+
       });
     }
   }
@@ -179,33 +179,26 @@ export class SuperbaseComponent {
     const email = prompt('Enter email address to invite:');
     if (email) {
       alert(`Invitation sent to ${email} (Simulated)`);
-      this.addLog('AUTH', 'auth.users', `Invite sent to ${email}`);
+
     }
   }
 
   sendMagicLink(email: string) {
     if (email === '-' || !email) return;
     alert(`Magic Link sent to ${email}`);
-    this.addLog('AUTH', 'auth.users', `Magic link sent to ${email}`);
+
   }
 
   deleteUser(uid: string) {
     if (confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
-      this.addLog('AUTH', 'auth.users', `Deleted user ${uid}`);
+
       alert('User deleted (Simulated)');
     }
   }
 
   // --- Helpers ---
 
-  addLog(event: string, table: string, detail: string) {
-    const newLog = {
-      time: new Date().toLocaleTimeString(),
-      event,
-      table
-    };
-    this.realtimeLogs.update(logs => [newLog, ...logs].slice(0, 50));
-  }
+
 
   formatValue(val: any): string {
     if (val instanceof Date) return val.toLocaleDateString();

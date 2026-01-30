@@ -19,7 +19,7 @@ export class MultiCalendarComponent implements AfterViewInit, OnInit {
   @ViewChild('bodyScroll') bodyScroll!: ElementRef<HTMLDivElement>;
 
   viewDate = signal(new Date()); // Current month view
-  
+
   // Cell configuration
   cellWidth = 48; // px
 
@@ -35,13 +35,13 @@ export class MultiCalendarComponent implements AfterViewInit, OnInit {
       if (params['date']) {
         const d = new Date(params['date']);
         if (!isNaN(d.getTime())) {
-           // Set view to the 1st of that month to ensure visibility
-           this.viewDate.set(new Date(d.getFullYear(), d.getMonth(), 1));
+          // Set view to the 1st of that month to ensure visibility
+          this.viewDate.set(new Date(d.getFullYear(), d.getMonth(), 1));
         }
       }
       if (params['unitId']) {
-         // Could implement logic to scroll to specific unit row here
-         // For now, ensuring the view month is correct is the primary goal
+        // Could implement logic to scroll to specific unit row here
+        // For now, ensuring the view month is correct is the primary goal
       }
     });
   }
@@ -62,12 +62,12 @@ export class MultiCalendarComponent implements AfterViewInit, OnInit {
   calendarGroups = computed(() => {
     // Derive structure directly from Portfolio Service
     const portfolio = this.portfolioService.portfolio();
-    
+
     return portfolio.map(group => ({
       name: group.name,
       units: group.units,
       // Default to expanded if not tracked in local state
-      expanded: this.expandedGroups()[group.name] ?? true 
+      expanded: this.expandedGroups()[group.name] ?? true
     })).filter(g => g.units.length > 0); // Optionally hide empty groups
   });
 
@@ -75,7 +75,7 @@ export class MultiCalendarComponent implements AfterViewInit, OnInit {
     const year = this.viewDate().getFullYear();
     const month = this.viewDate().getMonth();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
-    
+
     const days = [];
     for (let i = 1; i <= daysInMonth; i++) {
       const date = new Date(year, month, i);
@@ -118,10 +118,10 @@ export class MultiCalendarComponent implements AfterViewInit, OnInit {
 
   navigateToClient(booking: Booking) {
     if (booking.guestPhone) {
-        this.router.navigate(['/dashboard/clients'], { queryParams: { phone: booking.guestPhone } });
+      this.router.navigate(['/dashboard/clients'], { queryParams: { phone: booking.guestPhone } });
     } else {
-        // Fallback or alert if no phone (maybe navigate to Clients root?)
-        alert('This booking has no client record associated.');
+      // Fallback or alert if no phone (maybe navigate to Clients root?)
+      alert('This booking has no client record associated.');
     }
   }
 
@@ -129,24 +129,28 @@ export class MultiCalendarComponent implements AfterViewInit, OnInit {
   getBookingStyle(booking: Booking) {
     const viewYear = this.viewDate().getFullYear();
     const viewMonth = this.viewDate().getMonth();
-    
+
     // Simple clipping to current month view
     const startOfMonth = new Date(viewYear, viewMonth, 1);
     const endOfMonth = new Date(viewYear, viewMonth + 1, 0);
 
+    // Ensure we have Date objects
+    const bStart = new Date(booking.startDate);
+    const bEnd = new Date(booking.endDate);
+
     // If booking is completely outside current month, hide it
-    if (booking.endDate < startOfMonth || booking.startDate > endOfMonth) {
+    if (bEnd < startOfMonth || bStart > endOfMonth) {
       return { display: 'none' };
     }
 
     // Calculate effective start and end for the bar within this month
-    const effectiveStart = booking.startDate < startOfMonth ? startOfMonth : booking.startDate;
-    const effectiveEnd = booking.endDate > endOfMonth ? endOfMonth : booking.endDate;
+    const effectiveStart = bStart < startOfMonth ? startOfMonth : bStart;
+    const effectiveEnd = bEnd > endOfMonth ? endOfMonth : bEnd;
 
     const startDay = effectiveStart.getDate();
-    
+
     const diffTime = Math.abs(effectiveEnd.getTime() - effectiveStart.getTime());
-    const durationDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+    const durationDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
     const left = (startDay - 1) * this.cellWidth;
     const width = durationDays * this.cellWidth;
@@ -170,8 +174,8 @@ export class MultiCalendarComponent implements AfterViewInit, OnInit {
 
   private isSameDay(d1: Date, d2: Date) {
     return d1.getFullYear() === d2.getFullYear() &&
-           d1.getMonth() === d2.getMonth() &&
-           d1.getDate() === d2.getDate();
+      d1.getMonth() === d2.getMonth() &&
+      d1.getDate() === d2.getDate();
   }
 
   // Helper to filter bookings for a specific unit

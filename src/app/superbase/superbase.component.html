@@ -1,433 +1,384 @@
+<div
+    class="flex h-[calc(100vh-8rem)] animate-fade-in-up bg-[#1c1c1c] text-[#ededed] rounded-xl overflow-hidden border border-[#333] font-mono">
 
-<div class="flex h-[calc(100vh-8rem)] animate-fade-in-up bg-[#1c1c1c] text-[#ededed] rounded-xl overflow-hidden border border-[#333] font-mono">
-  
-  <!-- Navigation Rail (Far Left) -->
-  <div class="w-16 border-r border-[#333] bg-[#141414] flex flex-col items-center py-4 gap-4 z-20">
-     <!-- Logo/Brand -->
-     <div class="w-10 h-10 bg-[#3ECF8E] rounded-lg flex items-center justify-center text-black shadow-lg shadow-[#3ECF8E]/20 mb-2">
-        <span class="material-symbols-outlined font-bold">bolt</span>
-     </div>
+    <!-- Navigation Rail (Far Left) -->
+    <div class="w-16 border-r border-[#333] bg-[#141414] flex flex-col items-center py-4 gap-4 z-20">
+        <!-- Logo/Brand -->
+        <div
+            class="w-10 h-10 bg-[#3ECF8E] rounded-lg flex items-center justify-center text-black shadow-lg shadow-[#3ECF8E]/20 mb-2">
+            <span class="material-symbols-outlined font-bold">bolt</span>
+        </div>
 
-     <!-- Nav Items -->
-     <button 
-        (click)="activeModule.set('database')"
-        class="w-10 h-10 rounded-lg flex items-center justify-center transition-colors relative group"
-        [class.bg-[#333]]="activeModule() === 'database'"
-        [class.text-[#3ECF8E]]="activeModule() === 'database'"
-        [class.text-gray-500]="activeModule() !== 'database'"
-        [class.hover:text-gray-300]="activeModule() !== 'database'"
-     >
-        <span class="material-symbols-outlined">database</span>
-        <div class="absolute left-14 bg-black px-2 py-1 rounded text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 border border-[#333]">Database</div>
-     </button>
+        <!-- Nav Items -->
+        <button (click)="activeModule.set('database')"
+            class="w-10 h-10 rounded-lg flex items-center justify-center transition-colors relative group"
+            [class.bg-[#333]]="activeModule() === 'database'" [class.text-[#3ECF8E]]="activeModule() === 'database'"
+            [class.text-gray-500]="activeModule() !== 'database'"
+            [class.hover:text-gray-300]="activeModule() !== 'database'">
+            <span class="material-symbols-outlined">database</span>
+            <div
+                class="absolute left-14 bg-black px-2 py-1 rounded text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 border border-[#333]">
+                Database</div>
+        </button>
 
-     <button 
-        (click)="activeModule.set('auth')"
-        class="w-10 h-10 rounded-lg flex items-center justify-center transition-colors relative group"
-        [class.bg-[#333]]="activeModule() === 'auth'"
-        [class.text-[#3ECF8E]]="activeModule() === 'auth'"
-        [class.text-gray-500]="activeModule() !== 'auth'"
-        [class.hover:text-gray-300]="activeModule() !== 'auth'"
-     >
-        <span class="material-symbols-outlined">lock_person</span>
-        <div class="absolute left-14 bg-black px-2 py-1 rounded text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 border border-[#333]">Authentication</div>
-     </button>
+        <button (click)="activeModule.set('auth')"
+            class="w-10 h-10 rounded-lg flex items-center justify-center transition-colors relative group"
+            [class.bg-[#333]]="activeModule() === 'auth'" [class.text-[#3ECF8E]]="activeModule() === 'auth'"
+            [class.text-gray-500]="activeModule() !== 'auth'" [class.hover:text-gray-300]="activeModule() !== 'auth'">
+            <span class="material-symbols-outlined">lock_person</span>
+            <div
+                class="absolute left-14 bg-black px-2 py-1 rounded text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 border border-[#333]">
+                Authentication</div>
+        </button>
 
-     <div class="flex-1"></div>
+        <div class="flex-1"></div>
 
-     <button 
-        (click)="saveToDisk()"
-        class="w-10 h-10 rounded-lg flex items-center justify-center text-gray-500 hover:text-[#3ECF8E] hover:bg-[#333] transition-colors relative group"
-        title="Commit & Save"
-     >
-        <span class="material-symbols-outlined">save</span>
-        <div class="absolute left-14 bg-black px-2 py-1 rounded text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 border border-[#333]">Save to Disk</div>
-     </button>
-  </div>
+        <button (click)="saveToDisk()"
+            class="w-10 h-10 rounded-lg flex items-center justify-center text-gray-500 hover:text-[#3ECF8E] hover:bg-[#333] transition-colors relative group"
+            title="Commit & Save">
+            <span class="material-symbols-outlined">save</span>
+            <div
+                class="absolute left-14 bg-black px-2 py-1 rounded text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 border border-[#333]">
+                Save to Disk</div>
+        </button>
+    </div>
 
-  <!-- MODULE: DATABASE -->
-  @if (activeModule() === 'database') {
-      <!-- DB Sidebar (Tables) -->
-      <div class="w-64 border-r border-[#333] flex flex-col bg-[#141414]">
+    <!-- MODULE: DATABASE -->
+    @if (activeModule() === 'database') {
+    <!-- DB Sidebar (Tables) -->
+    <div class="w-64 border-r border-[#333] flex flex-col bg-[#141414]">
         <div class="p-4 border-b border-[#333]">
             <h2 class="font-bold text-sm tracking-wide flex items-center gap-2">
-               <span class="material-symbols-outlined text-gray-500 text-[18px]">dns</span>
-               Database
+                <span class="material-symbols-outlined text-gray-500 text-[18px]">dns</span>
+                Database
             </h2>
         </div>
 
         <div class="flex-1 overflow-y-auto py-2">
             <div class="px-4 py-2 text-[10px] font-bold text-gray-500 uppercase tracking-widest">Public Schema</div>
             @for (table of tables; track table.name) {
-                <button 
-                    (click)="setActiveTable(table.name)"
-                    class="w-full flex items-center gap-3 px-4 py-2 hover:bg-[#222] transition-colors border-l-2"
-                    [class.border-[#3ECF8E]]="activeTable() === table.name"
-                    [class.bg-[#1a1a1a]]="activeTable() === table.name"
-                    [class.border-transparent]="activeTable() !== table.name"
-                    [class.text-[#3ECF8E]]="activeTable() === table.name"
-                    [class.text-gray-400]="activeTable() !== table.name"
-                >
-                    <span class="material-symbols-outlined text-[16px]">{{ table.icon }}</span>
-                    <span class="text-xs font-medium">{{ table.label }}</span>
-                </button>
+            <button (click)="setActiveTable(table.name)"
+                class="w-full flex items-center gap-3 px-4 py-2 hover:bg-[#222] transition-colors border-l-2"
+                [class.border-[#3ECF8E]]="activeTable() === table.name"
+                [class.bg-[#1a1a1a]]="activeTable() === table.name"
+                [class.border-transparent]="activeTable() !== table.name"
+                [class.text-[#3ECF8E]]="activeTable() === table.name"
+                [class.text-gray-400]="activeTable() !== table.name">
+                <span class="material-symbols-outlined text-[16px]">{{ table.icon }}</span>
+                <span class="text-xs font-medium">{{ table.label }}</span>
+            </button>
             }
         </div>
-      </div>
+    </div>
 
-      <!-- DB Content -->
-      <div class="flex-1 flex flex-col min-w-0 bg-[#1c1c1c]">
-          
-          <!-- Toolbar -->
-          <div class="h-14 border-b border-[#333] flex items-center px-4 justify-between bg-[#1c1c1c]">
-              <div class="flex gap-1 bg-[#111] p-1 rounded-lg border border-[#333]">
-                  <button 
-                    (click)="activeView.set('table')"
+    <!-- DB Content -->
+    <div class="flex-1 flex flex-col min-w-0 bg-[#1c1c1c]">
+
+        <!-- Toolbar -->
+        <div class="h-14 border-b border-[#333] flex items-center px-4 justify-between bg-[#1c1c1c]">
+            <div class="flex gap-1 bg-[#111] p-1 rounded-lg border border-[#333]">
+                <button (click)="activeView.set('table')"
                     class="px-4 py-1.5 text-xs font-bold rounded-md transition-colors"
-                    [class.bg-[#333]]="activeView() === 'table'"
-                    [class.text-white]="activeView() === 'table'"
-                    [class.text-gray-500]="activeView() !== 'table'"
-                  >
+                    [class.bg-[#333]]="activeView() === 'table'" [class.text-white]="activeView() === 'table'"
+                    [class.text-gray-500]="activeView() !== 'table'">
                     Table Editor
-                  </button>
-                  <button 
-                    (click)="activeView.set('sql')"
+                </button>
+                <button (click)="activeView.set('sql')"
                     class="px-4 py-1.5 text-xs font-bold rounded-md transition-colors"
-                    [class.bg-[#333]]="activeView() === 'sql'"
-                    [class.text-white]="activeView() === 'sql'"
-                    [class.text-gray-500]="activeView() !== 'sql'"
-                  >
+                    [class.bg-[#333]]="activeView() === 'sql'" [class.text-white]="activeView() === 'sql'"
+                    [class.text-gray-500]="activeView() !== 'sql'">
                     SQL Editor
-                  </button>
-              </div>
+                </button>
+            </div>
 
-              <div class="flex items-center gap-3">
-                  <div class="flex items-center gap-1 mr-4">
-                      <button 
-                        (click)="createMockData()"
+            <div class="flex items-center gap-3">
+                <div class="flex items-center gap-1 mr-4">
+                    <button (click)="createMockData()"
                         class="px-3 py-1.5 text-xs font-bold rounded-md hover:bg-[#222] text-[#3ECF8E] transition-colors flex items-center gap-2 border border-transparent hover:border-[#333]"
-                        title="Reset to Demo Data"
-                      >
+                        title="Reset to Demo Data">
                         <span class="material-symbols-outlined text-[16px]">restart_alt</span>
                         Reset
-                      </button>
-                      <button 
-                        (click)="deleteAllData()"
+                    </button>
+                    <button (click)="deleteAllData()"
                         class="px-3 py-1.5 text-xs font-bold rounded-md hover:bg-[#222] text-red-500 transition-colors flex items-center gap-2 border border-transparent hover:border-[#333]"
-                        title="Allow Clear All"
-                      >
+                        title="Allow Clear All">
                         <span class="material-symbols-outlined text-[16px]">delete_forever</span>
                         Clear
-                      </button>
-                  </div>
+                    </button>
+                </div>
 
-                  <div class="flex items-center gap-4 text-xs text-gray-500 border-l border-[#333] pl-4">
-                      <span>Role: <strong class="text-white">service_role</strong></span>
-                      <span>Region: <strong class="text-white">aws-us-east-1</strong></span>
-                  </div>
-              </div>
-          </div>
+                <div class="flex items-center gap-4 text-xs text-gray-500 border-l border-[#333] pl-4">
+                    <span>Role: <strong class="text-white">service_role</strong></span>
+                    <span>Region: <strong class="text-white">aws-us-east-1</strong></span>
+                </div>
+            </div>
+        </div>
 
-          <!-- Content Area -->
-          <div class="flex-1 overflow-hidden flex flex-col relative">
-              
-              <!-- Table View -->
-              @if (activeView() === 'table') {
-                  <div class="flex-1 overflow-auto bg-[#1c1c1c]">
-                      <table class="w-full text-left border-collapse text-xs">
-                          <thead class="bg-[#111] sticky top-0 z-10">
-                              <tr>
-                                  @for (head of tableHeaders(); track head) {
-                                      <th class="px-4 py-3 font-medium text-gray-400 border-b border-[#333] border-r border-[#222] min-w-[120px]">
-                                          <div class="flex items-center gap-2">
-                                              @if(head === 'id') { <span class="material-symbols-outlined text-[10px]">key</span> }
-                                              @if(head === 'tenant_id') { <span class="material-symbols-outlined text-[10px] text-yellow-500">vpn_key</span> }
-                                              {{ head }}
-                                          </div>
-                                      </th>
-                                  }
-                              </tr>
-                          </thead>
-                          <tbody class="divide-y divide-[#2a2a2a]">
-                              @for (row of tableData(); track $index) {
-                                  <tr class="hover:bg-[#222] group transition-colors">
-                                      @for (head of tableHeaders(); track head) {
-                                          <td class="px-4 py-2 border-r border-[#2a2a2a] text-gray-300 truncate max-w-[200px]" [title]="formatValue(row[head])">
-                                              {{ formatValue(row[head]) }}
-                                          </td>
-                                      }
-                                  </tr>
-                              }
-                          </tbody>
-                      </table>
-                      @if(tableData().length === 0) {
-                          <div class="p-10 text-center text-gray-600">Table is empty</div>
-                      }
-                  </div>
-                  <div class="h-8 bg-[#111] border-t border-[#333] flex items-center px-4 text-[10px] text-gray-500 justify-between">
-                      <span>{{ tableData().length }} records</span>
-                      <span>Read-only view</span>
-                  </div>
-              }
+        <!-- Content Area -->
+        <div class="flex-1 overflow-hidden flex flex-col relative">
 
-              <!-- SQL View -->
-              @if (activeView() === 'sql') {
-                  <div class="flex-1 flex flex-col bg-[#141414]">
-                      <div class="h-1/2 border-b border-[#333] flex flex-col">
-                          <textarea 
-                            [(ngModel)]="sqlQuery"
-                            class="flex-1 bg-[#141414] text-[#3ECF8E] p-4 focus:outline-none resize-none font-mono text-sm leading-relaxed border-none focus:ring-0"
-                            placeholder="Enter SQL query..."
-                            spellcheck="false"
-                          ></textarea>
-                          <div class="px-4 py-2 bg-[#111] flex justify-end border-t border-[#333]">
-                              <button 
-                                (click)="runSql()"
-                                class="px-4 py-1.5 bg-[#3ECF8E] hover:bg-[#34b27b] text-black text-xs font-bold rounded flex items-center gap-2 transition-colors"
-                              >
-                                  <span class="material-symbols-outlined text-[16px]">play_arrow</span>
-                                  Run
-                              </button>
-                          </div>
-                      </div>
-                      
-                      <div class="flex-1 overflow-auto bg-[#1c1c1c] p-4">
-                          @if (sqlResult(); as results) {
-                              @if (results.length > 0) {
-                                  <div class="text-xs text-gray-400 mb-2">Result: {{ results.length }} rows affected</div>
-                                  <div class="bg-[#111] border border-[#333] rounded overflow-hidden">
-                                      <table class="w-full text-left text-xs">
-                                          <thead class="bg-[#222]">
-                                              <tr>
-                                                  @for(key of activeView() === 'sql' ? (results[0] | keyvalue) : []; track key.key) {
-                                                      <th class="px-3 py-2 text-gray-400 font-medium">{{ key.key }}</th>
-                                                  }
-                                              </tr>
-                                          </thead>
-                                          <tbody>
-                                              @for(row of results; track $index) {
-                                                  <tr class="border-t border-[#333]">
-                                                      @for(val of row | keyvalue; track val.key) {
-                                                          <td class="px-3 py-1.5 text-gray-300">{{ val.value }}</td>
-                                                      }
-                                                  </tr>
-                                              }
-                                          </tbody>
-                                      </table>
-                                  </div>
-                              } @else {
-                                  <div class="text-gray-500 text-xs">No results or empty set.</div>
-                              }
-                          } @else {
-                              <div class="text-gray-600 text-xs mt-4">Execute a query to see results. Try: <code>SELECT * FROM tenants</code></div>
-                          }
-                      </div>
-                  </div>
-              }
+            <!-- Table View -->
+            @if (activeView() === 'table') {
+            <div class="flex-1 overflow-auto bg-[#1c1c1c]">
+                <table class="w-full text-left border-collapse text-xs">
+                    <thead class="bg-[#111] sticky top-0 z-10">
+                        <tr>
+                            @for (head of tableHeaders(); track head) {
+                            <th
+                                class="px-4 py-3 font-medium text-gray-400 border-b border-[#333] border-r border-[#222] min-w-[120px]">
+                                <div class="flex items-center gap-2">
+                                    @if(head === 'id') { <span class="material-symbols-outlined text-[10px]">key</span>
+                                    }
+                                    @if(head === 'tenant_id') { <span
+                                        class="material-symbols-outlined text-[10px] text-yellow-500">vpn_key</span> }
+                                    {{ head }}
+                                </div>
+                            </th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-[#2a2a2a]">
+                        @for (row of tableData(); track $index) {
+                        <tr class="hover:bg-[#222] group transition-colors">
+                            @for (head of tableHeaders(); track head) {
+                            <td class="px-4 py-2 border-r border-[#2a2a2a] text-gray-300 truncate max-w-[200px]"
+                                [title]="formatValue(row[head])">
+                                {{ formatValue(row[head]) }}
+                            </td>
+                            }
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+                @if(tableData().length === 0) {
+                <div class="p-10 text-center text-gray-600">Table is empty</div>
+                }
+            </div>
+            <div
+                class="h-8 bg-[#111] border-t border-[#333] flex items-center px-4 text-[10px] text-gray-500 justify-between">
+                <span>{{ tableData().length }} records</span>
+                <span>Read-only view</span>
+            </div>
+            }
 
-          </div>
-      </div>
+            <!-- SQL View -->
+            @if (activeView() === 'sql') {
+            <div class="flex-1 flex flex-col bg-[#141414]">
+                <div class="h-1/2 border-b border-[#333] flex flex-col">
+                    <textarea [(ngModel)]="sqlQuery"
+                        class="flex-1 bg-[#141414] text-[#3ECF8E] p-4 focus:outline-none resize-none font-mono text-sm leading-relaxed border-none focus:ring-0"
+                        placeholder="Enter SQL query..." spellcheck="false"></textarea>
+                    <div class="px-4 py-2 bg-[#111] flex justify-end border-t border-[#333]">
+                        <button (click)="runSql()"
+                            class="px-4 py-1.5 bg-[#3ECF8E] hover:bg-[#34b27b] text-black text-xs font-bold rounded flex items-center gap-2 transition-colors">
+                            <span class="material-symbols-outlined text-[16px]">play_arrow</span>
+                            Run
+                        </button>
+                    </div>
+                </div>
 
-      <!-- DB Right Panel (Realtime) -->
-      <div class="w-72 border-l border-[#333] bg-[#141414] flex flex-col hidden xl:flex">
-          <div class="px-4 py-3 border-b border-[#333] flex items-center justify-between">
-              <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Realtime Inspector</h3>
-              <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]"></div>
-          </div>
-          
-          <div class="flex-1 overflow-y-auto p-2 space-y-2">
-              @for (log of realtimeLogs(); track $index) {
-                  <div class="p-3 bg-[#1c1c1c] border border-[#333] rounded-lg text-xs font-mono group hover:border-[#555] transition-colors cursor-default">
-                      <div class="flex justify-between items-center mb-1.5">
-                          <span 
-                            class="font-bold"
-                            [class.text-[#3ECF8E]]="log.event === 'INSERT' || log.event === 'CONNECT' || log.event === 'SEED'"
-                            [class.text-blue-400]="log.event === 'UPDATE'"
-                            [class.text-red-400]="log.event === 'DELETE' || log.event === 'TRUNCATE'"
-                            [class.text-gray-400]="log.event === 'SELECT'"
-                          >{{ log.event }}</span>
-                          <span class="text-gray-600 text-[10px]">{{ log.time }}</span>
-                      </div>
-                      <div class="text-gray-400 mb-1">
-                          on <span class="text-white">{{ log.table }}</span>
-                      </div>
-                  </div>
-              }
-              @if (realtimeLogs().length === 0) {
-                  <div class="text-center text-gray-600 text-xs py-10">
-                      Waiting for database events...
-                  </div>
-              }
-          </div>
-      </div>
-  }
+                <div class="flex-1 overflow-auto bg-[#1c1c1c] p-4">
+                    @if (sqlResult(); as results) {
+                    @if (results.length > 0) {
+                    <div class="text-xs text-gray-400 mb-2">Result: {{ results.length }} rows affected</div>
+                    <div class="bg-[#111] border border-[#333] rounded overflow-hidden">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-[#222]">
+                                <tr>
+                                    @for(key of activeView() === 'sql' ? (results[0] | keyvalue) : []; track key.key) {
+                                    <th class="px-3 py-2 text-gray-400 font-medium">{{ key.key }}</th>
+                                    }
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for(row of results; track $index) {
+                                <tr class="border-t border-[#333]">
+                                    @for(val of row | keyvalue; track val.key) {
+                                    <td class="px-3 py-1.5 text-gray-300">{{ val.value }}</td>
+                                    }
+                                </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    } @else {
+                    <div class="text-gray-500 text-xs">No results or empty set.</div>
+                    }
+                    } @else {
+                    <div class="text-gray-600 text-xs mt-4">Execute a query to see results. Try:
+                        <code>SELECT * FROM tenants</code></div>
+                    }
+                </div>
+            </div>
+            }
 
-  <!-- MODULE: AUTHENTICATION -->
-  @if (activeModule() === 'auth') {
-      <!-- Auth Sidebar -->
-      <div class="w-64 border-r border-[#333] flex flex-col bg-[#141414]">
+        </div>
+    </div>
+
+
+    }
+
+    <!-- MODULE: AUTHENTICATION -->
+    @if (activeModule() === 'auth') {
+    <!-- Auth Sidebar -->
+    <div class="w-64 border-r border-[#333] flex flex-col bg-[#141414]">
         <div class="p-4 border-b border-[#333]">
             <h2 class="font-bold text-sm tracking-wide flex items-center gap-2">
-               <span class="material-symbols-outlined text-gray-500 text-[18px]">verified_user</span>
-               Authentication
+                <span class="material-symbols-outlined text-gray-500 text-[18px]">verified_user</span>
+                Authentication
             </h2>
         </div>
         <div class="flex-1 py-2">
-            <button 
-                (click)="activeAuthSection.set('users')"
+            <button (click)="activeAuthSection.set('users')"
                 class="w-full flex items-center gap-3 px-4 py-2 hover:bg-[#222] transition-colors border-l-2"
                 [class.border-[#3ECF8E]]="activeAuthSection() === 'users'"
                 [class.bg-[#1a1a1a]]="activeAuthSection() === 'users'"
                 [class.border-transparent]="activeAuthSection() !== 'users'"
                 [class.text-[#3ECF8E]]="activeAuthSection() === 'users'"
-                [class.text-gray-400]="activeAuthSection() !== 'users'"
-            >
+                [class.text-gray-400]="activeAuthSection() !== 'users'">
                 <span class="material-symbols-outlined text-[16px]">group</span>
                 <span class="text-xs font-medium">Users</span>
             </button>
-            <button 
-                (click)="activeAuthSection.set('policies')"
+            <button (click)="activeAuthSection.set('policies')"
                 class="w-full flex items-center gap-3 px-4 py-2 hover:bg-[#222] transition-colors border-l-2"
                 [class.border-[#3ECF8E]]="activeAuthSection() === 'policies'"
                 [class.bg-[#1a1a1a]]="activeAuthSection() === 'policies'"
                 [class.border-transparent]="activeAuthSection() !== 'policies'"
                 [class.text-[#3ECF8E]]="activeAuthSection() === 'policies'"
-                [class.text-gray-400]="activeAuthSection() !== 'policies'"
-            >
+                [class.text-gray-400]="activeAuthSection() !== 'policies'">
                 <span class="material-symbols-outlined text-[16px]">security</span>
                 <span class="text-xs font-medium">Policies</span>
             </button>
         </div>
-      </div>
+    </div>
 
-      <!-- Auth Content -->
-      <div class="flex-1 flex flex-col min-w-0 bg-[#1c1c1c]">
-          
-          <!-- Users View -->
-          @if (activeAuthSection() === 'users') {
-              <!-- Toolbar -->
-              <div class="h-14 border-b border-[#333] flex items-center px-4 justify-between bg-[#1c1c1c]">
-                  <div class="relative">
-                      <span class="absolute inset-y-0 left-0 flex items-center pl-2">
-                          <span class="material-symbols-outlined text-gray-500 text-[16px]">search</span>
-                      </span>
-                      <input 
-                        type="text" 
-                        [(ngModel)]="searchUserQuery"
-                        placeholder="Search by email or phone" 
-                        class="bg-[#111] border border-[#333] rounded px-2 py-1 pl-8 text-xs text-white w-64 focus:ring-1 focus:ring-[#3ECF8E]"
-                      >
-                  </div>
-                  <button 
-                    (click)="inviteUser()"
-                    class="px-4 py-1.5 bg-[#3ECF8E] hover:bg-[#34b27b] text-black text-xs font-bold rounded flex items-center gap-2 transition-colors"
-                  >
-                      <span class="material-symbols-outlined text-[16px]">mail</span>
-                      Invite User
-                  </button>
-              </div>
+    <!-- Auth Content -->
+    <div class="flex-1 flex flex-col min-w-0 bg-[#1c1c1c]">
 
-              <!-- Users Table -->
-              <div class="flex-1 overflow-auto">
-                  <table class="w-full text-left border-collapse text-xs">
-                      <thead class="bg-[#111] sticky top-0 z-10">
-                          <tr>
-                              <th class="px-4 py-3 font-medium text-gray-400 border-b border-[#333]">Identity</th>
-                              <th class="px-4 py-3 font-medium text-gray-400 border-b border-[#333]">Role (App Metadata)</th>
-                              <th class="px-4 py-3 font-medium text-gray-400 border-b border-[#333]">Tenant ID</th>
-                              <th class="px-4 py-3 font-medium text-gray-400 border-b border-[#333]">Last Sign In</th>
-                              <th class="px-4 py-3 font-medium text-gray-400 border-b border-[#333] text-right"></th>
-                          </tr>
-                      </thead>
-                      <tbody class="divide-y divide-[#2a2a2a]">
-                          @for (user of authUsers(); track user.uid) {
-                              <tr class="hover:bg-[#222] group transition-colors">
-                                  <td class="px-4 py-3">
-                                      <div class="flex items-center gap-3">
-                                          <div class="w-8 h-8 rounded-full bg-[#333] flex items-center justify-center overflow-hidden border border-[#444]">
-                                              @if (user.metadata.avatar) {
-                                                  <img [src]="user.metadata.avatar" class="w-full h-full object-cover">
-                                              } @else {
-                                                  <span class="material-symbols-outlined text-gray-500">person</span>
-                                              }
-                                          </div>
-                                          <div>
-                                              <div class="font-bold text-white">{{ user.email !== '-' ? user.email : user.phone }}</div>
-                                              <div class="text-[10px] text-gray-500 flex items-center gap-1">
-                                                  @if (user.metadata.name) { {{user.metadata.name}} }
-                                                  <span class="text-gray-600">|</span>
-                                                  <span class="text-xs font-mono">{{ user.uid }}</span>
-                                              </div>
-                                          </div>
-                                      </div>
-                                  </td>
-                                  <td class="px-4 py-3">
-                                      <span class="px-2 py-1 bg-[#1a1a1a] border border-[#333] rounded text-gray-400 capitalize text-[10px]">{{ user.app_metadata.role }}</span>
-                                  </td>
-                                  <td class="px-4 py-3 text-yellow-500 font-mono text-[10px]">{{ user.app_metadata.tenant_id }}</td>
-                                  <td class="px-4 py-3 text-gray-400">{{ user.last_sign_in ? (user.last_sign_in | date:'short') : 'Never' }}</td>
-                                  <td class="px-4 py-3 text-right">
-                                      <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                          <button 
-                                            (click)="sendMagicLink(user.email)"
-                                            class="p-1 hover:bg-[#333] rounded text-gray-400 hover:text-white"
-                                            title="Send Magic Link"
-                                          >
-                                              <span class="material-symbols-outlined text-[16px]">magic_button</span>
-                                          </button>
-                                          <button 
-                                            (click)="deleteUser(user.uid)"
-                                            class="p-1 hover:bg-[#333] rounded text-gray-400 hover:text-red-500"
-                                            title="Delete User"
-                                          >
-                                              <span class="material-symbols-outlined text-[16px]">delete</span>
-                                          </button>
-                                      </div>
-                                  </td>
-                              </tr>
-                          }
-                      </tbody>
-                  </table>
-                  @if(authUsers().length === 0) {
-                      <div class="p-10 text-center text-gray-600">No users found</div>
-                  }
-              </div>
-          }
+        <!-- Users View -->
+        @if (activeAuthSection() === 'users') {
+        <!-- Toolbar -->
+        <div class="h-14 border-b border-[#333] flex items-center px-4 justify-between bg-[#1c1c1c]">
+            <div class="relative">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-2">
+                    <span class="material-symbols-outlined text-gray-500 text-[16px]">search</span>
+                </span>
+                <input type="text" [(ngModel)]="searchUserQuery" placeholder="Search by email or phone"
+                    class="bg-[#111] border border-[#333] rounded px-2 py-1 pl-8 text-xs text-white w-64 focus:ring-1 focus:ring-[#3ECF8E]">
+            </div>
+            <button (click)="inviteUser()"
+                class="px-4 py-1.5 bg-[#3ECF8E] hover:bg-[#34b27b] text-black text-xs font-bold rounded flex items-center gap-2 transition-colors">
+                <span class="material-symbols-outlined text-[16px]">mail</span>
+                Invite User
+            </button>
+        </div>
 
-          <!-- Policies View -->
-          @if (activeAuthSection() === 'policies') {
-              <div class="flex-1 p-8 flex flex-col items-center justify-center text-gray-500">
-                  <span class="material-symbols-outlined text-6xl mb-4 text-[#333]">policy</span>
-                  <h3 class="text-xl font-bold text-white mb-2">Row Level Security (RLS)</h3>
-                  <p class="text-sm max-w-md text-center">
-                      Multi-Tenant isolation policies active. Data is strictly segregated by <code>tenant_id</code>.
-                  </p>
-                  
-                  <div class="mt-8 w-full max-w-2xl text-left bg-[#111] border border-[#333] rounded-lg overflow-hidden">
-                      <div class="px-4 py-2 border-b border-[#333] text-xs font-bold uppercase text-gray-500 bg-[#1a1a1a]">public.bookings (Isolation)</div>
-                      <div class="p-4 space-y-4">
-                          <div>
-                              <div class="flex items-center gap-2 mb-1">
-                                  <span class="text-green-500 text-xs font-bold">ENABLE</span>
-                                  <span class="text-white text-sm font-mono">"Users can ONLY see data from their Tenant"</span>
-                              </div>
-                              <code class="text-xs text-gray-400 block bg-[#000] p-2 rounded">tenant_id = (auth.jwt() ->> 'tenant_id')::uuid</code>
-                          </div>
-                          <div>
-                              <div class="flex items-center gap-2 mb-1">
-                                  <span class="text-green-500 text-xs font-bold">ENABLE</span>
-                                  <span class="text-white text-sm font-mono">"Role Based Access (Cleaner)"</span>
-                              </div>
-                              <code class="text-xs text-gray-400 block bg-[#000] p-2 rounded">
+        <!-- Users Table -->
+        <div class="flex-1 overflow-auto">
+            <table class="w-full text-left border-collapse text-xs">
+                <thead class="bg-[#111] sticky top-0 z-10">
+                    <tr>
+                        <th class="px-4 py-3 font-medium text-gray-400 border-b border-[#333]">Identity</th>
+                        <th class="px-4 py-3 font-medium text-gray-400 border-b border-[#333]">Role (App Metadata)</th>
+                        <th class="px-4 py-3 font-medium text-gray-400 border-b border-[#333]">Tenant ID</th>
+                        <th class="px-4 py-3 font-medium text-gray-400 border-b border-[#333]">Last Sign In</th>
+                        <th class="px-4 py-3 font-medium text-gray-400 border-b border-[#333] text-right"></th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-[#2a2a2a]">
+                    @for (user of authUsers(); track user.uid) {
+                    <tr class="hover:bg-[#222] group transition-colors">
+                        <td class="px-4 py-3">
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="w-8 h-8 rounded-full bg-[#333] flex items-center justify-center overflow-hidden border border-[#444]">
+                                    @if (user.metadata.avatar) {
+                                    <img [src]="user.metadata.avatar" class="w-full h-full object-cover">
+                                    } @else {
+                                    <span class="material-symbols-outlined text-gray-500">person</span>
+                                    }
+                                </div>
+                                <div>
+                                    <div class="font-bold text-white">{{ user.email !== '-' ? user.email : user.phone }}
+                                    </div>
+                                    <div class="text-[10px] text-gray-500 flex items-center gap-1">
+                                        @if (user.metadata.name) { {{user.metadata.name}} }
+                                        <span class="text-gray-600">|</span>
+                                        <span class="text-xs font-mono">{{ user.uid }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-4 py-3">
+                            <span
+                                class="px-2 py-1 bg-[#1a1a1a] border border-[#333] rounded text-gray-400 capitalize text-[10px]">{{
+                                user.app_metadata.role }}</span>
+                        </td>
+                        <td class="px-4 py-3 text-yellow-500 font-mono text-[10px]">{{ user.app_metadata.tenant_id }}
+                        </td>
+                        <td class="px-4 py-3 text-gray-400">{{ user.last_sign_in ? (user.last_sign_in | date:'short') :
+                            'Never' }}</td>
+                        <td class="px-4 py-3 text-right">
+                            <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button (click)="sendMagicLink(user.email)"
+                                    class="p-1 hover:bg-[#333] rounded text-gray-400 hover:text-white"
+                                    title="Send Magic Link">
+                                    <span class="material-symbols-outlined text-[16px]">magic_button</span>
+                                </button>
+                                <button (click)="deleteUser(user.uid)"
+                                    class="p-1 hover:bg-[#333] rounded text-gray-400 hover:text-red-500"
+                                    title="Delete User">
+                                    <span class="material-symbols-outlined text-[16px]">delete</span>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+            @if(authUsers().length === 0) {
+            <div class="p-10 text-center text-gray-600">No users found</div>
+            }
+        </div>
+        }
+
+        <!-- Policies View -->
+        @if (activeAuthSection() === 'policies') {
+        <div class="flex-1 p-8 flex flex-col items-center justify-center text-gray-500">
+            <span class="material-symbols-outlined text-6xl mb-4 text-[#333]">policy</span>
+            <h3 class="text-xl font-bold text-white mb-2">Row Level Security (RLS)</h3>
+            <p class="text-sm max-w-md text-center">
+                Multi-Tenant isolation policies active. Data is strictly segregated by <code>tenant_id</code>.
+            </p>
+
+            <div class="mt-8 w-full max-w-2xl text-left bg-[#111] border border-[#333] rounded-lg overflow-hidden">
+                <div class="px-4 py-2 border-b border-[#333] text-xs font-bold uppercase text-gray-500 bg-[#1a1a1a]">
+                    public.bookings (Isolation)</div>
+                <div class="p-4 space-y-4">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="text-green-500 text-xs font-bold">ENABLE</span>
+                            <span class="text-white text-sm font-mono">"Users can ONLY see data from their
+                                Tenant"</span>
+                        </div>
+                        <code
+                            class="text-xs text-gray-400 block bg-[#000] p-2 rounded">tenant_id = (auth.jwt() ->> 'tenant_id')::uuid</code>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="text-green-500 text-xs font-bold">ENABLE</span>
+                            <span class="text-white text-sm font-mono">"Role Based Access (Cleaner)"</span>
+                        </div>
+                        <code class="text-xs text-gray-400 block bg-[#000] p-2 rounded">
                                 (auth.jwt() ->> 'role') = 'cleaner' AND table_name IN ('tasks', 'cleaning_reports')
                               </code>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-          }
+                    </div>
+                </div>
+            </div>
+        </div>
+        }
 
-      </div>
-  }
+    </div>
+    }
 
 </div>

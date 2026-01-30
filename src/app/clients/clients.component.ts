@@ -23,12 +23,12 @@ export class ClientsComponent implements OnInit, AfterViewChecked {
   private apiService = inject(ApiService);
   private portfolioService = inject(PortfolioService);
   private route = inject(ActivatedRoute);
-  
+
   @ViewChild('scrollContainer') private scrollContainer!: ElementRef;
 
   // Consume shared state
   clients = this.portfolioService.clients;
-  portfolio = this.portfolioService.portfolio; 
+  portfolio = this.portfolioService.portfolio;
   bookings = this.portfolioService.bookings;
 
   searchQuery = signal('');
@@ -44,8 +44,8 @@ export class ClientsComponent implements OnInit, AfterViewChecked {
   isBookingModalOpen = signal(false);
   isLinkModalOpen = signal(false);
   isSyncing = signal(false);
-  errorMessage = signal(''); 
-  
+  errorMessage = signal('');
+
   newBookingData = signal<{
     unitId: string;
     startDate: string;
@@ -68,7 +68,7 @@ export class ClientsComponent implements OnInit, AfterViewChecked {
         if (client) {
           this.selectClient(phone);
           if (params['action'] === 'edit') {
-             this.openEditModal(client);
+            this.openEditModal(client);
           }
         }
       }
@@ -79,11 +79,11 @@ export class ClientsComponent implements OnInit, AfterViewChecked {
   filteredClients = computed(() => {
     const query = this.searchQuery().toLowerCase();
     const normQuery = query.replace(/[^\d+]/g, '');
-    
+
     return this.clients()
       .filter(c => {
-         const normPhone = c.phoneNumber.replace(/[^\d+]/g, '');
-         return c.name.toLowerCase().includes(query) || normPhone.includes(normQuery);
+        const normPhone = c.phoneNumber.replace(/[^\d+]/g, '');
+        return c.name.toLowerCase().includes(query) || normPhone.includes(normQuery);
       })
       .sort((a, b) => b.lastActive.getTime() - a.lastActive.getTime());
   });
@@ -95,7 +95,7 @@ export class ClientsComponent implements OnInit, AfterViewChecked {
   linkableBookings = computed(() => {
     const client = this.selectedClient();
     if (!client) return [];
-    
+
     return this.bookings()
       .filter(b => (!b.guestPhone || b.guestPhone.trim() === '') && b.source !== 'blocked')
       .sort((a, b) => b.startDate.getTime() - a.startDate.getTime());
@@ -104,69 +104,69 @@ export class ClientsComponent implements OnInit, AfterViewChecked {
   getBookingStatus(phoneNumber: string): ClientBookingStatus {
     const allBookings = this.portfolioService.bookings();
     const portfolio = this.portfolioService.portfolio();
-    
+
     const clientBookings = allBookings.filter(b => b.guestPhone === phoneNumber);
-    
+
     if (clientBookings.length === 0) {
       return { state: 'none', label: 'New Client' };
     }
 
     const now = new Date();
-    now.setHours(0,0,0,0);
+    now.setHours(0, 0, 0, 0);
 
     const current = clientBookings.find(b => {
-       const start = new Date(b.startDate);
-       const end = new Date(b.endDate);
-       return now >= start && now <= end;
+      const start = new Date(b.startDate);
+      const end = new Date(b.endDate);
+      return now >= start && now <= end;
     });
 
     if (current) {
-       const unitName = this.getUnitName(current.unitId, portfolio);
-       const daysLeft = Math.ceil((new Date(current.endDate).getTime() - now.getTime()) / (1000 * 3600 * 24));
-       return { 
-         state: 'current', 
-         label: 'Currently Staying', 
-         unitName: unitName, 
-         date: `Until ${current.endDate.toLocaleDateString([], {month:'short', day:'numeric'})}`,
-         daysRemaining: daysLeft 
-       };
+      const unitName = this.getUnitName(current.unitId, portfolio);
+      const daysLeft = Math.ceil((new Date(current.endDate).getTime() - now.getTime()) / (1000 * 3600 * 24));
+      return {
+        state: 'current',
+        label: 'Currently Staying',
+        unitName: unitName,
+        date: `Until ${current.endDate.toLocaleDateString([], { month: 'short', day: 'numeric' })}`,
+        daysRemaining: daysLeft
+      };
     }
 
     const futureBookings = clientBookings.filter(b => new Date(b.startDate) > now);
     if (futureBookings.length > 0) {
-       futureBookings.sort((a,b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
-       const next = futureBookings[0];
-       const unitName = this.getUnitName(next.unitId, portfolio);
-       return { 
-         state: 'future', 
-         label: 'Upcoming Booking', 
-         unitName: unitName,
-         date: new Date(next.startDate).toLocaleDateString([], {month:'short', day:'numeric'}) 
-       };
+      futureBookings.sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime());
+      const next = futureBookings[0];
+      const unitName = this.getUnitName(next.unitId, portfolio);
+      return {
+        state: 'future',
+        label: 'Upcoming Booking',
+        unitName: unitName,
+        date: new Date(next.startDate).toLocaleDateString([], { month: 'short', day: 'numeric' })
+      };
     }
 
     const pastBookings = clientBookings.filter(b => new Date(b.endDate) < now);
     if (pastBookings.length > 0) {
-       pastBookings.sort((a,b) => new Date(b.endDate).getTime() - new Date(a.endDate).getTime());
-       const last = pastBookings[0];
-       const unitName = this.getUnitName(last.unitId, portfolio);
-       return {
-          state: 'past',
-          label: 'Past Guest',
-          unitName: unitName,
-          date: `Checked out ${new Date(last.endDate).toLocaleDateString([], {month:'short', day:'numeric'})}`
-       };
+      pastBookings.sort((a, b) => new Date(b.endDate).getTime() - new Date(a.endDate).getTime());
+      const last = pastBookings[0];
+      const unitName = this.getUnitName(last.unitId, portfolio);
+      return {
+        state: 'past',
+        label: 'Past Guest',
+        unitName: unitName,
+        date: `Checked out ${new Date(last.endDate).toLocaleDateString([], { month: 'short', day: 'numeric' })}`
+      };
     }
 
     return { state: 'none', label: 'No Active Bookings' };
   }
 
   public getUnitName(unitId: string, portfolio: any[]): string {
-     for (const group of portfolio) {
-        const unit = group.units.find((u: any) => u.id === unitId);
-        if (unit) return unit.name;
-     }
-     return 'Unknown Unit';
+    for (const group of portfolio) {
+      const unit = group.units.find((u: any) => u.id === unitId);
+      if (unit) return unit.name;
+    }
+    return 'Unknown Unit';
   }
 
   ngAfterViewChecked() {
@@ -178,7 +178,7 @@ export class ClientsComponent implements OnInit, AfterViewChecked {
       if (this.scrollContainer) {
         this.scrollContainer.nativeElement.scrollTop = this.scrollContainer.nativeElement.scrollHeight;
       }
-    } catch(err) { }
+    } catch (err) { }
   }
 
   selectClient(phoneNumber: string) {
@@ -191,7 +191,7 @@ export class ClientsComponent implements OnInit, AfterViewChecked {
     const prefix = last.sender === 'agent' ? 'You: ' : last.sender === 'bot' ? 'Bot: ' : '';
     return prefix + last.text;
   }
-  
+
   formatTime(date: Date): string {
     const now = new Date();
     if (date.toDateString() === now.toDateString()) {
@@ -203,7 +203,7 @@ export class ClientsComponent implements OnInit, AfterViewChecked {
   openBookingModal() {
     const client = this.selectedClient();
     if (!client) return;
-    
+
     this.errorMessage.set('');
     this.isSyncing.set(false);
 
@@ -231,10 +231,10 @@ export class ClientsComponent implements OnInit, AfterViewChecked {
   openLinkModal() {
     const client = this.selectedClient();
     if (!client) return;
-    
+
     const status = this.getBookingStatus(client.phoneNumber);
     if (status.state === 'current' || status.state === 'future') {
-      return; 
+      return;
     }
 
     this.isLinkModalOpen.set(true);
@@ -245,40 +245,40 @@ export class ClientsComponent implements OnInit, AfterViewChecked {
     if (!client) return;
 
     this.bookings.update(list => list.map(b => {
-        if (b.id === booking.id) {
-            return { ...b, guestName: client.name, guestPhone: client.phoneNumber };
-        }
-        return b;
+      if (b.id === booking.id) {
+        return { ...b, guestName: client.name, guestPhone: client.phoneNumber };
+      }
+      return b;
     }));
 
     const linkMsg: ChatMessage = {
-        id: `sys-link-${Date.now()}`,
-        text: `Booking Linked: ${booking.source.toUpperCase()} reservation for ${new Date(booking.startDate).toLocaleDateString()} has been assigned to this profile.`,
-        sender: 'bot',
-        timestamp: new Date(),
-        status: 'read'
+      id: `sys-link-${Date.now()}`,
+      text: `Booking Linked: ${booking.source.toUpperCase()} reservation for ${new Date(booking.startDate).toLocaleDateString()} has been assigned to this profile.`,
+      sender: 'bot',
+      timestamp: new Date(),
+      status: 'read'
     };
 
     this.clients.update(list => list.map(c => {
-        if (c.phoneNumber === client.phoneNumber) {
-            return {
-                ...c,
-                messages: [...c.messages, linkMsg],
-                previousBookings: c.previousBookings + 1,
-                lastActive: new Date()
-            };
-        }
-        return c;
+      if (c.phoneNumber === client.phoneNumber) {
+        return {
+          ...c,
+          messages: [...c.messages, linkMsg],
+          previousBookings: c.previousBookings + 1,
+          lastActive: new Date()
+        };
+      }
+      return c;
     }));
 
     this.isLinkModalOpen.set(false);
-    
+
     this.portfolioService.addNotification({
-        id: `link-${Date.now()}`,
-        title: 'Booking Linked',
-        message: `Booking ${booking.id} successfully assigned to ${client.name}.`,
-        type: 'success',
-        timestamp: new Date()
+      id: `link-${Date.now()}`,
+      title: 'Booking Linked',
+      message: `Booking ${booking.id} successfully assigned to ${client.name}.`,
+      type: 'success',
+      timestamp: new Date()
     });
   }
 
@@ -286,10 +286,15 @@ export class ClientsComponent implements OnInit, AfterViewChecked {
     this.errorMessage.set('');
     const data = this.newBookingData();
     const client = this.selectedClient();
-    
+
     if (!client || !data.unitId || !data.startDate || !data.endDate) {
-        this.errorMessage.set('Please fill in all required fields.');
-        return;
+      this.errorMessage.set('Please fill in all required fields.');
+      return;
+    }
+
+    if (new Date(data.startDate) >= new Date(data.endDate)) {
+      this.errorMessage.set('Check-out date must be after check-in date.');
+      return;
     }
 
     // Prepare booking object
@@ -300,7 +305,7 @@ export class ClientsComponent implements OnInit, AfterViewChecked {
       guestPhone: client.phoneNumber,
       startDate: new Date(data.startDate),
       endDate: new Date(data.endDate),
-      source: 'direct', 
+      source: 'direct',
       status: 'confirmed',
       price: data.price,
       createdAt: new Date()
@@ -321,41 +326,41 @@ export class ClientsComponent implements OnInit, AfterViewChecked {
     this.isSyncing.set(true);
 
     setTimeout(() => {
-        const confirmMsg: ChatMessage = {
-            id: `sys-${Date.now()}`,
-            text: `Booking confirmed: ${newBooking.startDate.toLocaleDateString()} - ${newBooking.endDate.toLocaleDateString()}.\nSynced with Channel Manager.`,
-            sender: 'bot',
-            timestamp: new Date(),
-            status: 'sent'
-        };
-        
-        this.clients.update(list => list.map(c => {
-            if (c.phoneNumber === client.phoneNumber) {
-                return { 
-                    ...c, 
-                    messages: [...c.messages, confirmMsg],
-                    previousBookings: c.previousBookings + 1,
-                    lastActive: new Date()
-                };
-            }
-            return c;
-        }));
+      const confirmMsg: ChatMessage = {
+        id: `sys-${Date.now()}`,
+        text: `Booking confirmed: ${newBooking.startDate.toLocaleDateString()} - ${newBooking.endDate.toLocaleDateString()}.\nSynced with Channel Manager.`,
+        sender: 'bot',
+        timestamp: new Date(),
+        status: 'sent'
+      };
 
-        this.portfolioService.addNotification({
-            id: `notif-sync-${Date.now()}`,
-            title: 'Booking Synchronized',
-            message: `Reservation for ${client.name} successfully pushed to Channel Manager.`,
-            type: 'success',
-            timestamp: new Date(),
-            data: {
-                action: 'calendar_focus',
-                date: newBooking.startDate.toISOString(),
-                unitId: newBooking.unitId
-            }
-        });
+      this.clients.update(list => list.map(c => {
+        if (c.phoneNumber === client.phoneNumber) {
+          return {
+            ...c,
+            messages: [...c.messages, confirmMsg],
+            previousBookings: c.previousBookings + 1,
+            lastActive: new Date()
+          };
+        }
+        return c;
+      }));
 
-        this.isSyncing.set(false);
-        this.isBookingModalOpen.set(false);
+      this.portfolioService.addNotification({
+        id: `notif-sync-${Date.now()}`,
+        title: 'Booking Synchronized',
+        message: `Reservation for ${client.name} successfully pushed to Channel Manager.`,
+        type: 'success',
+        timestamp: new Date(),
+        data: {
+          action: 'calendar_focus',
+          date: newBooking.startDate.toISOString(),
+          unitId: newBooking.unitId
+        }
+      });
+
+      this.isSyncing.set(false);
+      this.isBookingModalOpen.set(false);
 
     }, 1500);
   }
@@ -391,66 +396,66 @@ export class ClientsComponent implements OnInit, AfterViewChecked {
     if (!data.name || !data.phoneNumber) return;
 
     const newClient: Client = {
-        phoneNumber: data.phoneNumber,
-        name: data.name,
-        email: data.email || '',
-        address: data.address || '',
-        country: data.country || '',
-        previousBookings: data.previousBookings || 0,
-        platform: data.platform || 'whatsapp',
-        avatar: data.avatar || `https://picsum.photos/seed/${data.phoneNumber}/100/100`,
-        status: data.status || 'New',
-        lastActive: data.lastActive || new Date(),
-        messages: data.messages || [],
-        unreadCount: data.unreadCount || 0,
-        online: data.online || false,
-        createdAt: data.createdAt ? new Date(data.createdAt) : new Date()
+      phoneNumber: data.phoneNumber,
+      name: data.name,
+      email: data.email || '',
+      address: data.address || '',
+      country: data.country || '',
+      previousBookings: data.previousBookings || 0,
+      platform: data.platform || 'whatsapp',
+      avatar: data.avatar || `https://picsum.photos/seed/${data.phoneNumber}/100/100`,
+      status: data.status || 'New',
+      lastActive: data.lastActive || new Date(),
+      messages: data.messages || [],
+      unreadCount: data.unreadCount || 0,
+      online: data.online || false,
+      createdAt: data.createdAt ? new Date(data.createdAt) : new Date()
     };
 
     this.clients.update(list => {
-        if (this.isEditing()) {
-            const originalPhone = this.originalPhoneNumber();
-            return list.map(c => c.phoneNumber === originalPhone ? newClient : c);
-        } else {
-             if (list.some(c => c.phoneNumber === newClient.phoneNumber)) {
-                alert('Client with this phone number already exists!');
-                return list;
-            }
-            return [newClient, ...list];
+      if (this.isEditing()) {
+        const originalPhone = this.originalPhoneNumber();
+        return list.map(c => c.phoneNumber === originalPhone ? newClient : c);
+      } else {
+        if (list.some(c => c.phoneNumber === newClient.phoneNumber)) {
+          alert('Client with this phone number already exists!');
+          return list;
         }
+        return [newClient, ...list];
+      }
     });
 
     if (this.isEditing() && this.originalPhoneNumber() === this.selectedClientId()) {
-        this.selectedClientId.set(newClient.phoneNumber);
+      this.selectedClientId.set(newClient.phoneNumber);
     } else if (!this.isEditing()) {
-        this.selectedClientId.set(newClient.phoneNumber);
+      this.selectedClientId.set(newClient.phoneNumber);
     }
 
     this.isModalOpen.set(false);
   }
 
   deleteClient(phoneNumber: string) {
-    if(confirm('Are you sure you want to delete this client and all their history?')) {
-        this.clients.update(list => list.filter(c => c.phoneNumber !== phoneNumber));
-        if (this.selectedClientId() === phoneNumber) {
-            this.selectedClientId.set(null);
-        }
+    if (confirm('Are you sure you want to delete this client and all their history?')) {
+      this.clients.update(list => list.filter(c => c.phoneNumber !== phoneNumber));
+      if (this.selectedClientId() === phoneNumber) {
+        this.selectedClientId.set(null);
+      }
     }
   }
 
   saveHistory() {
-     const client = this.selectedClient();
-     if (!client) return;
-     const historyText = client.messages.map(m => 
-        `[${m.timestamp.toLocaleString()}] ${m.sender.toUpperCase()}: ${m.text}`
-     ).join('\n');
-     const blob = new Blob([historyText], { type: 'text/plain' });
-     const url = window.URL.createObjectURL(blob);
-     const a = document.createElement('a');
-     a.href = url;
-     a.download = `chat_history_${client.name.replace(/\s/g,'_')}.txt`;
-     a.click();
-     window.URL.revokeObjectURL(url);
+    const client = this.selectedClient();
+    if (!client) return;
+    const historyText = client.messages.map(m =>
+      `[${m.timestamp.toLocaleString()}] ${m.sender.toUpperCase()}: ${m.text}`
+    ).join('\n');
+    const blob = new Blob([historyText], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `chat_history_${client.name.replace(/\s/g, '_')}.txt`;
+    a.click();
+    window.URL.revokeObjectURL(url);
   }
 
   handleImport(event: Event) {
@@ -471,22 +476,22 @@ export class ClientsComponent implements OnInit, AfterViewChecked {
     const lines = text.split('\n');
     const newMessages: ChatMessage[] = [];
     const waRegex = /^(\d{1,2}\/\d{1,2}\/\d{2,4},?\s+\d{1,2}:\d{2}(?:\s?[AP]M)?)\s+-\s+([^:]+):\s+(.+)/;
-    
+
     lines.forEach((line, index) => {
-        const clean = line.trim();
-        if (clean) {
-            let sender: 'client' | 'bot' | 'agent' = 'bot';
-            // Simple heuristic if not strictly formatted
-            if (index % 2 === 0) sender = 'client'; 
-            
-            newMessages.push({
-                id: `imp-${Date.now()}-${index}`,
-                text: clean,
-                sender: sender,
-                timestamp: new Date(Date.now() - (lines.length - index) * 60000),
-                platform: 'whatsapp'
-            });
-        }
+      const clean = line.trim();
+      if (clean) {
+        let sender: 'client' | 'bot' | 'agent' = 'bot';
+        // Simple heuristic if not strictly formatted
+        if (index % 2 === 0) sender = 'client';
+
+        newMessages.push({
+          id: `imp-${Date.now()}-${index}`,
+          text: clean,
+          sender: sender,
+          timestamp: new Date(Date.now() - (lines.length - index) * 60000),
+          platform: 'whatsapp'
+        });
+      }
     });
 
     if (newMessages.length > 0) {

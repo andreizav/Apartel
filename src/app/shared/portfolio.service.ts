@@ -143,7 +143,10 @@ export class PortfolioService {
     appSettings?: AppSettings;
   }) {
     const revive = (obj: unknown): unknown => {
-      if (typeof obj === 'string' && /^\d{4}-\d{2}-\d{2}T/.test(obj)) return new Date(obj);
+      if (typeof obj === 'string' && /^\d{4}-\d{2}-\d{2}/.test(obj)) {
+        const d = new Date(obj);
+        return isNaN(d.getTime()) ? obj : d;
+      }
       if (Array.isArray(obj)) return obj.map(revive);
       if (obj && typeof obj === 'object') {
         const o = { ...obj } as Record<string, unknown>;
@@ -233,7 +236,8 @@ export class PortfolioService {
       return { success: false, error: 'Selected dates are unavailable for this unit.' };
     }
 
-    this.bookings.update(curr => [newBooking, ...curr]);
+    const bookingToSave = { ...newBooking, startDate: start, endDate: end };
+    this.bookings.update(curr => [bookingToSave, ...curr]);
     this.logDbEvent('INSERT', 'public.bookings', `ID: ${newBooking.id}`);
     return { success: true };
   }

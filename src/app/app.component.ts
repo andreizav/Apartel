@@ -1,7 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
-import { ApiService } from './app/shared/api.service';
-import { AuthTokenService } from './app/shared/auth-token.service';
+import { ApiService } from './shared/api.service';
+import { AuthTokenService } from './shared/auth-token.service';
 
 @Component({
   selector: 'app-root',
