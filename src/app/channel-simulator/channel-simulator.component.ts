@@ -25,8 +25,7 @@ export class ChannelSimulatorComponent implements OnInit {
   isIcalModalOpen = signal(false);
   icalContent = signal('');
 
-  // Message Modal State
-  isMessageModalOpen = signal(false);
+
 
   // Data for New Event
   newEventData = signal({
@@ -305,74 +304,6 @@ END:VCALENDAR`;
     });
 
     this.isIcalModalOpen.set(false);
-  }
-
-  // --- Message Simulation ---
-
-  simMessageText = signal('');
-  simMessageFile = signal<File | null>(null);
-  clients = this.portfolioService.clients;
-  selectedSimClient = signal<string>('');
-
-  triggerSimFileUpload() {
-    const fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.accept = 'image/*,application/pdf,.doc,.docx,.xlsx,.xls';
-    fileInput.onchange = (e) => {
-      const target = e.target as HTMLInputElement;
-      if (target.files && target.files.length > 0) {
-        this.simMessageFile.set(target.files[0]);
-      }
-    };
-    fileInput.click();
-  }
-
-  simulateIncomingMessage() {
-    const clientId = this.selectedSimClient();
-    const text = this.simMessageText();
-    const file = this.simMessageFile();
-
-    if (!clientId || (!text && !file)) return;
-
-    this.clients.update(list => list.map(c => {
-      if (c.phoneNumber === clientId) {
-        const newMsg: any = {
-          id: `sim-msg-${Date.now()}`,
-          text: text || (file ? `[Sent File] ${file.name}` : ''),
-          sender: 'client',
-          timestamp: new Date(),
-          platform: c.platform || 'booking',
-          status: 'read'
-        };
-
-        if (file) {
-          newMsg.attachment = {
-            name: file.name,
-            type: file.type,
-            size: file.size
-          };
-        }
-
-        return {
-          ...c,
-          messages: [...c.messages, newMsg],
-          lastActive: new Date(),
-          unreadCount: c.unreadCount + 1
-        };
-      }
-      return c;
-    }));
-
-    this.portfolioService.addNotification({
-      id: `sim-msg-notif-${Date.now()}`,
-      title: 'New Message',
-      message: `Message received from ${this.clients().find(c => c.phoneNumber === clientId)?.name}`,
-      type: 'info',
-      timestamp: new Date()
-    });
-
-    this.simMessageText.set('');
-    this.simMessageFile.set(null);
   }
 
   // --- Helpers ---

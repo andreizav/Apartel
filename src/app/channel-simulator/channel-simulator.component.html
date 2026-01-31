@@ -10,12 +10,6 @@
 
       <!-- Channel Toggle -->
       <div class="flex items-center gap-3">
-         <!-- Message Sim Button -->
-         <button (click)="isMessageModalOpen.set(true)"
-            class="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-bold bg-white dark:bg-[#253545] border border-gray-200 dark:border-[#324d67] text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-[#2f4356] transition-all shadow-sm">
-            <span class="material-symbols-outlined text-[18px]">chat</span>
-            Simulate Message
-         </button>
 
          <!-- iCal Button -->
          <button (click)="openIcalModal()"
@@ -245,74 +239,5 @@
    </div>
    }
 
-   <!-- Message Simulation Modal -->
-   @if (isMessageModalOpen()) {
-   <div
-      class="absolute inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in fixed">
-      <div
-         class="bg-white dark:bg-[#1c2936] w-full max-w-sm rounded-xl shadow-2xl border border-gray-200 dark:border-[#324d67] overflow-hidden flex flex-col">
-         <div
-            class="px-6 py-4 border-b border-gray-200 dark:border-[#324d67] flex items-center justify-between bg-gray-50 dark:bg-[#18232e]">
-            <h3 class="text-lg font-bold text-[#111418] dark:text-white flex items-center gap-2">
-               <span class="material-symbols-outlined text-green-500">chat</span>
-               Simulate Guest Message
-            </h3>
-            <button (click)="isMessageModalOpen.set(false)"
-               class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
-               <span class="material-symbols-outlined">close</span>
-            </button>
-         </div>
 
-         <div class="p-6 space-y-4">
-            <!-- Client Select -->
-            <div class="space-y-1.5">
-               <label class="text-xs font-bold text-gray-500 uppercase">From Client</label>
-               <select [ngModel]="selectedSimClient()" (ngModelChange)="selectedSimClient.set($event)"
-                  class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary">
-                  <option value="" disabled>Select a guest...</option>
-                  @for (client of clients(); track client.phoneNumber) {
-                  <option [value]="client.phoneNumber">{{ client.name }} ({{ client.platform }})</option>
-                  }
-               </select>
-            </div>
-
-            <!-- Message Text -->
-            <div class="space-y-1.5">
-               <label class="text-xs font-bold text-gray-500 uppercase">Message Text</label>
-               <textarea [ngModel]="simMessageText()" (ngModelChange)="simMessageText.set($event)" rows="3"
-                  class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary resize-none"
-                  placeholder="Hello, I have a question..."></textarea>
-            </div>
-
-            <!-- File Attachment -->
-            <div class="space-y-1.5">
-               <label class="text-xs font-bold text-gray-500 uppercase">Attachment (Optional)</label>
-               <div class="flex items-center gap-3">
-                  <button (click)="triggerSimFileUpload()"
-                     class="px-4 py-2 bg-gray-100 dark:bg-[#253545] hover:bg-gray-200 dark:hover:bg-[#2f4356] rounded-lg text-sm font-bold text-gray-600 dark:text-gray-300 flex items-center gap-2 transition-colors">
-                     <span class="material-symbols-outlined text-[18px]">attach_file</span>
-                     Choose File
-                  </button>
-                  @if (simMessageFile(); as file) {
-                  <span class="text-xs text-green-500 font-bold truncate max-w-[150px]">{{ file.name }}</span>
-                  <button (click)="simMessageFile.set(null)" class="text-red-500 hover:text-red-700">
-                     <span class="material-symbols-outlined text-[16px]">close</span>
-                  </button>
-                  }
-               </div>
-            </div>
-
-         </div>
-
-         <div
-            class="px-6 py-4 bg-gray-50 dark:bg-[#111a22] border-t border-gray-200 dark:border-[#324d67] flex justify-end gap-3">
-            <button (click)="simulateIncomingMessage(); isMessageModalOpen.set(false)"
-               [disabled]="!selectedSimClient() || (!simMessageText() && !simMessageFile())"
-               class="px-6 py-2 text-sm font-bold text-white bg-green-600 hover:bg-green-700 rounded-lg shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
-               Send Message
-            </button>
-         </div>
-      </div>
-   </div>
-   }
 </div>
