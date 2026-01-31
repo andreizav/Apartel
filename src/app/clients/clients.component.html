@@ -1,212 +1,218 @@
-<div class="flex h-[calc(100vh-8rem)] bg-white dark:bg-[#1c2936] rounded-xl border border-gray-200 dark:border-[#324d67] overflow-hidden animate-fade-in-up shadow-sm">
-  
-  <!-- Left Sidebar: Client List -->
-  <div class="w-full md:w-80 lg:w-96 flex flex-col border-r border-gray-200 dark:border-[#324d67] bg-white dark:bg-[#1c2936]">
-    
-    <!-- Header & Search -->
-    <div class="p-4 border-b border-gray-200 dark:border-[#324d67]">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-xl font-bold text-[#111418] dark:text-white">Clients</h2>
-        <div class="flex items-center gap-2">
-            <span class="text-xs font-bold px-2 py-1 bg-gray-100 dark:bg-[#253545] rounded-lg text-gray-500">{{ filteredClients().length }}</span>
-            <button (click)="openAddModal()" class="p-1 hover:bg-gray-100 dark:hover:bg-[#253545] rounded text-primary transition-colors" title="Add Client">
-                <span class="material-symbols-outlined">add_circle</span>
-            </button>
-        </div>
-      </div>
-      <div class="relative">
-        <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-          <span class="material-symbols-outlined text-[18px] text-gray-400">search</span>
-        </span>
-        <input 
-          type="text" 
-          [ngModel]="searchQuery()"
-          (ngModelChange)="searchQuery.set($event)"
-          class="block w-full pl-9 pr-3 py-2 rounded-lg border-gray-200 dark:border-[#324d67] bg-gray-50 dark:bg-[#111a22] text-sm text-[#111418] dark:text-white placeholder-gray-500 focus:ring-primary focus:border-primary transition-colors" 
-          placeholder="Search phone or name..."
-        >
-      </div>
-    </div>
+<div
+   class="flex h-[calc(100vh-8rem)] bg-white dark:bg-[#1c2936] rounded-xl border border-gray-200 dark:border-[#324d67] overflow-hidden animate-fade-in-up shadow-sm">
 
-    <!-- List -->
-    <div class="flex-1 overflow-y-auto">
-      @for (client of filteredClients(); track client.phoneNumber) {
-        @let bookingStatus = getBookingStatus(client.phoneNumber);
-        <div 
-          (click)="selectClient(client.phoneNumber)"
-          class="flex items-start gap-3 p-4 cursor-pointer transition-colors border-b border-gray-50 dark:border-[#324d67]/50 hover:bg-gray-50 dark:hover:bg-[#253545]"
-          [class.bg-blue-50]="selectedClientId() === client.phoneNumber"
-          [class.dark:bg-[#253545]]="selectedClientId() === client.phoneNumber"
-        >
-          <!-- Avatar -->
-          <div class="relative flex-shrink-0">
-            <img [src]="client.avatar" class="w-10 h-10 rounded-full object-cover border border-gray-200 dark:border-gray-600" alt="Avatar">
-            <div class="absolute -bottom-1 -right-1 bg-white dark:bg-[#1c2936] rounded-full p-0.5">
-               @if (client.platform === 'whatsapp') {
-                 <div class="w-4 h-4 rounded-full bg-[#25D366] text-white flex items-center justify-center">
-                    <svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-                 </div>
-               } @else {
-                 <div class="w-4 h-4 rounded-full bg-[#0088cc] text-white flex items-center justify-center">
-                   <svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 11.944 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
-                 </div>
-               }
-            </div>
-          </div>
+   <!-- Left Sidebar: Client List -->
+   <div
+      class="w-full md:w-80 lg:w-96 flex flex-col border-r border-gray-200 dark:border-[#324d67] bg-white dark:bg-[#1c2936]">
 
-          <!-- Info -->
-          <div class="flex-1 min-w-0">
-            <div class="flex justify-between items-baseline mb-0.5">
-              <h3 class="text-sm font-bold text-[#111418] dark:text-white truncate pr-2">{{ client.name }}</h3>
-              <span class="text-[10px] text-gray-400 flex-shrink-0">{{ formatTime(client.lastActive) }}</span>
+      <!-- Header & Search -->
+      <div class="p-4 border-b border-gray-200 dark:border-[#324d67]">
+         <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl font-bold text-[#111418] dark:text-white">Clients</h2>
+            <div class="flex items-center gap-2">
+               <span class="text-xs font-bold px-2 py-1 bg-gray-100 dark:bg-[#253545] rounded-lg text-gray-500">{{
+                  filteredClients().length }}</span>
+               <button (click)="openAddModal()"
+                  class="p-1 hover:bg-gray-100 dark:hover:bg-[#253545] rounded text-primary transition-colors"
+                  title="Add Client">
+                  <span class="material-symbols-outlined">add_circle</span>
+               </button>
             </div>
-            
-            <!-- Booking Status Tag (Small) -->
-            @if (bookingStatus.state !== 'none') {
-                <div class="mb-1 flex items-center gap-1.5">
-                   <span 
-                     class="w-2 h-2 rounded-full"
-                     [class.bg-green-500]="bookingStatus.state === 'current'"
+         </div>
+         <div class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+               <span class="material-symbols-outlined text-[18px] text-gray-400">search</span>
+            </span>
+            <input type="text" [ngModel]="searchQuery()" (ngModelChange)="searchQuery.set($event)"
+               class="block w-full pl-9 pr-3 py-2 rounded-lg border-gray-200 dark:border-[#324d67] bg-gray-50 dark:bg-[#111a22] text-sm text-[#111418] dark:text-white placeholder-gray-500 focus:ring-primary focus:border-primary transition-colors"
+               placeholder="Search phone or name...">
+         </div>
+      </div>
+
+      <!-- List -->
+      <div class="flex-1 overflow-y-auto">
+         @for (client of filteredClients(); track client.phoneNumber) {
+         @let bookingStatus = getBookingStatus(client.phoneNumber);
+         <div (click)="selectClient(client.phoneNumber)"
+            class="flex items-start gap-3 p-4 cursor-pointer transition-colors border-b border-gray-50 dark:border-[#324d67]/50 hover:bg-gray-50 dark:hover:bg-[#253545]"
+            [class.bg-blue-50]="selectedClientId() === client.phoneNumber"
+            [class.dark:bg-[#253545]]="selectedClientId() === client.phoneNumber">
+            <!-- Avatar -->
+            <div class="relative flex-shrink-0">
+               <img [src]="client.avatar"
+                  class="w-10 h-10 rounded-full object-cover border border-gray-200 dark:border-gray-600" alt="Avatar">
+               <div class="absolute -bottom-1 -right-1 bg-white dark:bg-[#1c2936] rounded-full p-0.5">
+                  @if (client.platform === 'whatsapp') {
+                  <div class="w-4 h-4 rounded-full bg-[#25D366] text-white flex items-center justify-center">
+                     <svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                           d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+                     </svg>
+                  </div>
+                  } @else {
+                  <div class="w-4 h-4 rounded-full bg-[#0088cc] text-white flex items-center justify-center">
+                     <svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                           d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 11.944 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" />
+                     </svg>
+                  </div>
+                  }
+               </div>
+            </div>
+
+            <!-- Info -->
+            <div class="flex-1 min-w-0">
+               <div class="flex justify-between items-baseline mb-0.5">
+                  <h3 class="text-sm font-bold text-[#111418] dark:text-white truncate pr-2">{{ client.name }}</h3>
+                  <span class="text-[10px] text-gray-400 flex-shrink-0">{{ formatTime(client.lastActive) }}</span>
+               </div>
+
+               <!-- Booking Status Tag (Small) -->
+               @if (bookingStatus.state !== 'none') {
+               <div class="mb-1 flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full" [class.bg-green-500]="bookingStatus.state === 'current'"
                      [class.bg-blue-500]="bookingStatus.state === 'future'"
-                     [class.bg-gray-400]="bookingStatus.state === 'past'"
-                   ></span>
-                   <span class="text-[10px] font-bold text-gray-600 dark:text-gray-300 truncate">
-                      {{ bookingStatus.state === 'current' ? 'Stay: ' : '' }}{{ bookingStatus.unitName }}
-                   </span>
-                </div>
-            } @else {
-                <div class="text-[10px] text-primary font-bold mb-1">New Client</div>
-            }
+                     [class.bg-gray-400]="bookingStatus.state === 'past'"></span>
+                  <span class="text-[10px] font-bold text-gray-600 dark:text-gray-300 truncate">
+                     {{ bookingStatus.state === 'current' ? 'Stay: ' : '' }}{{ bookingStatus.unitName }}
+                  </span>
+               </div>
+               } @else {
+               <div class="text-[10px] text-primary font-bold mb-1">New Client</div>
+               }
 
-            <p class="text-xs text-gray-500 dark:text-gray-400 truncate">
-               {{ getLastMessage(client) }}
-            </p>
-          </div>
-        </div>
-      }
-      @if (filteredClients().length === 0) {
+               <p class="text-xs text-gray-500 dark:text-gray-400 truncate">
+                  {{ getLastMessage(client) }}
+               </p>
+            </div>
+         </div>
+         }
+         @if (filteredClients().length === 0) {
          <div class="p-6 text-center text-gray-400 text-sm">No clients found</div>
-      }
-    </div>
-  </div>
+         }
+      </div>
+   </div>
 
-  <!-- Right Area: Chat Interface (Read-Only) -->
-  <div class="flex-1 flex flex-col bg-gray-50 dark:bg-[#111a22] min-w-0">
-    @if (selectedClient(); as client) {
+   <!-- Right Area: Chat Interface (Read-Only) -->
+   <div class="flex-1 flex flex-col bg-gray-50 dark:bg-[#111a22] min-w-0">
+      @if (selectedClient(); as client) {
       @let status = getBookingStatus(client.phoneNumber);
-      
+
       <!-- Top Bar: Avatar & Main Actions -->
-      <div class="h-16 flex items-center justify-between px-6 bg-white dark:bg-[#1c2936] border-b border-gray-200 dark:border-[#324d67] flex-shrink-0">
+      <div
+         class="h-16 flex items-center justify-between px-6 bg-white dark:bg-[#1c2936] border-b border-gray-200 dark:border-[#324d67] flex-shrink-0">
          <div class="flex items-center gap-3">
-            <img [src]="client.avatar" class="w-9 h-9 rounded-full object-cover border border-gray-200 dark:border-gray-600">
+            <img [src]="client.avatar"
+               class="w-9 h-9 rounded-full object-cover border border-gray-200 dark:border-gray-600">
             <div>
                <h3 class="font-bold text-[#111418] dark:text-white text-sm flex items-center gap-2">
                   {{ client.name }}
                   @if(status.state === 'current') {
-                      <span class="px-1.5 py-0.5 bg-green-500 text-white text-[10px] rounded font-bold uppercase tracking-wider">In House</span>
+                  <span
+                     class="px-1.5 py-0.5 bg-green-500 text-white text-[10px] rounded font-bold uppercase tracking-wider">In
+                     House</span>
                   }
                </h3>
                <div class="flex items-center gap-1.5 text-xs text-gray-500">
                   <span class="material-symbols-outlined text-[14px]">phone_iphone</span>
                   <span class="font-mono">{{ client.phoneNumber }}</span>
                   <span class="w-1 h-1 rounded-full bg-gray-300"></span>
-                  <span [class.text-[#25D366]]="client.platform === 'whatsapp'" [class.text-[#0088cc]]="client.platform === 'telegram'" class="capitalize">{{ client.platform }}</span>
+                  <span [class.text-[#25D366]]="client.platform === 'whatsapp'"
+                     [class.text-[#0088cc]]="client.platform === 'telegram'" class="capitalize">{{ client.platform
+                     }}</span>
                </div>
             </div>
          </div>
          <div class="flex gap-2 items-center">
-            <input 
-              #fileInput 
-              type="file" 
-              (change)="handleImport($event)" 
-              accept=".txt, .csv" 
-              class="hidden"
-            >
-            <button (click)="fileInput.click()" class="p-2 text-gray-500 hover:text-primary hover:bg-gray-100 dark:hover:bg-[#253545] rounded-full transition-colors" title="Import Chat File">
+            <input #fileInput type="file" (change)="handleImport($event)" accept=".txt, .csv" class="hidden">
+            <button (click)="fileInput.click()"
+               class="p-2 text-gray-500 hover:text-primary hover:bg-gray-100 dark:hover:bg-[#253545] rounded-full transition-colors"
+               title="Import Chat File">
                <span class="material-symbols-outlined">upload_file</span>
             </button>
-            <button (click)="saveHistory()" class="p-2 text-gray-500 hover:text-[#111418] dark:hover:text-white hover:bg-gray-100 dark:hover:bg-[#253545] rounded-full transition-colors" title="Export History">
+            <button (click)="saveHistory()"
+               class="p-2 text-gray-500 hover:text-[#111418] dark:hover:text-white hover:bg-gray-100 dark:hover:bg-[#253545] rounded-full transition-colors"
+               title="Export History">
                <span class="material-symbols-outlined">save_alt</span>
             </button>
-            
-            <button 
-              (click)="openBookingModal()"
-              class="flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary hover:bg-primary/20 rounded-lg text-xs font-bold transition-colors ml-2"
-            >
-              <span class="material-symbols-outlined text-[18px]">calendar_add_on</span>
-              New Booking
+
+            <button (click)="openBookingModal()"
+               class="flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary hover:bg-primary/20 rounded-lg text-xs font-bold transition-colors ml-2">
+               <span class="material-symbols-outlined text-[18px]">calendar_add_on</span>
+               New Booking
             </button>
 
             <!-- Link Booking Button -->
-            <button 
-              (click)="openLinkModal()"
-              [disabled]="status.state === 'current' || status.state === 'future'"
-              class="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 dark:bg-[#253545] text-gray-700 dark:text-gray-300 rounded-lg text-xs font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              [class.hover:bg-gray-200]="status.state !== 'current' && status.state !== 'future'"
-              [class.dark:hover:bg-[#2f4356]]="status.state !== 'current' && status.state !== 'future'"
-              [title]="(status.state === 'current' || status.state === 'future') ? 'Client already has an active/future booking' : 'Link existing booking'"
-            >
-              <span class="material-symbols-outlined text-[18px]">link</span>
-              Link Booking
+            <button (click)="openLinkModal()" [disabled]="status.state === 'current' || status.state === 'future'"
+               class="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 dark:bg-[#253545] text-gray-700 dark:text-gray-300 rounded-lg text-xs font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+               [class.hover:bg-gray-200]="status.state !== 'current' && status.state !== 'future'"
+               [class.dark:hover:bg-[#2f4356]]="status.state !== 'current' && status.state !== 'future'"
+               [title]="(status.state === 'current' || status.state === 'future') ? 'Client already has an active/future booking' : 'Link existing booking'">
+               <span class="material-symbols-outlined text-[18px]">link</span>
+               Link Booking
             </button>
 
             <div class="w-px h-6 bg-gray-200 dark:bg-[#324d67] mx-1"></div>
-            
-            <button (click)="openEditModal(client)" class="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-full transition-colors" title="Edit Client">
-                <span class="material-symbols-outlined">edit</span>
+
+            <button (click)="openEditModal(client)"
+               class="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-full transition-colors"
+               title="Edit Client">
+               <span class="material-symbols-outlined">edit</span>
             </button>
-            <button (click)="deleteClient(client.phoneNumber)" class="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full transition-colors" title="Delete Client">
-                <span class="material-symbols-outlined">delete</span>
+            <button (click)="deleteClient(client.phoneNumber)"
+               class="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full transition-colors"
+               title="Delete Client">
+               <span class="material-symbols-outlined">delete</span>
             </button>
          </div>
       </div>
 
       <!-- Booking Info Bar -->
-      <div class="px-6 py-3 bg-white dark:bg-[#1c2936] border-b border-gray-200 dark:border-[#324d67] flex items-center justify-between">
-          <div class="flex items-center gap-2">
-             <div 
-               class="w-8 h-8 rounded-lg flex items-center justify-center"
-               [class.bg-green-500/10]="status.state === 'current'"
-               [class.text-green-600]="status.state === 'current'"
-               [class.bg-blue-500/10]="status.state === 'future'"
-               [class.text-blue-600]="status.state === 'future'"
+      <div
+         class="px-6 py-3 bg-white dark:bg-[#1c2936] border-b border-gray-200 dark:border-[#324d67] flex items-center justify-between">
+         <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center"
+               [class.bg-green-500/10]="status.state === 'current'" [class.text-green-600]="status.state === 'current'"
+               [class.bg-blue-500/10]="status.state === 'future'" [class.text-blue-600]="status.state === 'future'"
                [class.bg-gray-100]="status.state === 'past' || status.state === 'none'"
                [class.text-gray-500]="status.state === 'past' || status.state === 'none'"
-               [class.dark:bg-[#253545]]="status.state === 'past' || status.state === 'none'"
-             >
-                <span class="material-symbols-outlined text-[18px]">
-                   @if(status.state === 'current') { bedroom_parent }
-                   @else if(status.state === 'future') { event_upcoming }
-                   @else if(status.state === 'past') { history }
-                   @else { person_add }
-                </span>
-             </div>
-             <div>
-                <div class="text-xs font-bold uppercase text-gray-500 dark:text-gray-400 tracking-wider">Booking Status</div>
-                <div class="text-sm font-bold text-[#111418] dark:text-white">
-                   {{ status.label }} 
-                   @if(status.unitName) { <span class="font-normal text-gray-500">in</span> {{ status.unitName }} }
-                </div>
-             </div>
-          </div>
-          
-          @if (status.date) {
-             <div class="text-right">
-                <div class="text-xs font-bold uppercase text-gray-500 dark:text-gray-400 tracking-wider">
-                   @if(status.state === 'current') { Checkout }
-                   @else if(status.state === 'future') { Check-in }
-                   @else { Date }
-                </div>
-                <div class="text-sm font-bold text-[#111418] dark:text-white">{{ status.date }}</div>
-             </div>
-          }
+               [class.dark:bg-[#253545]]="status.state === 'past' || status.state === 'none'">
+               <span class="material-symbols-outlined text-[18px]">
+                  @if(status.state === 'current') { bedroom_parent }
+                  @else if(status.state === 'future') { event_upcoming }
+                  @else if(status.state === 'past') { history }
+                  @else { person_add }
+               </span>
+            </div>
+            <div>
+               <div class="text-xs font-bold uppercase text-gray-500 dark:text-gray-400 tracking-wider">Booking Status
+               </div>
+               <div class="text-sm font-bold text-[#111418] dark:text-white">
+                  {{ status.label }}
+                  @if(status.unitName) { <span class="font-normal text-gray-500">in</span> {{ status.unitName }} }
+               </div>
+            </div>
+         </div>
+
+         @if (status.date) {
+         <div class="text-right">
+            <div class="text-xs font-bold uppercase text-gray-500 dark:text-gray-400 tracking-wider">
+               @if(status.state === 'current') { Checkout }
+               @else if(status.state === 'future') { Check-in }
+               @else { Date }
+            </div>
+            <div class="text-sm font-bold text-[#111418] dark:text-white">{{ status.date }}</div>
+         </div>
+         }
       </div>
 
       <!-- Info Bar: User Properties -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 px-6 py-3 bg-gray-50 dark:bg-[#18232e] border-b border-gray-200 dark:border-[#324d67] text-xs">
+      <div
+         class="grid grid-cols-2 md:grid-cols-4 gap-4 px-6 py-3 bg-gray-50 dark:bg-[#18232e] border-b border-gray-200 dark:border-[#324d67] text-xs">
          <div>
             <span class="text-gray-400 font-bold uppercase tracking-wider text-[10px]">Email</span>
-            <div class="font-medium text-[#111418] dark:text-white truncate" title="{{ client.email }}">{{ client.email || '--' }}</div>
+            <div class="font-medium text-[#111418] dark:text-white truncate" title="{{ client.email }}">{{ client.email
+               || '--' }}</div>
          </div>
          <div>
             <span class="text-gray-400 font-bold uppercase tracking-wider text-[10px]">Country</span>
@@ -214,7 +220,8 @@
          </div>
          <div>
             <span class="text-gray-400 font-bold uppercase tracking-wider text-[10px]">Address</span>
-            <div class="font-medium text-[#111418] dark:text-white truncate" title="{{ client.address }}">{{ client.address || '--' }}</div>
+            <div class="font-medium text-[#111418] dark:text-white truncate" title="{{ client.address }}">{{
+               client.address || '--' }}</div>
          </div>
          <div>
             <span class="text-gray-400 font-bold uppercase tracking-wider text-[10px]">Total Bookings</span>
@@ -228,362 +235,331 @@
       <!-- Messages Area -->
       <div #scrollContainer class="flex-1 overflow-y-auto p-6 space-y-4">
          <div class="flex justify-center my-4">
-            <span class="px-3 py-1 bg-gray-200 dark:bg-[#253545] rounded-full text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+            <span
+               class="px-3 py-1 bg-gray-200 dark:bg-[#253545] rounded-full text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                History Archive
             </span>
          </div>
 
          @for (msg of client.messages; track msg.id) {
-            <div 
-               class="flex w-full" 
-               [class.justify-end]="msg.sender === 'agent'"
-               [class.justify-start]="msg.sender !== 'agent'"
-            >
-               <div class="flex flex-col max-w-[75%] md:max-w-[60%]">
-                  <!-- Sender Label for Bot -->
-                  @if (msg.sender === 'bot') {
-                     <span class="text-[10px] font-bold text-blue-500 mb-1 ml-1 flex items-center gap-1">
-                        <span class="material-symbols-outlined text-[12px]">smart_toy</span>
-                        Automated Bot
-                     </span>
-                  }
-                  
-                  <!-- Bubble -->
-                  <div 
-                     class="px-4 py-2.5 rounded-2xl text-sm relative shadow-sm whitespace-pre-wrap"
-                     [class.bg-primary]="msg.sender === 'agent'"
-                     [class.text-white]="msg.sender === 'agent'"
-                     [class.rounded-tr-none]="msg.sender === 'agent'"
-                     [class.bg-white]="msg.sender === 'client'"
-                     [class.dark:bg-[#253545]]="msg.sender === 'client'"
-                     [class.text-[#111418]]="msg.sender === 'client'"
-                     [class.dark:text-white]="msg.sender === 'client'"
-                     [class.rounded-tl-none]="msg.sender === 'client'"
-                     [class.bg-blue-50]="msg.sender === 'bot'"
-                     [class.dark:bg-blue-900/20]="msg.sender === 'bot'"
-                     [class.text-blue-900]="msg.sender === 'bot'"
-                     [class.dark:text-blue-100]="msg.sender === 'bot'"
-                     [class.rounded-tl-none]="msg.sender === 'bot'"
-                     [class.border]="msg.sender !== 'agent'"
-                     [class.border-gray-100]="msg.sender === 'client'"
-                     [class.dark:border-[#324d67]]="msg.sender === 'client'"
-                     [class.border-blue-100]="msg.sender === 'bot'"
-                     [class.dark:border-blue-900/30]="msg.sender === 'bot'"
-                  >
-                     {{ msg.text }}
-                  </div>
-                  
-                  <!-- Timestamp -->
-                  <span 
-                     class="text-[10px] text-gray-400 mt-1"
-                     [class.text-right]="msg.sender === 'agent'"
-                     [class.mr-1]="msg.sender === 'agent'"
-                     [class.ml-1]="msg.sender !== 'agent'"
-                  >
-                     {{ msg.timestamp.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) }}
-                  </span>
+         <div class="flex w-full" [class.justify-end]="msg.sender === 'agent'"
+            [class.justify-start]="msg.sender !== 'agent'">
+            <div class="flex flex-col max-w-[75%] md:max-w-[60%]">
+               <!-- Sender Label for Bot -->
+               @if (msg.sender === 'bot') {
+               <span class="text-[10px] font-bold text-blue-500 mb-1 ml-1 flex items-center gap-1">
+                  <span class="material-symbols-outlined text-[12px]">smart_toy</span>
+                  Automated Bot
+               </span>
+               }
+
+               <!-- Bubble -->
+               <div class="px-4 py-2.5 rounded-2xl text-sm relative shadow-sm whitespace-pre-wrap"
+                  [class.bg-primary]="msg.sender === 'agent'" [class.text-white]="msg.sender === 'agent'"
+                  [class.rounded-tr-none]="msg.sender === 'agent'" [class.bg-white]="msg.sender === 'client'"
+                  [class.dark:bg-[#253545]]="msg.sender === 'client'" [class.text-[#111418]]="msg.sender === 'client'"
+                  [class.dark:text-white]="msg.sender === 'client'" [class.rounded-tl-none]="msg.sender === 'client'"
+                  [class.bg-blue-50]="msg.sender === 'bot'" [class.dark:bg-blue-900/20]="msg.sender === 'bot'"
+                  [class.text-blue-900]="msg.sender === 'bot'" [class.dark:text-blue-100]="msg.sender === 'bot'"
+                  [class.rounded-tl-none]="msg.sender === 'bot'" [class.border]="msg.sender !== 'agent'"
+                  [class.border-gray-100]="msg.sender === 'client'"
+                  [class.dark:border-[#324d67]]="msg.sender === 'client'" [class.border-blue-100]="msg.sender === 'bot'"
+                  [class.dark:border-blue-900/30]="msg.sender === 'bot'">
+                  {{ msg.text }}
                </div>
+
+               <!-- Timestamp -->
+               <span class="text-[10px] text-gray-400 mt-1" [class.text-right]="msg.sender === 'agent'"
+                  [class.mr-1]="msg.sender === 'agent'" [class.ml-1]="msg.sender !== 'agent'">
+                  {{ msg.timestamp.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) }}
+               </span>
             </div>
+         </div>
          }
       </div>
 
-    } @else {
+      <!-- Reply Input Area -->
+      <div class="p-4 bg-white dark:bg-[#1c2936] border-t border-gray-200 dark:border-[#324d67]">
+         <div
+            class="flex items-end gap-2 bg-gray-50 dark:bg-[#111a22] rounded-xl p-2 border border-gray-200 dark:border-[#324d67] focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all">
+            <button (click)="triggerFileUpload()" [disabled]="isSending()"
+               class="p-2 text-gray-500 hover:text-primary hover:bg-gray-100 dark:hover:bg-[#253545] rounded-lg transition-colors flex-shrink-0"
+               title="Attach File">
+               <span class="material-symbols-outlined text-[20px] block">attach_file</span>
+            </button>
+            <textarea [ngModel]="replyText()" (ngModelChange)="replyText.set($event)"
+               (keydown.enter)="$event.preventDefault(); sendReply()" rows="1"
+               class="flex-1 bg-transparent border-none focus:ring-0 text-sm p-2 text-[#111418] dark:text-white placeholder-gray-500 resize-none max-h-32"
+               placeholder="Type a message..."></textarea>
+            <button (click)="sendReply()" [disabled]="!replyText() || isSending()"
+               class="p-2 bg-primary text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex-shrink-0"
+               title="Send Message">
+               @if(isSending()) {
+               <span class="w-5 h-5 border-2 border-white/50 border-t-white rounded-full animate-spin block"></span>
+               } @else {
+               <span class="material-symbols-outlined text-[20px] block">send</span>
+               }
+            </button>
+         </div>
+      </div>
+
+      } @else {
       <!-- Empty State -->
       <div class="flex-1 flex flex-col items-center justify-center text-gray-400">
          <div class="w-20 h-20 bg-gray-100 dark:bg-[#253545] rounded-full flex items-center justify-center mb-6">
             <span class="material-symbols-outlined text-4xl opacity-50">history_edu</span>
          </div>
          <h2 class="text-xl font-bold text-[#111418] dark:text-white mb-2">Select a Client</h2>
-         <p class="max-w-xs text-center text-sm">Choose a client from the list to view their transferred chat history.</p>
+         <p class="max-w-xs text-center text-sm">Choose a client from the list to view their transferred chat history.
+         </p>
       </div>
-    }
-  </div>
+      }
+   </div>
 
-  <!-- Add/Edit Client Modal -->
-  @if (isModalOpen()) {
-    <div class="absolute inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
-      <div class="bg-white dark:bg-[#1c2936] w-full max-w-lg rounded-xl shadow-2xl border border-gray-200 dark:border-[#324d67] overflow-hidden flex flex-col max-h-[90vh]">
-        <div class="px-6 py-4 border-b border-gray-200 dark:border-[#324d67] flex items-center justify-between">
-          <h3 class="text-lg font-bold text-[#111418] dark:text-white">
-            {{ isEditing() ? 'Edit Client' : 'Add New Client' }}
-          </h3>
-          <button (click)="isModalOpen.set(false)" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
-            <span class="material-symbols-outlined">close</span>
-          </button>
-        </div>
-        
-        <div class="p-6 overflow-y-auto space-y-4">
+   <!-- Add/Edit Client Modal -->
+   @if (isModalOpen()) {
+   <div class="absolute inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
+      <div
+         class="bg-white dark:bg-[#1c2936] w-full max-w-lg rounded-xl shadow-2xl border border-gray-200 dark:border-[#324d67] overflow-hidden flex flex-col max-h-[90vh]">
+         <div class="px-6 py-4 border-b border-gray-200 dark:border-[#324d67] flex items-center justify-between">
+            <h3 class="text-lg font-bold text-[#111418] dark:text-white">
+               {{ isEditing() ? 'Edit Client' : 'Add New Client' }}
+            </h3>
+            <button (click)="isModalOpen.set(false)" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+               <span class="material-symbols-outlined">close</span>
+            </button>
+         </div>
+
+         <div class="p-6 overflow-y-auto space-y-4">
             <!-- Form fields identical to original -->
             <div class="grid grid-cols-2 gap-4">
-                <div class="space-y-1.5">
-                    <label class="text-xs font-bold text-gray-500 uppercase">Name</label>
-                    <input 
-                        type="text" 
-                        [ngModel]="currentClient().name"
-                        (ngModelChange)="currentClient().name = $event"
-                        class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary"
-                        placeholder="Full Name"
-                    >
-                </div>
-                <div class="space-y-1.5">
-                    <label class="text-xs font-bold text-gray-500 uppercase">Phone Number</label>
-                    <input 
-                        type="text" 
-                        [ngModel]="currentClient().phoneNumber"
-                        (ngModelChange)="currentClient().phoneNumber = $event"
-                        class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary"
-                        placeholder="+1 234 567 890"
-                    >
-                </div>
+               <div class="space-y-1.5">
+                  <label class="text-xs font-bold text-gray-500 uppercase">Name</label>
+                  <input type="text" [ngModel]="currentClient().name" (ngModelChange)="currentClient().name = $event"
+                     class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary"
+                     placeholder="Full Name">
+               </div>
+               <div class="space-y-1.5">
+                  <label class="text-xs font-bold text-gray-500 uppercase">Phone Number</label>
+                  <input type="text" [ngModel]="currentClient().phoneNumber"
+                     (ngModelChange)="currentClient().phoneNumber = $event"
+                     class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary"
+                     placeholder="+1 234 567 890">
+               </div>
             </div>
 
             <div class="space-y-1.5">
-                <label class="text-xs font-bold text-gray-500 uppercase">Email</label>
-                <input 
-                    type="email" 
-                    [ngModel]="currentClient().email"
-                    (ngModelChange)="currentClient().email = $event"
-                    class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary"
-                    placeholder="name@example.com"
-                >
+               <label class="text-xs font-bold text-gray-500 uppercase">Email</label>
+               <input type="email" [ngModel]="currentClient().email" (ngModelChange)="currentClient().email = $event"
+                  class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary"
+                  placeholder="name@example.com">
             </div>
 
             <div class="grid grid-cols-2 gap-4">
-                <div class="space-y-1.5">
-                    <label class="text-xs font-bold text-gray-500 uppercase">Country</label>
-                    <input 
-                        type="text" 
-                        [ngModel]="currentClient().country"
-                        (ngModelChange)="currentClient().country = $event"
-                        class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary"
-                        placeholder="USA"
-                    >
-                </div>
-                <div class="space-y-1.5">
-                    <label class="text-xs font-bold text-gray-500 uppercase">Platform</label>
-                    <select 
-                        [ngModel]="currentClient().platform"
-                        (ngModelChange)="currentClient().platform = $event"
-                        class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary"
-                    >
-                        <option value="whatsapp">WhatsApp</option>
-                        <option value="telegram">Telegram</option>
-                    </select>
-                </div>
+               <div class="space-y-1.5">
+                  <label class="text-xs font-bold text-gray-500 uppercase">Country</label>
+                  <input type="text" [ngModel]="currentClient().country"
+                     (ngModelChange)="currentClient().country = $event"
+                     class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary"
+                     placeholder="USA">
+               </div>
+               <div class="space-y-1.5">
+                  <label class="text-xs font-bold text-gray-500 uppercase">Platform</label>
+                  <select [ngModel]="currentClient().platform" (ngModelChange)="currentClient().platform = $event"
+                     class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary">
+                     <option value="whatsapp">WhatsApp</option>
+                     <option value="telegram">Telegram</option>
+                  </select>
+               </div>
             </div>
 
             <div class="space-y-1.5">
-                <label class="text-xs font-bold text-gray-500 uppercase">Address</label>
-                <input 
-                    type="text" 
-                    [ngModel]="currentClient().address"
-                    (ngModelChange)="currentClient().address = $event"
-                    class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary"
-                    placeholder="123 Main St"
-                >
+               <label class="text-xs font-bold text-gray-500 uppercase">Address</label>
+               <input type="text" [ngModel]="currentClient().address" (ngModelChange)="currentClient().address = $event"
+                  class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary"
+                  placeholder="123 Main St">
             </div>
 
             <div class="grid grid-cols-2 gap-4">
-                <div class="space-y-1.5">
-                    <label class="text-xs font-bold text-gray-500 uppercase">Status</label>
-                    <select 
-                        [ngModel]="currentClient().status"
-                        (ngModelChange)="currentClient().status = $event"
-                        class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary"
-                    >
-                        <option value="New">New</option>
-                        <option value="Replied">Replied</option>
-                        <option value="Archived">Archived</option>
-                    </select>
-                </div>
-                <div class="space-y-1.5">
-                    <label class="text-xs font-bold text-gray-500 uppercase">Bookings</label>
-                    <input 
-                        type="number" 
-                        [ngModel]="currentClient().previousBookings"
-                        (ngModelChange)="currentClient().previousBookings = $event"
-                        class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary"
-                    >
-                </div>
+               <div class="space-y-1.5">
+                  <label class="text-xs font-bold text-gray-500 uppercase">Status</label>
+                  <select [ngModel]="currentClient().status" (ngModelChange)="currentClient().status = $event"
+                     class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary">
+                     <option value="New">New</option>
+                     <option value="Replied">Replied</option>
+                     <option value="Archived">Archived</option>
+                  </select>
+               </div>
+               <div class="space-y-1.5">
+                  <label class="text-xs font-bold text-gray-500 uppercase">Bookings</label>
+                  <input type="number" [ngModel]="currentClient().previousBookings"
+                     (ngModelChange)="currentClient().previousBookings = $event"
+                     class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary">
+               </div>
             </div>
 
-        </div>
+         </div>
 
-        <div class="px-6 py-4 bg-gray-50 dark:bg-[#111a22] border-t border-gray-200 dark:border-[#324d67] flex justify-end gap-3">
-           <button (click)="isModalOpen.set(false)" class="px-4 py-2 text-sm font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#253545] rounded-lg">Cancel</button>
-           <button 
-             (click)="saveClient()" 
-             class="px-4 py-2 text-sm font-bold text-white bg-primary hover:bg-blue-600 rounded-lg shadow-lg shadow-primary/25"
-           >Save Client</button>
-        </div>
+         <div
+            class="px-6 py-4 bg-gray-50 dark:bg-[#111a22] border-t border-gray-200 dark:border-[#324d67] flex justify-end gap-3">
+            <button (click)="isModalOpen.set(false)"
+               class="px-4 py-2 text-sm font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#253545] rounded-lg">Cancel</button>
+            <button (click)="saveClient()"
+               class="px-4 py-2 text-sm font-bold text-white bg-primary hover:bg-blue-600 rounded-lg shadow-lg shadow-primary/25">Save
+               Client</button>
+         </div>
       </div>
-    </div>
-  }
+   </div>
+   }
 
-  <!-- New Booking Modal -->
-  @if (isBookingModalOpen()) {
-    <div class="absolute inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
-      <div class="bg-white dark:bg-[#1c2936] w-full max-w-lg rounded-xl shadow-2xl border border-gray-200 dark:border-[#324d67] overflow-hidden flex flex-col max-h-[90vh]">
-        <div class="px-6 py-4 border-b border-gray-200 dark:border-[#324d67] flex items-center justify-between">
-          <h3 class="text-lg font-bold text-[#111418] dark:text-white flex items-center gap-2">
-             <span class="material-symbols-outlined text-primary">calendar_add_on</span>
-             New Booking
-          </h3>
-          <button (click)="isBookingModalOpen.set(false)" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
-            <span class="material-symbols-outlined">close</span>
-          </button>
-        </div>
-        
-        <div class="p-6 overflow-y-auto space-y-4">
-            
+   <!-- New Booking Modal -->
+   @if (isBookingModalOpen()) {
+   <div class="absolute inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
+      <div
+         class="bg-white dark:bg-[#1c2936] w-full max-w-lg rounded-xl shadow-2xl border border-gray-200 dark:border-[#324d67] overflow-hidden flex flex-col max-h-[90vh]">
+         <div class="px-6 py-4 border-b border-gray-200 dark:border-[#324d67] flex items-center justify-between">
+            <h3 class="text-lg font-bold text-[#111418] dark:text-white flex items-center gap-2">
+               <span class="material-symbols-outlined text-primary">calendar_add_on</span>
+               New Booking
+            </h3>
+            <button (click)="isBookingModalOpen.set(false)"
+               class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+               <span class="material-symbols-outlined">close</span>
+            </button>
+         </div>
+
+         <div class="p-6 overflow-y-auto space-y-4">
+
             <!-- Error Alert -->
             @if(errorMessage()) {
-                <div class="p-3 bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-900/30 rounded-lg flex items-center gap-3">
-                    <span class="material-symbols-outlined text-red-600 dark:text-red-400">error</span>
-                    <p class="text-sm font-medium text-red-700 dark:text-red-400">{{ errorMessage() }}</p>
-                </div>
+            <div
+               class="p-3 bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-900/30 rounded-lg flex items-center gap-3">
+               <span class="material-symbols-outlined text-red-600 dark:text-red-400">error</span>
+               <p class="text-sm font-medium text-red-700 dark:text-red-400">{{ errorMessage() }}</p>
+            </div>
             }
 
             <!-- Unit Selection -->
             <div class="space-y-1.5">
-                <label class="text-xs font-bold text-gray-500 uppercase">Unit / Property</label>
-                <select 
-                    [ngModel]="newBookingData().unitId"
-                    (ngModelChange)="newBookingData().unitId = $event"
-                    class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary"
-                >
-                    <option value="" disabled>Select a unit...</option>
-                    @for (group of portfolio(); track group.id) {
-                        <optgroup [label]="group.name">
-                            @for (unit of group.units; track unit.id) {
-                                <option [value]="unit.id">{{ unit.name }}</option>
-                            }
-                        </optgroup>
-                    }
-                </select>
+               <label class="text-xs font-bold text-gray-500 uppercase">Unit / Property</label>
+               <select [ngModel]="newBookingData().unitId" (ngModelChange)="newBookingData().unitId = $event"
+                  class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary">
+                  <option value="" disabled>Select a unit...</option>
+                  @for (group of portfolio(); track group.id) {
+                  <optgroup [label]="group.name">
+                     @for (unit of group.units; track unit.id) {
+                     <option [value]="unit.id">{{ unit.name }}</option>
+                     }
+                  </optgroup>
+                  }
+               </select>
             </div>
 
             <!-- Dates -->
             <div class="grid grid-cols-2 gap-4">
-                <div class="space-y-1.5">
-                    <label class="text-xs font-bold text-gray-500 uppercase">Check-in</label>
-                    <input 
-                        type="date" 
-                        [ngModel]="newBookingData().startDate"
-                        (ngModelChange)="newBookingData().startDate = $event"
-                        class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary"
-                    >
-                </div>
-                <div class="space-y-1.5">
-                    <label class="text-xs font-bold text-gray-500 uppercase">Check-out</label>
-                    <input 
-                        type="date" 
-                        [ngModel]="newBookingData().endDate"
-                        (ngModelChange)="newBookingData().endDate = $event"
-                        class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary"
-                    >
-                </div>
+               <div class="space-y-1.5">
+                  <label class="text-xs font-bold text-gray-500 uppercase">Check-in</label>
+                  <input type="date" [ngModel]="newBookingData().startDate"
+                     (ngModelChange)="newBookingData().startDate = $event"
+                     class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary">
+               </div>
+               <div class="space-y-1.5">
+                  <label class="text-xs font-bold text-gray-500 uppercase">Check-out</label>
+                  <input type="date" [ngModel]="newBookingData().endDate"
+                     (ngModelChange)="newBookingData().endDate = $event"
+                     class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary">
+               </div>
             </div>
 
             <!-- Price -->
             <div class="space-y-1.5">
-                <label class="text-xs font-bold text-gray-500 uppercase">Total Price</label>
-                <div class="relative">
-                    <span class="absolute left-3 top-2 text-gray-500">$</span>
-                    <input 
-                        type="number" 
-                        [ngModel]="newBookingData().price"
-                        (ngModelChange)="newBookingData().price = $event"
-                        class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md pl-7 pr-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary font-mono"
-                        placeholder="0.00"
-                    >
-                </div>
+               <label class="text-xs font-bold text-gray-500 uppercase">Total Price</label>
+               <div class="relative">
+                  <span class="absolute left-3 top-2 text-gray-500">$</span>
+                  <input type="number" [ngModel]="newBookingData().price"
+                     (ngModelChange)="newBookingData().price = $event"
+                     class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md pl-7 pr-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary font-mono"
+                     placeholder="0.00">
+               </div>
             </div>
 
             <!-- Notes -->
             <div class="space-y-1.5">
-                <label class="text-xs font-bold text-gray-500 uppercase">Notes</label>
-                <textarea 
-                    [ngModel]="newBookingData().notes"
-                    (ngModelChange)="newBookingData().notes = $event"
-                    rows="3"
-                    class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary resize-none"
-                    placeholder="Optional details..."
-                ></textarea>
+               <label class="text-xs font-bold text-gray-500 uppercase">Notes</label>
+               <textarea [ngModel]="newBookingData().notes" (ngModelChange)="newBookingData().notes = $event" rows="3"
+                  class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary resize-none"
+                  placeholder="Optional details..."></textarea>
             </div>
 
-        </div>
+         </div>
 
-        <div class="px-6 py-4 bg-gray-50 dark:bg-[#111a22] border-t border-gray-200 dark:border-[#324d67] flex justify-end gap-3">
-           <button (click)="isBookingModalOpen.set(false)" class="px-4 py-2 text-sm font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#253545] rounded-lg">Cancel</button>
-           <button 
-             (click)="saveBooking()" 
-             [disabled]="isSyncing()"
-             class="px-4 py-2 text-sm font-bold text-white bg-primary hover:bg-blue-600 rounded-lg shadow-lg shadow-primary/25 flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
-           >
-             @if(isSyncing()) {
-                <span class="w-3 h-3 border-2 border-white/50 border-t-white rounded-full animate-spin"></span>
-                Syncing...
-             } @else {
-                Create Booking
-             }
-           </button>
-        </div>
+         <div
+            class="px-6 py-4 bg-gray-50 dark:bg-[#111a22] border-t border-gray-200 dark:border-[#324d67] flex justify-end gap-3">
+            <button (click)="isBookingModalOpen.set(false)"
+               class="px-4 py-2 text-sm font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#253545] rounded-lg">Cancel</button>
+            <button (click)="saveBooking()" [disabled]="isSyncing()"
+               class="px-4 py-2 text-sm font-bold text-white bg-primary hover:bg-blue-600 rounded-lg shadow-lg shadow-primary/25 flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed">
+               @if(isSyncing()) {
+               <span class="w-3 h-3 border-2 border-white/50 border-t-white rounded-full animate-spin"></span>
+               Syncing...
+               } @else {
+               Create Booking
+               }
+            </button>
+         </div>
       </div>
-    </div>
-  }
+   </div>
+   }
 
-  <!-- Link Booking Modal -->
-  @if (isLinkModalOpen()) {
-    <div class="absolute inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
-      <div class="bg-white dark:bg-[#1c2936] w-full max-w-lg rounded-xl shadow-2xl border border-gray-200 dark:border-[#324d67] overflow-hidden flex flex-col max-h-[90vh]">
-        <div class="px-6 py-4 border-b border-gray-200 dark:border-[#324d67] flex items-center justify-between">
-          <h3 class="text-lg font-bold text-[#111418] dark:text-white flex items-center gap-2">
-             <span class="material-symbols-outlined text-primary">link</span>
-             Link Existing Booking
-          </h3>
-          <button (click)="isLinkModalOpen.set(false)" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
-            <span class="material-symbols-outlined">close</span>
-          </button>
-        </div>
-        
-        <div class="flex-1 overflow-y-auto bg-gray-50 dark:bg-[#111a22]">
-           @if (linkableBookings().length > 0) {
-              <div class="divide-y divide-gray-200 dark:divide-[#324d67]">
-                 @for (booking of linkableBookings(); track booking.id) {
-                    <div 
-                       (click)="linkBooking(booking)"
-                       class="p-4 bg-white dark:bg-[#1c2936] hover:bg-gray-50 dark:hover:bg-[#253545] cursor-pointer transition-colors"
-                    >
-                       <div class="flex justify-between items-start mb-1">
-                          <div class="font-bold text-[#111418] dark:text-white flex items-center gap-2">
-                             {{ booking.guestName }}
-                             <span 
-                                class="text-[10px] px-1.5 py-0.5 rounded font-bold uppercase"
-                                [class.bg-blue-100]="booking.source === 'booking'"
-                                [class.text-blue-700]="booking.source === 'booking'"
-                                [class.bg-red-100]="booking.source === 'airbnb'"
-                                [class.text-red-600]="booking.source === 'airbnb'"
-                                [class.bg-yellow-100]="booking.source === 'expedia'"
-                                [class.text-yellow-700]="booking.source === 'expedia'"
-                             >{{ booking.source }}</span>
-                          </div>
-                          <span class="text-xs text-gray-500 font-mono">{{ booking.id }}</span>
-                       </div>
-                       <div class="text-xs text-gray-600 dark:text-gray-400">
-                          {{ getUnitName(booking.unitId, portfolio()) }} • 
-                          {{ booking.startDate | date:'mediumDate' }} - {{ booking.endDate | date:'mediumDate' }}
-                       </div>
-                    </div>
-                 }
-              </div>
-           } @else {
-              <div class="p-8 text-center text-gray-400 text-sm">
-                 No unlinked bookings available.
-              </div>
-           }
-        </div>
+   <!-- Link Booking Modal -->
+   @if (isLinkModalOpen()) {
+   <div class="absolute inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
+      <div
+         class="bg-white dark:bg-[#1c2936] w-full max-w-lg rounded-xl shadow-2xl border border-gray-200 dark:border-[#324d67] overflow-hidden flex flex-col max-h-[90vh]">
+         <div class="px-6 py-4 border-b border-gray-200 dark:border-[#324d67] flex items-center justify-between">
+            <h3 class="text-lg font-bold text-[#111418] dark:text-white flex items-center gap-2">
+               <span class="material-symbols-outlined text-primary">link</span>
+               Link Existing Booking
+            </h3>
+            <button (click)="isLinkModalOpen.set(false)"
+               class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+               <span class="material-symbols-outlined">close</span>
+            </button>
+         </div>
+
+         <div class="flex-1 overflow-y-auto bg-gray-50 dark:bg-[#111a22]">
+            @if (linkableBookings().length > 0) {
+            <div class="divide-y divide-gray-200 dark:divide-[#324d67]">
+               @for (booking of linkableBookings(); track booking.id) {
+               <div (click)="linkBooking(booking)"
+                  class="p-4 bg-white dark:bg-[#1c2936] hover:bg-gray-50 dark:hover:bg-[#253545] cursor-pointer transition-colors">
+                  <div class="flex justify-between items-start mb-1">
+                     <div class="font-bold text-[#111418] dark:text-white flex items-center gap-2">
+                        {{ booking.guestName }}
+                        <span class="text-[10px] px-1.5 py-0.5 rounded font-bold uppercase"
+                           [class.bg-blue-100]="booking.source === 'booking'"
+                           [class.text-blue-700]="booking.source === 'booking'"
+                           [class.bg-red-100]="booking.source === 'airbnb'"
+                           [class.text-red-600]="booking.source === 'airbnb'"
+                           [class.bg-yellow-100]="booking.source === 'expedia'"
+                           [class.text-yellow-700]="booking.source === 'expedia'">{{ booking.source }}</span>
+                     </div>
+                     <span class="text-xs text-gray-500 font-mono">{{ booking.id }}</span>
+                  </div>
+                  <div class="text-xs text-gray-600 dark:text-gray-400">
+                     {{ getUnitName(booking.unitId, portfolio()) }} •
+                     {{ booking.startDate | date:'mediumDate' }} - {{ booking.endDate | date:'mediumDate' }}
+                  </div>
+               </div>
+               }
+            </div>
+            } @else {
+            <div class="p-8 text-center text-gray-400 text-sm">
+               No unlinked bookings available.
+            </div>
+            }
+         </div>
       </div>
-    </div>
-  }
+   </div>
+   }
 </div>

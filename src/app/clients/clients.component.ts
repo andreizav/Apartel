@@ -60,6 +60,10 @@ export class ClientsComponent implements OnInit, AfterViewChecked {
     notes: ''
   });
 
+  // Reply State
+  replyText = signal('');
+  isSending = signal(false);
+
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
       if (params['phone']) {
@@ -502,5 +506,149 @@ export class ClientsComponent implements OnInit, AfterViewChecked {
         return c;
       }));
     }
+  }
+
+  triggerFileUpload() {
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'image/*,application/pdf,.doc,.docx,.xlsx,.xls';
+    fileInput.onchange = (e) => {
+      const target = e.target as HTMLInputElement;
+      if (target.files && target.files.length > 0) {
+        this.uploadFile(target.files[0]);
+      }
+    };
+    fileInput.click();
+  }
+
+  uploadFile(file: File) {
+    const client = this.selectedClient();
+    if (!client) return;
+
+    this.isSending.set(true);
+
+    // Optimistic Update
+    const tempId = `msg-agent-file-${Date.now()}`;
+    const newMsg: ChatMessage = {
+      id: tempId,
+      text: `[Sending File] ${file.name}`,
+      sender: 'agent',
+      timestamp: new Date(),
+      platform: 'telegram',
+      status: 'sending'
+    };
+
+    const recipientId = client.platformId || client.phoneNumber;
+    const platform = client.platform || 'telegram';
+
+    this.clients.update(list => list.map(c => {
+      if (c.phoneNumber === client.phoneNumber) {
+        return {
+          ...c,
+          messages: [...c.messages, newMsg],
+          lastActive: new Date()
+        };
+      }
+      return c;
+    }));
+
+    this.apiService.sendFile(recipientId, file, platform)
+      .subscribe({
+        next: (success) => {
+          this.isSending.set(false);
+          this.clients.update(list => list.map(c => {
+            if (c.phoneNumber === client.phoneNumber) {
+              return {
+                ...c,
+                messages: c.messages.map(m => m.id === tempId ? {
+                  ...m,
+                  text: `[File Sent] ${file.name}`,
+                  status: success ? 'sent' : 'failed'
+                } : m)
+              };
+            }
+            return c;
+          }));
+        },
+        error: () => {
+          this.isSending.set(false);
+          this.clients.update(list => list.map(c => {
+            if (c.phoneNumber === client.phoneNumber) {
+              return {
+                ...c,
+                messages: c.messages.map(m => m.id === tempId ? { ...m, status: 'failed' } : m)
+              };
+            }
+            return c;
+          }));
+        }
+      });
+  }
+
+  sendReply() {
+    const text = this.replyText().trim();
+    const client = this.selectedClient();
+
+    if (!text || !client) return;
+
+    this.isSending.set(true);
+
+    // Optimistic Update
+    const tempId = `msg-agent-temp-${Date.now()}`;
+    const newMsg: ChatMessage = {
+      id: tempId,
+      text: text,
+      sender: 'agent',
+      timestamp: new Date(),
+      platform: 'telegram',
+      status: 'sending'
+    };
+
+    // Determine ID to send to server
+    const recipientId = client.platformId || client.phoneNumber;
+
+    // Use a local variable for the platform to avoid TS issues in closure if any
+    const platform = client.platform || 'telegram';
+
+    this.clients.update(list => list.map(c => {
+      if (c.phoneNumber === client.phoneNumber) {
+        return {
+          ...c,
+          messages: [...c.messages, newMsg],
+          lastActive: new Date()
+        };
+      }
+      return c;
+    }));
+
+    this.replyText.set('');
+
+    this.apiService.sendMessage(recipientId, text, platform)
+      .subscribe({
+        next: (success) => {
+          this.isSending.set(false);
+          this.clients.update(list => list.map(c => {
+            if (c.phoneNumber === client.phoneNumber) {
+              return {
+                ...c,
+                messages: c.messages.map(m => m.id === tempId ? { ...m, status: success ? 'sent' : 'failed' } : m)
+              };
+            }
+            return c;
+          }));
+        },
+        error: () => {
+          this.isSending.set(false);
+          this.clients.update(list => list.map(c => {
+            if (c.phoneNumber === client.phoneNumber) {
+              return {
+                ...c,
+                messages: c.messages.map(m => m.id === tempId ? { ...m, status: 'failed' } : m)
+              };
+            }
+            return c;
+          }));
+        }
+      });
   }
 }

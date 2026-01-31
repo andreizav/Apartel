@@ -1,5 +1,5 @@
 
-import { Component, signal, inject } from '@angular/core';
+import { Component, signal, inject, OnInit } from '@angular/core';
 import { RouterLink, RouterOutlet, RouterLinkActive, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../shared/api.service';
@@ -11,10 +11,14 @@ import { PortfolioService, AppNotification, Client } from '../shared/portfolio.s
   imports: [RouterLink, RouterOutlet, RouterLinkActive, CommonModule],
   templateUrl: './dashboard.component.html',
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
   private apiService = inject(ApiService);
   private portfolioService = inject(PortfolioService);
   private router = inject(Router);
+
+  ngOnInit() {
+    this.apiService.syncTelegram().subscribe();
+  }
 
   sidebarOpen = signal(false);
   showNotifications = signal(false);
@@ -46,15 +50,15 @@ export class DashboardComponent {
   handleNotificationAction(notification: AppNotification) {
     const d = notification.data as { action?: string; date?: string; unitId?: string; pendingClient?: Client; phone?: string } | undefined;
     if (d?.action === 'calendar_focus') {
-        this.router.navigate(['/dashboard/calendar'], {
-            queryParams: { date: d.date, unitId: d.unitId }
-        });
+      this.router.navigate(['/dashboard/calendar'], {
+        queryParams: { date: d.date, unitId: d.unitId }
+      });
     } else if (d?.pendingClient) {
-        const client = d.pendingClient;
-        this.portfolioService.clients.update(list => [client, ...list]);
-        this.router.navigate(['/dashboard/clients'], { queryParams: { phone: client.phoneNumber } });
+      const client = d.pendingClient;
+      this.portfolioService.clients.update(list => [client, ...list]);
+      this.router.navigate(['/dashboard/clients'], { queryParams: { phone: client.phoneNumber } });
     } else if (d?.phone) {
-        this.router.navigate(['/dashboard/clients'], { queryParams: { phone: d.phone, action: 'edit' } });
+      this.router.navigate(['/dashboard/clients'], { queryParams: { phone: d.phone, action: 'edit' } });
     }
     this.portfolioService.dismissNotification(notification.id);
     this.showNotifications.set(false);
@@ -79,9 +83,9 @@ export class DashboardComponent {
 
   processPayment() {
     if (!this.selectedGateway()) return;
-    
+
     this.isProcessingPayment.set(true);
-    
+
     // Simulate Payment Gateway Redirect/Delay
     setTimeout(() => {
       this.apiService.activateProPlan();

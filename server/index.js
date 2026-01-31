@@ -19,6 +19,7 @@ import inventoryRoutes from './routes/inventory.js';
 import channelsRoutes from './routes/channels.js';
 import settingsRoutes from './routes/settings.js';
 import bootstrapRoutes from './routes/bootstrap.js';
+import messagesRoutes from './routes/messages.js';
 
 const PORT = Number(process.env.PORT) || 4000;
 const CORS_ORIGIN = process.env.CORS_ORIGIN || 'http://localhost:3000';
@@ -40,6 +41,7 @@ app.use('/api/inventory', inventoryRoutes);
 app.use('/api/channels', channelsRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/bootstrap', bootstrapRoutes);
+app.use('/api/messages', messagesRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ ok: true, ts: new Date().toISOString() });

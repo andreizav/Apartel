@@ -20,11 +20,14 @@ export class ChannelSimulatorComponent implements OnInit {
   // Modal State
   isModalOpen = signal(false);
   modalType = signal<'book' | 'block'>('book');
-  
+
   // iCal Modal State
   isIcalModalOpen = signal(false);
   icalContent = signal('');
-  
+
+  // Message Modal State
+  isMessageModalOpen = signal(false);
+
   // Data for New Event
   newEventData = signal({
     guestName: '',
@@ -65,12 +68,12 @@ export class ChannelSimulatorComponent implements OnInit {
     const year = this.currentDate().getFullYear();
     const month = this.currentDate().getMonth();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
-    
+
     // Find starting day of week (0=Sun)
     const firstDay = new Date(year, month, 1).getDay();
-    
+
     const days = [];
-    
+
     // Empty slots for previous month
     for (let i = 0; i < firstDay; i++) {
       days.push({ empty: true });
@@ -82,15 +85,15 @@ export class ChannelSimulatorComponent implements OnInit {
     for (let i = 1; i <= daysInMonth; i++) {
       const date = new Date(year, month, i);
       const isToday = this.isSameDay(date, new Date());
-      
+
       // Check for booking on this day
       const booking = unitBookings.find(b => {
-         const start = new Date(b.startDate);
-         start.setHours(0,0,0,0);
-         const end = new Date(b.endDate);
-         end.setHours(0,0,0,0);
-         date.setHours(0,0,0,0);
-         return date >= start && date <= end;
+        const start = new Date(b.startDate);
+        start.setHours(0, 0, 0, 0);
+        const end = new Date(b.endDate);
+        end.setHours(0, 0, 0, 0);
+        date.setHours(0, 0, 0, 0);
+        return date >= start && date <= end;
       });
 
       days.push({
@@ -146,17 +149,17 @@ export class ChannelSimulatorComponent implements OnInit {
   saveEvent() {
     const data = this.newEventData();
     if (!data.startDate || !data.endDate) return;
-    
+
     // For Blocks, name is optional/fixed
     const guestName = this.modalType() === 'block' ? 'Blocked by Host' : (data.guestName || 'Guest');
-    
+
     const source = this.modalType() === 'block' ? 'blocked' : this.activeChannel();
 
     const newBooking: Booking = {
       id: `${source === 'airbnb' ? 'hm' : 'bk'}-${Date.now()}`, // Simulated external ID
       unitId: this.selectedUnitId(),
       guestName: guestName,
-      guestPhone: '', 
+      guestPhone: '',
       startDate: new Date(data.startDate),
       endDate: new Date(data.endDate),
       source: source,
@@ -167,18 +170,18 @@ export class ChannelSimulatorComponent implements OnInit {
 
     // Push to shared state
     this.bookings.update(current => [...current, newBooking]);
-    
+
     this.portfolioService.addNotification({
-        id: `sync-${Date.now()}`,
-        title: 'Channel Sync',
-        message: `New ${this.modalType() === 'block' ? 'block' : 'booking'} received from ${this.capitalize(source)} for ${this.selectedUnit()?.name}`,
-        type: 'info',
-        timestamp: new Date(),
-        data: {
-            action: 'calendar_focus',
-            date: newBooking.startDate.toISOString(),
-            unitId: newBooking.unitId
-        }
+      id: `sync-${Date.now()}`,
+      title: 'Channel Sync',
+      message: `New ${this.modalType() === 'block' ? 'block' : 'booking'} received from ${this.capitalize(source)} for ${this.selectedUnit()?.name}`,
+      type: 'info',
+      timestamp: new Date(),
+      data: {
+        action: 'calendar_focus',
+        date: newBooking.startDate.toISOString(),
+        unitId: newBooking.unitId
+      }
     });
 
     this.isModalOpen.set(false);
@@ -194,11 +197,11 @@ export class ChannelSimulatorComponent implements OnInit {
   generateRandomIcal() {
     const unitName = this.selectedUnit()?.name || 'Unit';
     const now = new Date();
-    
+
     // Generate 2 random bookings in the future
     const event1Start = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 5);
     const event1End = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 9);
-    
+
     const event2Start = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 15);
     const event2End = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 17);
 
@@ -242,78 +245,146 @@ END:VCALENDAR`;
     let count = 0;
 
     events.forEach(e => {
-        // Regex parsing for basic iCal fields
-        const startMatch = e.match(/DTSTART(?:;VALUE=DATE)?:(\d{8})/);
-        const endMatch = e.match(/DTEND(?:;VALUE=DATE)?:(\d{8})/);
-        const sumMatch = e.match(/SUMMARY:(.*)/);
+      // Regex parsing for basic iCal fields
+      const startMatch = e.match(/DTSTART(?:;VALUE=DATE)?:(\d{8})/);
+      const endMatch = e.match(/DTEND(?:;VALUE=DATE)?:(\d{8})/);
+      const sumMatch = e.match(/SUMMARY:(.*)/);
 
-        if (startMatch && endMatch) {
-            const startStr = startMatch[1];
-            const endStr = endMatch[1];
-            
-            const start = new Date(
-                parseInt(startStr.substring(0,4)),
-                parseInt(startStr.substring(4,6)) - 1,
-                parseInt(startStr.substring(6,8))
-            );
-            
-            const end = new Date(
-                parseInt(endStr.substring(0,4)),
-                parseInt(endStr.substring(4,6)) - 1,
-                parseInt(endStr.substring(6,8))
-            );
+      if (startMatch && endMatch) {
+        const startStr = startMatch[1];
+        const endStr = endMatch[1];
 
-            // Correct end date (iCal end date is exclusive, but our system might treat it differently, keeping as is for now)
-            // Actually usually for Date only events end date is day AFTER check out. 
-            // Let's subtract 1 day for visualization consistency if needed, but standard booking systems usually store check-out date.
-            
-            let summary = sumMatch ? sumMatch[1].trim() : 'External Booking';
-            let source: 'blocked' | 'direct' = 'direct'; // Map iCal to direct or specific source
-            
-            if (summary.toLowerCase().includes('block')) {
-                source = 'blocked';
-                summary = 'Blocked (iCal)';
-            }
+        const start = new Date(
+          parseInt(startStr.substring(0, 4)),
+          parseInt(startStr.substring(4, 6)) - 1,
+          parseInt(startStr.substring(6, 8))
+        );
 
-            const newBooking: Booking = {
-                id: `ical-${Date.now()}-${count}`,
-                unitId: this.selectedUnitId(),
-                guestName: summary.replace('Reservation:', '').trim(),
-                guestPhone: '', // Usually not in iCal summary
-                startDate: start,
-                endDate: end,
-                source: source,
-                status: 'confirmed',
-                price: 0, // iCal doesn't usually carry price
-                createdAt: new Date()
-            };
+        const end = new Date(
+          parseInt(endStr.substring(0, 4)),
+          parseInt(endStr.substring(4, 6)) - 1,
+          parseInt(endStr.substring(6, 8))
+        );
 
-            this.bookings.update(b => [...b, newBooking]);
-            count++;
+        // Correct end date (iCal end date is exclusive, but our system might treat it differently, keeping as is for now)
+        // Actually usually for Date only events end date is day AFTER check out. 
+        // Let's subtract 1 day for visualization consistency if needed, but standard booking systems usually store check-out date.
+
+        let summary = sumMatch ? sumMatch[1].trim() : 'External Booking';
+        let source: 'blocked' | 'direct' = 'direct'; // Map iCal to direct or specific source
+
+        if (summary.toLowerCase().includes('block')) {
+          source = 'blocked';
+          summary = 'Blocked (iCal)';
         }
+
+        const newBooking: Booking = {
+          id: `ical-${Date.now()}-${count}`,
+          unitId: this.selectedUnitId(),
+          guestName: summary.replace('Reservation:', '').trim(),
+          guestPhone: '', // Usually not in iCal summary
+          startDate: start,
+          endDate: end,
+          source: source,
+          status: 'confirmed',
+          price: 0, // iCal doesn't usually carry price
+          createdAt: new Date()
+        };
+
+        this.bookings.update(b => [...b, newBooking]);
+        count++;
+      }
     });
 
     this.portfolioService.addNotification({
-        id: `ical-sync-${Date.now()}`,
-        title: 'iCal Import',
-        message: `Imported ${count} events from iCal feed for ${this.selectedUnit()?.name}`,
-        type: 'success',
-        timestamp: new Date()
+      id: `ical-sync-${Date.now()}`,
+      title: 'iCal Import',
+      message: `Imported ${count} events from iCal feed for ${this.selectedUnit()?.name}`,
+      type: 'success',
+      timestamp: new Date()
     });
 
     this.isIcalModalOpen.set(false);
+  }
+
+  // --- Message Simulation ---
+
+  simMessageText = signal('');
+  simMessageFile = signal<File | null>(null);
+  clients = this.portfolioService.clients;
+  selectedSimClient = signal<string>('');
+
+  triggerSimFileUpload() {
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'image/*,application/pdf,.doc,.docx,.xlsx,.xls';
+    fileInput.onchange = (e) => {
+      const target = e.target as HTMLInputElement;
+      if (target.files && target.files.length > 0) {
+        this.simMessageFile.set(target.files[0]);
+      }
+    };
+    fileInput.click();
+  }
+
+  simulateIncomingMessage() {
+    const clientId = this.selectedSimClient();
+    const text = this.simMessageText();
+    const file = this.simMessageFile();
+
+    if (!clientId || (!text && !file)) return;
+
+    this.clients.update(list => list.map(c => {
+      if (c.phoneNumber === clientId) {
+        const newMsg: any = {
+          id: `sim-msg-${Date.now()}`,
+          text: text || (file ? `[Sent File] ${file.name}` : ''),
+          sender: 'client',
+          timestamp: new Date(),
+          platform: c.platform || 'booking',
+          status: 'read'
+        };
+
+        if (file) {
+          newMsg.attachment = {
+            name: file.name,
+            type: file.type,
+            size: file.size
+          };
+        }
+
+        return {
+          ...c,
+          messages: [...c.messages, newMsg],
+          lastActive: new Date(),
+          unreadCount: c.unreadCount + 1
+        };
+      }
+      return c;
+    }));
+
+    this.portfolioService.addNotification({
+      id: `sim-msg-notif-${Date.now()}`,
+      title: 'New Message',
+      message: `Message received from ${this.clients().find(c => c.phoneNumber === clientId)?.name}`,
+      type: 'info',
+      timestamp: new Date()
+    });
+
+    this.simMessageText.set('');
+    this.simMessageFile.set(null);
   }
 
   // --- Helpers ---
 
   private isSameDay(d1: Date, d2: Date) {
     return d1.getFullYear() === d2.getFullYear() &&
-           d1.getMonth() === d2.getMonth() &&
-           d1.getDate() === d2.getDate();
+      d1.getMonth() === d2.getMonth() &&
+      d1.getDate() === d2.getDate();
   }
 
   private capitalize(s: string) {
-      if(!s) return '';
-      return s.charAt(0).toUpperCase() + s.slice(1);
+    if (!s) return '';
+    return s.charAt(0).toUpperCase() + s.slice(1);
   }
 }

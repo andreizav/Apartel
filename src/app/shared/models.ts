@@ -67,7 +67,7 @@ export interface ChatMessage {
   text: string;
   sender: 'client' | 'staff' | 'bot' | 'agent';
   timestamp: Date;
-  status?: 'sent' | 'delivered' | 'read';
+  status?: 'sent' | 'delivered' | 'read' | 'sending' | 'failed';
   platform?: 'whatsapp' | 'telegram';
 }
 
@@ -79,6 +79,7 @@ export interface Client {
   country: string;
   avatar: string;
   platform: 'whatsapp' | 'telegram';
+  platformId?: string;
   status: 'New' | 'Replied' | 'Archived';
   lastActive: Date;
   createdAt: Date;

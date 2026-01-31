@@ -14,7 +14,7 @@ import { PortfolioService, AppSettings } from '../shared/portfolio.service';
 export class SettingsComponent {
   private apiService = inject(ApiService);
   private portfolioService = inject(PortfolioService);
-  
+
   // Connect to shared settings
   settings = this.portfolioService.appSettings;
 
@@ -37,7 +37,7 @@ export class SettingsComponent {
 
   // Helper to update specific setting field
   updateSetting(field: keyof AppSettings, value: any) {
-      this.settings.update(s => ({ ...s, [field]: value }));
+    this.settings.update(s => ({ ...s, [field]: value }));
   }
 
   toggleAutoDraft() {
@@ -46,44 +46,59 @@ export class SettingsComponent {
 
   openQrModal() {
     if (!this.portfolioService.tenant().features.staffBot) {
-        this.portfolioService.triggerUpgrade('WhatsApp Staff Bot requires a PRO subscription.');
-        return;
+      this.portfolioService.triggerUpgrade('WhatsApp Staff Bot requires a PRO subscription.');
+      return;
     }
     if (this.waStatus() === 'connected') return;
 
     this.isQrModalOpen.set(true);
     this.updateSetting('waStatus', 'qr_ready');
-    
+
     setTimeout(() => {
-        if (this.isQrModalOpen() && this.waStatus() === 'qr_ready') {
-            this.confirmConnection();
-        }
+      if (this.isQrModalOpen() && this.waStatus() === 'qr_ready') {
+        this.confirmConnection();
+      }
     }, 4000);
   }
 
   confirmConnection() {
-      this.updateSetting('waStatus', 'connected');
-      this.isQrModalOpen.set(false);
-      this.apiService.updateSettings(this.portfolioService.appSettings());
+    this.updateSetting('waStatus', 'connected');
+    this.isQrModalOpen.set(false);
+    this.apiService.updateSettings(this.portfolioService.appSettings());
   }
 
   disconnectDevice() {
-      if(confirm('Are you sure you want to unlink this device?')) {
-          this.updateSetting('waStatus', 'disconnected');
-          this.apiService.updateSettings(this.portfolioService.appSettings());
-      }
+    if (confirm('Are you sure you want to unlink this device?')) {
+      this.updateSetting('waStatus', 'disconnected');
+      this.apiService.updateSettings(this.portfolioService.appSettings());
+    }
   }
 
   testTgNotification() {
-      if (!this.tgBotToken() || !this.tgAdminGroupId()) {
-          alert('Please enter a valid Bot Token and Group ID first.');
-          return;
+    const token = this.tgBotToken();
+    const chatId = this.tgAdminGroupId();
+
+    if (!token || !chatId) {
+      alert('Please enter a valid Bot Token and Group ID first.');
+      return;
+    }
+
+    this.apiService.testTelegramNotification(token, chatId).subscribe(res => {
+      if (res.success) {
+        alert('✅ Success! Check your Telegram group for the test message.');
+      } else {
+        alert(`❌ Failed: ${res.error}`);
       }
-      alert(`Test notification sent to group ${this.tgAdminGroupId()} via bot!`);
+    });
+  }
+
+  constructor() {
+    // Sync Telegram on load (once per page refresh/init)
+    this.apiService.syncTelegram().subscribe();
   }
 
   saveSettings() {
-      this.apiService.updateSettings(this.portfolioService.appSettings());
-      alert('Settings saved successfully!');
+    this.apiService.updateSettings(this.portfolioService.appSettings());
+    alert('Settings saved successfully!');
   }
 }

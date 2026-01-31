@@ -1,284 +1,318 @@
 <div class="flex flex-col h-[calc(100vh-8rem)] animate-fade-in-up">
-  
-  <!-- Header -->
-  <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-6">
-    <div>
-      <h1 class="text-3xl font-extrabold text-[#111418] dark:text-white tracking-tight">Channel Simulator</h1>
-      <p class="text-gray-500 dark:text-gray-400 mt-1">Simulate booking events from external OTAs (Extranet View).</p>
-    </div>
 
-    <!-- Channel Toggle -->
-    <div class="flex items-center gap-3">
-        <!-- iCal Button -->
-        <button 
-          (click)="openIcalModal()"
-          class="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-bold bg-white dark:bg-[#253545] border border-gray-200 dark:border-[#324d67] text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-[#2f4356] transition-all shadow-sm"
-        >
-           <span class="material-symbols-outlined text-[18px]">calendar_month</span>
-           Simulate iCal
-        </button>
+   <!-- Header -->
+   <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-6">
+      <div>
+         <h1 class="text-3xl font-extrabold text-[#111418] dark:text-white tracking-tight">Channel Simulator</h1>
+         <p class="text-gray-500 dark:text-gray-400 mt-1">Simulate booking events from external OTAs (Extranet View).
+         </p>
+      </div>
 
-        <div class="flex bg-gray-100 dark:bg-[#1c2936] p-1 rounded-xl border border-gray-200 dark:border-[#324d67] shadow-sm">
-            <button 
-              (click)="switchChannel('airbnb')"
-              class="flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-bold transition-all"
-              [class.bg-[#ff385c]]="activeChannel() === 'airbnb'"
-              [class.text-white]="activeChannel() === 'airbnb'"
-              [class.text-gray-500]="activeChannel() !== 'airbnb'"
-              [class.dark:text-gray-400]="activeChannel() !== 'airbnb'"
-            >
+      <!-- Channel Toggle -->
+      <div class="flex items-center gap-3">
+         <!-- Message Sim Button -->
+         <button (click)="isMessageModalOpen.set(true)"
+            class="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-bold bg-white dark:bg-[#253545] border border-gray-200 dark:border-[#324d67] text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-[#2f4356] transition-all shadow-sm">
+            <span class="material-symbols-outlined text-[18px]">chat</span>
+            Simulate Message
+         </button>
+
+         <!-- iCal Button -->
+         <button (click)="openIcalModal()"
+            class="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-bold bg-white dark:bg-[#253545] border border-gray-200 dark:border-[#324d67] text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-[#2f4356] transition-all shadow-sm">
+            <span class="material-symbols-outlined text-[18px]">calendar_month</span>
+            Simulate iCal
+         </button>
+
+         <div
+            class="flex bg-gray-100 dark:bg-[#1c2936] p-1 rounded-xl border border-gray-200 dark:border-[#324d67] shadow-sm">
+            <button (click)="switchChannel('airbnb')"
+               class="flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-bold transition-all"
+               [class.bg-[#ff385c]]="activeChannel() === 'airbnb'" [class.text-white]="activeChannel() === 'airbnb'"
+               [class.text-gray-500]="activeChannel() !== 'airbnb'"
+               [class.dark:text-gray-400]="activeChannel() !== 'airbnb'">
                <i class="fa fa-airbnb"></i> Airbnb
             </button>
-            <button 
-              (click)="switchChannel('booking')"
-              class="flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-bold transition-all"
-              [class.bg-[#003580]]="activeChannel() === 'booking'"
-              [class.text-white]="activeChannel() === 'booking'"
-              [class.text-gray-500]="activeChannel() !== 'booking'"
-              [class.dark:text-gray-400]="activeChannel() !== 'booking'"
-            >
+            <button (click)="switchChannel('booking')"
+               class="flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-bold transition-all"
+               [class.bg-[#003580]]="activeChannel() === 'booking'" [class.text-white]="activeChannel() === 'booking'"
+               [class.text-gray-500]="activeChannel() !== 'booking'"
+               [class.dark:text-gray-400]="activeChannel() !== 'booking'">
                Booking.com
             </button>
-        </div>
-    </div>
-  </div>
-
-  <!-- Main Simulator Area -->
-  <div 
-    class="flex-1 flex flex-col rounded-2xl border overflow-hidden shadow-xl transition-colors duration-500"
-    [class.bg-white]="true"
-    [class.dark:bg-[#1c2936]]="true"
-    [class.border-[#ff385c]]="activeChannel() === 'airbnb'"
-    [class.border-[#003580]]="activeChannel() === 'booking'"
-  >
-     <!-- Simulator Toolbar -->
-     <div 
-        class="px-6 py-4 flex items-center justify-between text-white transition-colors duration-500"
-        [class.bg-[#ff385c]]="activeChannel() === 'airbnb'"
-        [class.bg-[#003580]]="activeChannel() === 'booking'"
-     >
-        <div class="flex items-center gap-4">
-           <span class="font-bold text-lg tracking-wide opacity-90 uppercase">
-              {{ activeChannel() }} Extranet
-           </span>
-           <div class="h-6 w-px bg-white/30"></div>
-           
-           <!-- Unit Selector (Simulated Dropdown) -->
-           <select 
-              [ngModel]="selectedUnitId()"
-              (ngModelChange)="selectedUnitId.set($event)"
-              class="bg-white/20 border-none text-white text-sm rounded cursor-pointer focus:ring-0 font-medium"
-           >
-              @for (group of portfolio(); track group.id) {
-                 <optgroup [label]="group.name" class="text-black">
-                    @for (unit of group.units; track unit.id) {
-                       <option [value]="unit.id" class="text-black">{{ unit.name }}</option>
-                    }
-                 </optgroup>
-              }
-           </select>
-        </div>
-
-        <div class="flex items-center gap-4">
-           <button (click)="prevMonth()" class="p-1 hover:bg-white/20 rounded"><span class="material-symbols-outlined">chevron_left</span></button>
-           <span class="font-bold min-w-[120px] text-center select-none">{{ formattedMonth() }}</span>
-           <button (click)="nextMonth()" class="p-1 hover:bg-white/20 rounded"><span class="material-symbols-outlined">chevron_right</span></button>
-        </div>
-     </div>
-
-     <!-- Calendar Grid -->
-     <div class="flex-1 p-6 overflow-y-auto">
-        <div class="grid grid-cols-7 gap-4">
-           <!-- Days Header -->
-           <div class="text-center text-xs font-bold text-gray-400 uppercase py-2">Sun</div>
-           <div class="text-center text-xs font-bold text-gray-400 uppercase py-2">Mon</div>
-           <div class="text-center text-xs font-bold text-gray-400 uppercase py-2">Tue</div>
-           <div class="text-center text-xs font-bold text-gray-400 uppercase py-2">Wed</div>
-           <div class="text-center text-xs font-bold text-gray-400 uppercase py-2">Thu</div>
-           <div class="text-center text-xs font-bold text-gray-400 uppercase py-2">Fri</div>
-           <div class="text-center text-xs font-bold text-gray-400 uppercase py-2">Sat</div>
-
-           <!-- Calendar Cells -->
-           @for (day of calendarDays(); track $index) {
-              <div 
-                 class="min-h-[100px] border rounded-xl p-2 relative flex flex-col justify-between transition-all"
-                 [class.border-transparent]="day.empty"
-                 [class.bg-gray-50]="!day.empty && !day.booking"
-                 [class.dark:bg-[#253545]]="!day.empty && !day.booking"
-                 [class.border-gray-200]="!day.empty"
-                 [class.dark:border-[#324d67]]="!day.empty"
-                 [class.opacity-50]="day.booking"
-                 [class.cursor-pointer]="!day.empty && !day.booking"
-                 [class.hover:border-primary]="!day.empty && !day.booking"
-                 [class.hover:shadow-md]="!day.empty && !day.booking"
-                 (click)="openModal(day)"
-              >
-                 @if (!day.empty) {
-                    <div class="flex justify-between items-start">
-                       <span 
-                          class="text-sm font-bold w-6 h-6 flex items-center justify-center rounded-full"
-                          [class.bg-primary]="day.isToday"
-                          [class.text-white]="day.isToday"
-                          [class.text-gray-500]="!day.isToday"
-                          [class.dark:text-gray-400]="!day.isToday"
-                       >
-                          {{ day.dayNum }}
-                       </span>
-                    </div>
-
-                    @if (day.booking) {
-                       <div 
-                          class="mt-2 p-1.5 rounded text-[10px] font-bold truncate text-white"
-                          [class.bg-[#ff385c]]="day.booking.source === 'airbnb'"
-                          [class.bg-[#003580]]="day.booking.source === 'booking'"
-                          [class.bg-[#FFC400]]="day.booking.source === 'expedia'"
-                          [class.text-black]="day.booking.source === 'expedia'"
-                          [class.bg-gray-500]="day.booking.source === 'blocked'"
-                          [class.bg-green-500]="day.booking.source === 'direct'"
-                       >
-                          {{ day.booking.source === 'blocked' ? 'Blocked' : day.booking.guestName }}
-                       </div>
-                    } @else {
-                       <div class="flex justify-center items-center h-full opacity-0 hover:opacity-100 transition-opacity">
-                          <span class="material-symbols-outlined text-gray-300 dark:text-gray-600">add</span>
-                       </div>
-                    }
-                 }
-              </div>
-           }
-        </div>
-     </div>
-  </div>
-
-  <!-- Create Modal -->
-  @if (isModalOpen()) {
-    <div class="absolute inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in fixed">
-      <div class="bg-white dark:bg-[#1c2936] w-full max-w-sm rounded-xl shadow-2xl border border-gray-200 dark:border-[#324d67] overflow-hidden flex flex-col">
-        <div 
-           class="px-6 py-4 flex items-center justify-between text-white"
-           [class.bg-[#ff385c]]="activeChannel() === 'airbnb'"
-           [class.bg-[#003580]]="activeChannel() === 'booking'"
-        >
-          <h3 class="text-lg font-bold flex items-center gap-2">
-             <span class="material-symbols-outlined">add_circle</span>
-             Simulate {{ modalType() === 'book' ? 'Booking' : 'Block' }}
-          </h3>
-          <button (click)="isModalOpen.set(false)" class="text-white/80 hover:text-white">
-            <span class="material-symbols-outlined">close</span>
-          </button>
-        </div>
-        
-        <div class="p-6 space-y-4">
-           <!-- Mode Toggle -->
-           <div class="flex gap-2 text-sm justify-center mb-2">
-              <button 
-                 (click)="modalType.set('book')" 
-                 class="px-3 py-1 rounded-full font-bold transition-colors"
-                 [class.bg-green-100]="modalType() === 'book'"
-                 [class.text-green-700]="modalType() === 'book'"
-                 [class.text-gray-400]="modalType() !== 'book'"
-              >Booking</button>
-              <button 
-                 (click)="modalType.set('block')" 
-                 class="px-3 py-1 rounded-full font-bold transition-colors"
-                 [class.bg-gray-200]="modalType() === 'block'"
-                 [class.text-gray-700]="modalType() === 'block'"
-                 [class.text-gray-400]="modalType() !== 'block'"
-              >Block Dates</button>
-           </div>
-
-           @if (modalType() === 'book') {
-              <div class="space-y-1.5 animate-fade-in">
-                 <label class="text-xs font-bold text-gray-500 uppercase">Guest Name</label>
-                 <input 
-                    type="text" 
-                    [(ngModel)]="newEventData().guestName"
-                    class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary"
-                    placeholder="John Doe"
-                 >
-              </div>
-              <div class="space-y-1.5 animate-fade-in">
-                 <label class="text-xs font-bold text-gray-500 uppercase">Payout Price</label>
-                 <input 
-                    type="number" 
-                    [(ngModel)]="newEventData().price"
-                    class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary"
-                 >
-              </div>
-           }
-
-           <div class="grid grid-cols-2 gap-4">
-              <div class="space-y-1.5">
-                 <label class="text-xs font-bold text-gray-500 uppercase">Start</label>
-                 <input type="date" [(ngModel)]="newEventData().startDate" class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white">
-              </div>
-              <div class="space-y-1.5">
-                 <label class="text-xs font-bold text-gray-500 uppercase">End</label>
-                 <input type="date" [(ngModel)]="newEventData().endDate" class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white">
-              </div>
-           </div>
-        </div>
-
-        <div class="px-6 py-4 bg-gray-50 dark:bg-[#111a22] border-t border-gray-200 dark:border-[#324d67] flex justify-end gap-3">
-           <button 
-             (click)="saveEvent()" 
-             class="px-6 py-2 text-sm font-bold text-white rounded-lg shadow-lg transition-colors"
-             [class.bg-[#ff385c]]="activeChannel() === 'airbnb'"
-             [class.bg-[#003580]]="activeChannel() === 'booking'"
-             [class.hover:opacity-90]="true"
-           >
-             Confirm & Sync
-           </button>
-        </div>
+         </div>
       </div>
-    </div>
-  }
+   </div>
 
-  <!-- iCal Modal -->
-  @if (isIcalModalOpen()) {
-    <div class="absolute inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in fixed">
-      <div class="bg-white dark:bg-[#1c2936] w-full max-w-2xl rounded-xl shadow-2xl border border-gray-200 dark:border-[#324d67] overflow-hidden flex flex-col h-[70vh]">
-        <div class="px-6 py-4 border-b border-gray-200 dark:border-[#324d67] flex items-center justify-between bg-gray-50 dark:bg-[#18232e]">
-          <h3 class="text-lg font-bold text-[#111418] dark:text-white flex items-center gap-2">
-             <span class="material-symbols-outlined">sync_alt</span>
-             iCal Data Simulation
-          </h3>
-          <button (click)="isIcalModalOpen.set(false)" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
-            <span class="material-symbols-outlined">close</span>
-          </button>
-        </div>
-        
-        <div class="flex-1 p-6 overflow-hidden flex flex-col">
-           <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">
-              Paste `.ics` content below or generate random data to simulate an external calendar sync.
-           </p>
-           <textarea 
-              [(ngModel)]="icalContent"
-              class="flex-1 w-full bg-gray-900 text-green-400 font-mono text-xs p-4 rounded-lg border border-gray-700 resize-none focus:ring-1 focus:ring-primary mb-4"
-              placeholder="BEGIN:VCALENDAR..."
-           ></textarea>
-           
-           <div class="flex justify-between items-center">
-              <button 
-                 (click)="generateRandomIcal()"
-                 class="text-primary text-sm font-bold hover:underline flex items-center gap-1"
-              >
-                 <span class="material-symbols-outlined text-[16px]">autorenew</span>
-                 Generate Random Data
-              </button>
-              
-              <button 
-                 (click)="processIcalImport()"
-                 class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-bold shadow-lg transition-colors flex items-center gap-2"
-                 [disabled]="!icalContent()"
-                 [class.opacity-50]="!icalContent()"
-              >
-                 <span class="material-symbols-outlined text-[18px]">download</span>
-                 Process & Import
-              </button>
-           </div>
-        </div>
+   <!-- Main Simulator Area -->
+   <div class="flex-1 flex flex-col rounded-2xl border overflow-hidden shadow-xl transition-colors duration-500"
+      [class.bg-white]="true" [class.dark:bg-[#1c2936]]="true" [class.border-[#ff385c]]="activeChannel() === 'airbnb'"
+      [class.border-[#003580]]="activeChannel() === 'booking'">
+      <!-- Simulator Toolbar -->
+      <div class="px-6 py-4 flex items-center justify-between text-white transition-colors duration-500"
+         [class.bg-[#ff385c]]="activeChannel() === 'airbnb'" [class.bg-[#003580]]="activeChannel() === 'booking'">
+         <div class="flex items-center gap-4">
+            <span class="font-bold text-lg tracking-wide opacity-90 uppercase">
+               {{ activeChannel() }} Extranet
+            </span>
+            <div class="h-6 w-px bg-white/30"></div>
+
+            <!-- Unit Selector (Simulated Dropdown) -->
+            <select [ngModel]="selectedUnitId()" (ngModelChange)="selectedUnitId.set($event)"
+               class="bg-white/20 border-none text-white text-sm rounded cursor-pointer focus:ring-0 font-medium">
+               @for (group of portfolio(); track group.id) {
+               <optgroup [label]="group.name" class="text-black">
+                  @for (unit of group.units; track unit.id) {
+                  <option [value]="unit.id" class="text-black">{{ unit.name }}</option>
+                  }
+               </optgroup>
+               }
+            </select>
+         </div>
+
+         <div class="flex items-center gap-4">
+            <button (click)="prevMonth()" class="p-1 hover:bg-white/20 rounded"><span
+                  class="material-symbols-outlined">chevron_left</span></button>
+            <span class="font-bold min-w-[120px] text-center select-none">{{ formattedMonth() }}</span>
+            <button (click)="nextMonth()" class="p-1 hover:bg-white/20 rounded"><span
+                  class="material-symbols-outlined">chevron_right</span></button>
+         </div>
       </div>
-    </div>
-  }
+
+      <!-- Calendar Grid -->
+      <div class="flex-1 p-6 overflow-y-auto">
+         <div class="grid grid-cols-7 gap-4">
+            <!-- Days Header -->
+            <div class="text-center text-xs font-bold text-gray-400 uppercase py-2">Sun</div>
+            <div class="text-center text-xs font-bold text-gray-400 uppercase py-2">Mon</div>
+            <div class="text-center text-xs font-bold text-gray-400 uppercase py-2">Tue</div>
+            <div class="text-center text-xs font-bold text-gray-400 uppercase py-2">Wed</div>
+            <div class="text-center text-xs font-bold text-gray-400 uppercase py-2">Thu</div>
+            <div class="text-center text-xs font-bold text-gray-400 uppercase py-2">Fri</div>
+            <div class="text-center text-xs font-bold text-gray-400 uppercase py-2">Sat</div>
+
+            <!-- Calendar Cells -->
+            @for (day of calendarDays(); track $index) {
+            <div class="min-h-[100px] border rounded-xl p-2 relative flex flex-col justify-between transition-all"
+               [class.border-transparent]="day.empty" [class.bg-gray-50]="!day.empty && !day.booking"
+               [class.dark:bg-[#253545]]="!day.empty && !day.booking" [class.border-gray-200]="!day.empty"
+               [class.dark:border-[#324d67]]="!day.empty" [class.opacity-50]="day.booking"
+               [class.cursor-pointer]="!day.empty && !day.booking"
+               [class.hover:border-primary]="!day.empty && !day.booking"
+               [class.hover:shadow-md]="!day.empty && !day.booking" (click)="openModal(day)">
+               @if (!day.empty) {
+               <div class="flex justify-between items-start">
+                  <span class="text-sm font-bold w-6 h-6 flex items-center justify-center rounded-full"
+                     [class.bg-primary]="day.isToday" [class.text-white]="day.isToday"
+                     [class.text-gray-500]="!day.isToday" [class.dark:text-gray-400]="!day.isToday">
+                     {{ day.dayNum }}
+                  </span>
+               </div>
+
+               @if (day.booking) {
+               <div class="mt-2 p-1.5 rounded text-[10px] font-bold truncate text-white"
+                  [class.bg-[#ff385c]]="day.booking.source === 'airbnb'"
+                  [class.bg-[#003580]]="day.booking.source === 'booking'"
+                  [class.bg-[#FFC400]]="day.booking.source === 'expedia'"
+                  [class.text-black]="day.booking.source === 'expedia'"
+                  [class.bg-gray-500]="day.booking.source === 'blocked'"
+                  [class.bg-green-500]="day.booking.source === 'direct'">
+                  {{ day.booking.source === 'blocked' ? 'Blocked' : day.booking.guestName }}
+               </div>
+               } @else {
+               <div class="flex justify-center items-center h-full opacity-0 hover:opacity-100 transition-opacity">
+                  <span class="material-symbols-outlined text-gray-300 dark:text-gray-600">add</span>
+               </div>
+               }
+               }
+            </div>
+            }
+         </div>
+      </div>
+   </div>
+
+   <!-- Create Modal -->
+   @if (isModalOpen()) {
+   <div
+      class="absolute inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in fixed">
+      <div
+         class="bg-white dark:bg-[#1c2936] w-full max-w-sm rounded-xl shadow-2xl border border-gray-200 dark:border-[#324d67] overflow-hidden flex flex-col">
+         <div class="px-6 py-4 flex items-center justify-between text-white"
+            [class.bg-[#ff385c]]="activeChannel() === 'airbnb'" [class.bg-[#003580]]="activeChannel() === 'booking'">
+            <h3 class="text-lg font-bold flex items-center gap-2">
+               <span class="material-symbols-outlined">add_circle</span>
+               Simulate {{ modalType() === 'book' ? 'Booking' : 'Block' }}
+            </h3>
+            <button (click)="isModalOpen.set(false)" class="text-white/80 hover:text-white">
+               <span class="material-symbols-outlined">close</span>
+            </button>
+         </div>
+
+         <div class="p-6 space-y-4">
+            <!-- Mode Toggle -->
+            <div class="flex gap-2 text-sm justify-center mb-2">
+               <button (click)="modalType.set('book')" class="px-3 py-1 rounded-full font-bold transition-colors"
+                  [class.bg-green-100]="modalType() === 'book'" [class.text-green-700]="modalType() === 'book'"
+                  [class.text-gray-400]="modalType() !== 'book'">Booking</button>
+               <button (click)="modalType.set('block')" class="px-3 py-1 rounded-full font-bold transition-colors"
+                  [class.bg-gray-200]="modalType() === 'block'" [class.text-gray-700]="modalType() === 'block'"
+                  [class.text-gray-400]="modalType() !== 'block'">Block Dates</button>
+            </div>
+
+            @if (modalType() === 'book') {
+            <div class="space-y-1.5 animate-fade-in">
+               <label class="text-xs font-bold text-gray-500 uppercase">Guest Name</label>
+               <input type="text" [(ngModel)]="newEventData().guestName"
+                  class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary"
+                  placeholder="John Doe">
+            </div>
+            <div class="space-y-1.5 animate-fade-in">
+               <label class="text-xs font-bold text-gray-500 uppercase">Payout Price</label>
+               <input type="number" [(ngModel)]="newEventData().price"
+                  class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary">
+            </div>
+            }
+
+            <div class="grid grid-cols-2 gap-4">
+               <div class="space-y-1.5">
+                  <label class="text-xs font-bold text-gray-500 uppercase">Start</label>
+                  <input type="date" [(ngModel)]="newEventData().startDate"
+                     class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white">
+               </div>
+               <div class="space-y-1.5">
+                  <label class="text-xs font-bold text-gray-500 uppercase">End</label>
+                  <input type="date" [(ngModel)]="newEventData().endDate"
+                     class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white">
+               </div>
+            </div>
+         </div>
+
+         <div
+            class="px-6 py-4 bg-gray-50 dark:bg-[#111a22] border-t border-gray-200 dark:border-[#324d67] flex justify-end gap-3">
+            <button (click)="saveEvent()"
+               class="px-6 py-2 text-sm font-bold text-white rounded-lg shadow-lg transition-colors"
+               [class.bg-[#ff385c]]="activeChannel() === 'airbnb'" [class.bg-[#003580]]="activeChannel() === 'booking'"
+               [class.hover:opacity-90]="true">
+               Confirm & Sync
+            </button>
+         </div>
+      </div>
+   </div>
+   }
+
+   <!-- iCal Modal -->
+   @if (isIcalModalOpen()) {
+   <div
+      class="absolute inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in fixed">
+      <div
+         class="bg-white dark:bg-[#1c2936] w-full max-w-2xl rounded-xl shadow-2xl border border-gray-200 dark:border-[#324d67] overflow-hidden flex flex-col h-[70vh]">
+         <div
+            class="px-6 py-4 border-b border-gray-200 dark:border-[#324d67] flex items-center justify-between bg-gray-50 dark:bg-[#18232e]">
+            <h3 class="text-lg font-bold text-[#111418] dark:text-white flex items-center gap-2">
+               <span class="material-symbols-outlined">sync_alt</span>
+               iCal Data Simulation
+            </h3>
+            <button (click)="isIcalModalOpen.set(false)"
+               class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+               <span class="material-symbols-outlined">close</span>
+            </button>
+         </div>
+
+         <div class="flex-1 p-6 overflow-hidden flex flex-col">
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">
+               Paste `.ics` content below or generate random data to simulate an external calendar sync.
+            </p>
+            <textarea [(ngModel)]="icalContent"
+               class="flex-1 w-full bg-gray-900 text-green-400 font-mono text-xs p-4 rounded-lg border border-gray-700 resize-none focus:ring-1 focus:ring-primary mb-4"
+               placeholder="BEGIN:VCALENDAR..."></textarea>
+
+            <div class="flex justify-between items-center">
+               <button (click)="generateRandomIcal()"
+                  class="text-primary text-sm font-bold hover:underline flex items-center gap-1">
+                  <span class="material-symbols-outlined text-[16px]">autorenew</span>
+                  Generate Random Data
+               </button>
+
+               <button (click)="processIcalImport()"
+                  class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-bold shadow-lg transition-colors flex items-center gap-2"
+                  [disabled]="!icalContent()" [class.opacity-50]="!icalContent()">
+                  <span class="material-symbols-outlined text-[18px]">download</span>
+                  Process & Import
+               </button>
+            </div>
+         </div>
+      </div>
+   </div>
+   }
+
+   <!-- Message Simulation Modal -->
+   @if (isMessageModalOpen()) {
+   <div
+      class="absolute inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in fixed">
+      <div
+         class="bg-white dark:bg-[#1c2936] w-full max-w-sm rounded-xl shadow-2xl border border-gray-200 dark:border-[#324d67] overflow-hidden flex flex-col">
+         <div
+            class="px-6 py-4 border-b border-gray-200 dark:border-[#324d67] flex items-center justify-between bg-gray-50 dark:bg-[#18232e]">
+            <h3 class="text-lg font-bold text-[#111418] dark:text-white flex items-center gap-2">
+               <span class="material-symbols-outlined text-green-500">chat</span>
+               Simulate Guest Message
+            </h3>
+            <button (click)="isMessageModalOpen.set(false)"
+               class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+               <span class="material-symbols-outlined">close</span>
+            </button>
+         </div>
+
+         <div class="p-6 space-y-4">
+            <!-- Client Select -->
+            <div class="space-y-1.5">
+               <label class="text-xs font-bold text-gray-500 uppercase">From Client</label>
+               <select [ngModel]="selectedSimClient()" (ngModelChange)="selectedSimClient.set($event)"
+                  class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary">
+                  <option value="" disabled>Select a guest...</option>
+                  @for (client of clients(); track client.phoneNumber) {
+                  <option [value]="client.phoneNumber">{{ client.name }} ({{ client.platform }})</option>
+                  }
+               </select>
+            </div>
+
+            <!-- Message Text -->
+            <div class="space-y-1.5">
+               <label class="text-xs font-bold text-gray-500 uppercase">Message Text</label>
+               <textarea [ngModel]="simMessageText()" (ngModelChange)="simMessageText.set($event)" rows="3"
+                  class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary resize-none"
+                  placeholder="Hello, I have a question..."></textarea>
+            </div>
+
+            <!-- File Attachment -->
+            <div class="space-y-1.5">
+               <label class="text-xs font-bold text-gray-500 uppercase">Attachment (Optional)</label>
+               <div class="flex items-center gap-3">
+                  <button (click)="triggerSimFileUpload()"
+                     class="px-4 py-2 bg-gray-100 dark:bg-[#253545] hover:bg-gray-200 dark:hover:bg-[#2f4356] rounded-lg text-sm font-bold text-gray-600 dark:text-gray-300 flex items-center gap-2 transition-colors">
+                     <span class="material-symbols-outlined text-[18px]">attach_file</span>
+                     Choose File
+                  </button>
+                  @if (simMessageFile(); as file) {
+                  <span class="text-xs text-green-500 font-bold truncate max-w-[150px]">{{ file.name }}</span>
+                  <button (click)="simMessageFile.set(null)" class="text-red-500 hover:text-red-700">
+                     <span class="material-symbols-outlined text-[16px]">close</span>
+                  </button>
+                  }
+               </div>
+            </div>
+
+         </div>
+
+         <div
+            class="px-6 py-4 bg-gray-50 dark:bg-[#111a22] border-t border-gray-200 dark:border-[#324d67] flex justify-end gap-3">
+            <button (click)="simulateIncomingMessage(); isMessageModalOpen.set(false)"
+               [disabled]="!selectedSimClient() || (!simMessageText() && !simMessageFile())"
+               class="px-6 py-2 text-sm font-bold text-white bg-green-600 hover:bg-green-700 rounded-lg shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+               Send Message
+            </button>
+         </div>
+      </div>
+   </div>
+   }
 </div>

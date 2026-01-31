@@ -174,7 +174,49 @@ export class ApiService {
   updateSettings(settings: Partial<AppSettings>): void {
     this.http.put<AppSettings>(`${this.apiUrl}/api/settings`, settings).subscribe((data) => {
       this.portfolio.appSettings.set(data);
+      this.portfolio.appSettings.set(data);
     });
+  }
+
+  testTelegramNotification(token: string, chatId: string): Observable<{ success: boolean; error?: string }> {
+    return this.http.post<{ success: boolean; error?: string }>(`${this.apiUrl}/api/settings/telegram/test`, { token, chatId }).pipe(
+      catchError((err) => of({ success: false, error: err.error?.error || 'Failed to test Telegram' }))
+    );
+  }
+
+  syncTelegram(): Observable<{ success: boolean; count?: number }> {
+    return this.http.post<{ success: boolean; count?: number; messages?: any[] }>(`${this.apiUrl}/api/settings/telegram/sync`, {}).pipe(
+      map(res => {
+        if (res.success && res.messages && res.messages.length > 0) {
+          this.loadBootstrap().subscribe();
+        }
+        return res;
+      }),
+      catchError(() => of({ success: false }))
+    );
+  }
+
+  sendMessage(recipientId: string, text: string, platform: string = 'telegram'): Observable<boolean> {
+    return this.http.post<{ success: boolean }>(`${this.apiUrl}/api/messages/send`, { recipientId, text, platform }).pipe(
+      map(res => res.success),
+      catchError(() => of(false))
+    );
+  }
+
+  sendFile(recipientId: string, file: File, platform: string = 'telegram', caption: string = ''): Observable<boolean> {
+    const formData = new FormData();
+    formData.append('recipientId', recipientId);
+    formData.append('file', file);
+    formData.append('platform', platform);
+    if (caption) formData.append('caption', caption);
+
+    return this.http.post<{ success: boolean }>(`${this.apiUrl}/api/messages/send/attachment`, formData).pipe(
+      map(res => res.success),
+      catchError((err) => {
+        console.error('File Upload Error:', err);
+        return of(false);
+      })
+    );
   }
 
   addStaff(member: Omit<Staff, 'id' | 'tenantId'>): void {
@@ -213,7 +255,7 @@ export class ApiService {
   }
 
   updateChannelMappings(mappings: Parameters<PortfolioService['channelMappings']['set']>[0]): void {
-    this.http.put(`${this.apiUrl}/api/channels/mappings`, mappings).subscribe(() => {});
+    this.http.put(`${this.apiUrl}/api/channels/mappings`, mappings).subscribe(() => { });
   }
 
   updateOtaConfigs(configs: Record<string, unknown>): void {
