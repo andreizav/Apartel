@@ -306,13 +306,22 @@ export class PortfolioService {
     this.logDbEvent('DELETE', 'auth.users', id);
   }
 
-  deleteUnit(unitId: string) {
+  deleteUnit(unitId: string, tenantData?: Tenant) {
+    if (tenantData) {
+      this.tenant.set(tenantData);
+    }
     this.portfolio.update(groups =>
       groups.map(g => ({
         ...g,
         units: g.units.filter(u => u.id !== unitId)
       })).filter(g => g.units.length > 0 || !g.isMerge)
     );
+
+    // Sync other signals
+    this.bookings.update(list => list.filter(b => b.unitId !== unitId));
+    this.channelMappings.update(list => list.filter(m => m.unitId !== unitId));
+    this.icalConnections.update(list => list.filter(i => i.unitId !== unitId));
+
     this.logDbEvent('DELETE', 'public.properties', unitId);
   }
 

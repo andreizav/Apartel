@@ -6,10 +6,10 @@ import { of } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { PortfolioService } from './portfolio.service';
 import { AuthTokenService } from './auth-token.service';
-import type { Booking, Client, Staff, Transaction } from './models';
+import type { Booking, Client, Staff, Transaction, Tenant } from './models';
 import type { InventoryCategory } from './models';
 import type { AppSettings } from './models';
-import type { PropertyGroup } from './models';
+import type { PropertyGroup, PropertyUnit } from './models';
 
 const base = () => environment.apiUrl.replace(/\/$/, '');
 
@@ -176,8 +176,8 @@ export class ApiService {
   }
 
   deleteUnit(unitId: string): void {
-    this.http.delete(`${this.apiUrl}/api/portfolio/units/${unitId}`).subscribe(() => {
-      this.portfolio.deleteUnit(unitId);
+    this.http.delete<{ ok: boolean, tenant: Tenant }>(`${this.apiUrl}/api/portfolio/units/${unitId}`).subscribe((res) => {
+      this.portfolio.deleteUnit(unitId, res.tenant);
     });
   }
 

@@ -199,8 +199,9 @@
           Booking Details</h4>
 
         <div class="space-y-1.5">
-          <label class="text-xs font-bold text-gray-500 uppercase">Unit</label>
-          <select [ngModel]="bookingForm().unitId" (ngModelChange)="bookingForm().unitId = $event"
+          <label for="booking-unit" class="text-xs font-bold text-gray-500 uppercase">Unit</label>
+          <select id="booking-unit" name="unitId" [ngModel]="bookingForm().unitId"
+            (ngModelChange)="bookingForm().unitId = $event"
             class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary">
             @for (group of calendarGroups(); track group.name) {
             <optgroup [label]="group.name">
@@ -214,22 +215,25 @@
 
         <div class="grid grid-cols-2 gap-4">
           <div class="space-y-1.5">
-            <label class="text-xs font-bold text-gray-500 uppercase">Check-in</label>
-            <input type="date" [ngModel]="bookingForm().startDate" (ngModelChange)="bookingForm().startDate = $event"
+            <label for="booking-start" class="text-xs font-bold text-gray-500 uppercase">Check-in</label>
+            <input id="booking-start" name="startDate" type="date" [ngModel]="bookingForm().startDate"
+              (ngModelChange)="bookingForm().startDate = $event"
               class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary">
           </div>
           <div class="space-y-1.5">
-            <label class="text-xs font-bold text-gray-500 uppercase">Check-out</label>
-            <input type="date" [ngModel]="bookingForm().endDate" (ngModelChange)="bookingForm().endDate = $event"
+            <label for="booking-end" class="text-xs font-bold text-gray-500 uppercase">Check-out</label>
+            <input id="booking-end" name="endDate" type="date" [ngModel]="bookingForm().endDate"
+              (ngModelChange)="bookingForm().endDate = $event"
               class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary">
           </div>
         </div>
 
         <div class="space-y-1.5">
-          <label class="text-xs font-bold text-gray-500 uppercase">Total Price</label>
+          <label for="booking-price" class="text-xs font-bold text-gray-500 uppercase">Total Price</label>
           <div class="relative">
             <span class="absolute left-3 top-2 text-gray-500">$</span>
-            <input type="number" [ngModel]="bookingForm().price" (ngModelChange)="bookingForm().price = $event"
+            <input id="booking-price" name="price" type="number" [ngModel]="bookingForm().price"
+              (ngModelChange)="bookingForm().price = $event"
               class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md pl-7 pr-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary"
               placeholder="0.00">
           </div>
@@ -237,8 +241,9 @@
       </div>
 
       <div class="space-y-1.5">
-        <label class="text-xs font-bold text-gray-500 uppercase">Notes / Description</label>
-        <textarea [ngModel]="bookingForm().notes" (ngModelChange)="bookingForm().notes = $event"
+        <label for="booking-notes" class="text-xs font-bold text-gray-500 uppercase">Notes / Description</label>
+        <textarea id="booking-notes" name="notes" [ngModel]="bookingForm().notes"
+          (ngModelChange)="bookingForm().notes = $event"
           class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary h-20 resize-none"
           placeholder="Add booking notes..."></textarea>
       </div>
@@ -261,8 +266,9 @@
 
         @if (!isNewClient()) {
         <div class="space-y-1.5 animate-fade-in">
-          <label class="text-xs font-bold text-gray-500 uppercase">Select Client</label>
-          <select [ngModel]="selectedClientId()" (ngModelChange)="onClientSelect($event)"
+          <label for="client-select" class="text-xs font-bold text-gray-500 uppercase">Select Client</label>
+          <select id="client-select" name="clientId" [ngModel]="selectedClientId()"
+            (ngModelChange)="onClientSelect($event)"
             class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary">
             <option value="" disabled>Search client...</option>
             @for (c of availableClients(); track c.id) {
@@ -274,21 +280,24 @@
         } @else {
         <div class="space-y-3 animate-fade-in">
           <div class="space-y-1.5">
-            <label class="text-xs font-bold text-gray-500 uppercase">Full Name</label>
-            <input type="text" [ngModel]="newClientForm().name" (ngModelChange)="newClientForm().name = $event"
+            <label for="client-name" class="text-xs font-bold text-gray-500 uppercase">Full Name</label>
+            <input id="client-name" name="clientName" type="text" [ngModel]="newClientForm().name"
+              (ngModelChange)="newClientForm().name = $event"
               class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary"
               placeholder="e.g. John Doe">
           </div>
           <div class="grid grid-cols-2 gap-4">
             <div class="space-y-1.5">
-              <label class="text-xs font-bold text-gray-500 uppercase">Phone</label>
-              <input type="text" [ngModel]="newClientForm().phone" (ngModelChange)="newClientForm().phone = $event"
+              <label for="client-phone" class="text-xs font-bold text-gray-500 uppercase">Phone</label>
+              <input id="client-phone" name="clientPhone" type="text" [ngModel]="newClientForm().phone"
+                (ngModelChange)="newClientForm().phone = $event"
                 class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary"
                 placeholder="+1234567890">
             </div>
             <div class="space-y-1.5">
-              <label class="text-xs font-bold text-gray-500 uppercase">Email (Optional)</label>
-              <input type="email" [ngModel]="newClientForm().email" (ngModelChange)="newClientForm().email = $event"
+              <label for="client-email" class="text-xs font-bold text-gray-500 uppercase">Email (Optional)</label>
+              <input id="client-email" name="clientEmail" type="email" [ngModel]="newClientForm().email"
+                (ngModelChange)="newClientForm().email = $event"
                 class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary"
                 placeholder="john@example.com">
             </div>

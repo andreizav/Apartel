@@ -89,6 +89,7 @@ export class PortfolioService {
         await this.prisma.booking.deleteMany({ where: { unitId } });
         await this.prisma.channelMapping.deleteMany({ where: { unitId } });
         await this.prisma.icalConnection.deleteMany({ where: { unitId } });
+        await this.prisma.transaction.deleteMany({ where: { property: unit.name } });
 
         // Delete the unit
         await this.prisma.unit.delete({ where: { id: unitId } });
@@ -102,6 +103,17 @@ export class PortfolioService {
             await this.prisma.portfolioGroup.delete({ where: { id: group.id } });
         }
 
-        return { ok: true };
+        // Get updated tenant data to reflect "plan configuration" changes if any
+        const updatedTenant = await this.prisma.tenant.findUnique({
+            where: { id: tenantId }
+        });
+
+        return {
+            ok: true,
+            tenant: updatedTenant ? {
+                ...updatedTenant,
+                features: updatedTenant.features ? JSON.parse(updatedTenant.features) : {}
+            } : null
+        };
     }
 }
