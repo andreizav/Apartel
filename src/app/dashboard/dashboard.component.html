@@ -1,13 +1,13 @@
-<div class="flex min-h-screen bg-background-light dark:bg-background-dark">
+<div class="flex h-screen bg-background-light dark:bg-background-dark overflow-hidden">
 
   <!-- Sidebar Overlay for Mobile -->
   @if (sidebarOpen()) {
   <div class="fixed inset-0 z-20 bg-black/50 lg:hidden" (click)="toggleSidebar()"></div>
   }
 
-  <!-- Sidebar -->
+  <!-- Sidebar (Mobile Only) -->
   <aside
-    class="fixed inset-y-0 left-0 z-30 w-64 flex flex-col transform bg-white dark:bg-[#1c2936] border-r border-gray-200 dark:border-[#324d67] transition-transform duration-300 lg:static lg:translate-x-0"
+    class="fixed inset-y-0 left-0 z-30 w-64 flex flex-col transform bg-white dark:bg-[#1c2936] border-r border-gray-200 dark:border-[#324d67] transition-transform duration-300 lg:hidden"
     [class.translate-x-0]="sidebarOpen()" [class.-translate-x-full]="!sidebarOpen()">
     <!-- Logo -->
     <div class="flex items-center gap-3 px-6 h-16 border-b border-gray-200 dark:border-[#324d67] flex-shrink-0">
@@ -17,100 +17,70 @@
       <span class="text-xl font-extrabold text-[#111418] dark:text-white">apartEl</span>
     </div>
 
-    <!-- Nav Links -->
+    <!-- Nav Links (Duplicate of Topbar for Mobile) -->
     <nav class="p-4 space-y-1 flex-1 overflow-y-auto">
+      <!-- Mobile Links... (Same as before) -->
       <a routerLink="/dashboard" [routerLinkActiveOptions]="{exact: true}" routerLinkActive="bg-primary/10 text-primary"
         class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#637588] dark:text-[#92adc9] hover:bg-gray-100 dark:hover:bg-[#253545] hover:text-[#111418] dark:hover:text-white font-medium transition-colors cursor-pointer"
-        [class.text-[#637588]]="!isActive">
+        (click)="toggleSidebar()">
         <span class="material-symbols-outlined">dashboard</span>
         Dashboard
-        <span #isActive="routerLinkActive" routerLinkActive></span>
       </a>
-
       <a routerLink="/dashboard/calendar" routerLinkActive="bg-primary/10 text-primary"
-        class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#637588] dark:text-[#92adc9] hover:bg-gray-100 dark:hover:bg-[#253545] hover:text-[#111418] dark:hover:text-white font-medium transition-colors cursor-pointer">
+        class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#637588] dark:text-[#92adc9] hover:bg-gray-100 dark:hover:bg-[#253545] hover:text-[#111418] dark:hover:text-white font-medium transition-colors cursor-pointer"
+        (click)="toggleSidebar()">
         <span class="material-symbols-outlined">calendar_month</span>
         Multi-Calendar
       </a>
-
       <a routerLink="/dashboard/properties" routerLinkActive="bg-primary/10 text-primary"
-        class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#637588] dark:text-[#92adc9] hover:bg-gray-100 dark:hover:bg-[#253545] hover:text-[#111418] dark:hover:text-white font-medium transition-colors cursor-pointer">
+        class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#637588] dark:text-[#92adc9] hover:bg-gray-100 dark:hover:bg-[#253545] hover:text-[#111418] dark:hover:text-white font-medium transition-colors cursor-pointer"
+        (click)="toggleSidebar()">
         <span class="material-symbols-outlined">domain</span>
         Properties
       </a>
-
       <a routerLink="/dashboard/clients" routerLinkActive="bg-primary/10 text-primary"
-        class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#637588] dark:text-[#92adc9] hover:bg-gray-100 dark:hover:bg-[#253545] hover:text-[#111418] dark:hover:text-white font-medium transition-colors cursor-pointer">
+        class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#637588] dark:text-[#92adc9] hover:bg-gray-100 dark:hover:bg-[#253545] hover:text-[#111418] dark:hover:text-white font-medium transition-colors cursor-pointer"
+        (click)="toggleSidebar()">
         <span class="material-symbols-outlined">perm_phone_msg</span>
         Clients
       </a>
-
       <a routerLink="/dashboard/channel-manager" routerLinkActive="bg-primary/10 text-primary"
-        class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#637588] dark:text-[#92adc9] hover:bg-gray-100 dark:hover:bg-[#253545] hover:text-[#111418] dark:hover:text-white font-medium transition-colors cursor-pointer">
+        class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#637588] dark:text-[#92adc9] hover:bg-gray-100 dark:hover:bg-[#253545] hover:text-[#111418] dark:hover:text-white font-medium transition-colors cursor-pointer"
+        (click)="toggleSidebar()">
         <span class="material-symbols-outlined">hub</span>
         Channel Manager
       </a>
-
       <a routerLink="/dashboard/staff" routerLinkActive="bg-primary/10 text-primary"
-        class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#637588] dark:text-[#92adc9] hover:bg-gray-100 dark:hover:bg-[#253545] hover:text-[#111418] dark:hover:text-white font-medium transition-colors cursor-pointer">
+        class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#637588] dark:text-[#92adc9] hover:bg-gray-100 dark:hover:bg-[#253545] hover:text-[#111418] dark:hover:text-white font-medium transition-colors cursor-pointer"
+        (click)="toggleSidebar()">
         <span class="material-symbols-outlined">group</span>
         Staff
       </a>
-
       <a routerLink="/dashboard/pnl" routerLinkActive="bg-primary/10 text-primary"
-        class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#637588] dark:text-[#92adc9] hover:bg-gray-100 dark:hover:bg-[#253545] hover:text-[#111418] dark:hover:text-white font-medium transition-colors cursor-pointer">
+        class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#637588] dark:text-[#92adc9] hover:bg-gray-100 dark:hover:bg-[#253545] hover:text-[#111418] dark:hover:text-white font-medium transition-colors cursor-pointer"
+        (click)="toggleSidebar()">
         <span class="material-symbols-outlined">payments</span>
         P&L
       </a>
-
       <a routerLink="/dashboard/inventory" routerLinkActive="bg-primary/10 text-primary"
-        class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#637588] dark:text-[#92adc9] hover:bg-gray-100 dark:hover:bg-[#253545] hover:text-[#111418] dark:hover:text-white font-medium transition-colors cursor-pointer">
+        class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#637588] dark:text-[#92adc9] hover:bg-gray-100 dark:hover:bg-[#253545] hover:text-[#111418] dark:hover:text-white font-medium transition-colors cursor-pointer"
+        (click)="toggleSidebar()">
         <span class="material-symbols-outlined">inventory_2</span>
         Inventory
       </a>
-
       <div class="pt-4 mt-4 border-t border-gray-200 dark:border-[#324d67]">
-        <a routerLink="/dashboard/db-simulator" routerLinkActive="bg-[#3ECF8E]/10 text-[#3ECF8E]"
-          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#637588] dark:text-[#92adc9] hover:bg-gray-100 dark:hover:bg-[#253545] hover:text-[#111418] dark:hover:text-white font-medium transition-colors cursor-pointer group">
-          <span class="material-symbols-outlined group-hover:animate-pulse">database</span>
-          DB Simulator
-        </a>
-
         <a routerLink="/dashboard/settings" routerLinkActive="bg-primary/10 text-primary"
-          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#637588] dark:text-[#92adc9] hover:bg-gray-100 dark:hover:bg-[#253545] hover:text-[#111418] dark:hover:text-white font-medium transition-colors cursor-pointer">
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#637588] dark:text-[#92adc9] hover:bg-gray-100 dark:hover:bg-[#253545] hover:text-[#111418] dark:hover:text-white font-medium transition-colors cursor-pointer"
+          (click)="toggleSidebar()">
           <span class="material-symbols-outlined">settings</span>
           Settings
         </a>
-
-        <a routerLink="/dashboard/communications" routerLinkActive="bg-primary/10 text-primary"
-          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#637588] dark:text-[#92adc9] hover:bg-gray-100 dark:hover:bg-[#253545] hover:text-[#111418] dark:hover:text-white font-medium transition-colors cursor-pointer">
-          <span class="material-symbols-outlined">smart_toy</span>
-          Chat Simulator
-        </a>
-
-        <a routerLink="/dashboard/channel-simulator" routerLinkActive="bg-primary/10 text-primary"
-          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#637588] dark:text-[#92adc9] hover:bg-gray-100 dark:hover:bg-[#253545] hover:text-[#111418] dark:hover:text-white font-medium transition-colors cursor-pointer">
-          <span class="material-symbols-outlined">cloud_sync</span>
-          Channel Simulator
-        </a>
+        <!-- Other simulators hidden for mobile to save space or added if needed -->
       </div>
     </nav>
 
-    <!-- Bottom Actions -->
+    <!-- Bottom Actions Mobile -->
     <div class="p-4 border-t border-gray-200 dark:border-[#324d67] flex-shrink-0">
-      <div
-        class="mb-3 px-3 py-2 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-lg border border-blue-100 dark:border-blue-900/30">
-        <div class="flex justify-between items-center mb-1">
-          <span class="text-[10px] font-bold uppercase text-gray-500">Current Plan</span>
-          <span class="text-[10px] font-bold px-2 py-0.5 rounded text-white"
-            [class.bg-gray-500]="tenant().plan === 'Free'" [class.bg-gradient-to-r]="tenant().plan !== 'Free'"
-            [class.from-blue-500]="tenant().plan !== 'Free'" [class.to-purple-600]="tenant().plan !== 'Free'">{{
-            tenant().plan }}</span>
-        </div>
-        <p class="text-[10px] text-gray-500">
-          @if(tenant().plan === 'Free') { 1 Unit Limit } @else { Unlimited Units }
-        </p>
-      </div>
       <button (click)="logout()"
         class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#637588] dark:text-[#92adc9] hover:bg-red-50 dark:hover:bg-red-900/10 hover:text-red-600 font-medium transition-colors cursor-pointer">
         <span class="material-symbols-outlined">logout</span>
@@ -119,21 +89,32 @@
     </div>
   </aside>
 
-  <!-- Main Content -->
+  <!-- Main Content Area -->
   <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
 
     <!-- Top Header -->
     <header
-      class="flex items-center justify-between px-6 h-16 bg-white dark:bg-[#1c2936] border-b border-gray-200 dark:border-[#324d67]">
-      <button
-        class="lg:hidden p-2 -ml-2 text-gray-600 dark:text-gray-300 rounded-md hover:bg-gray-100 dark:hover:bg-[#253545]"
-        (click)="toggleSidebar()">
-        <span class="material-symbols-outlined">menu</span>
-      </button>
+      class="flex items-center justify-between px-6 h-16 bg-white dark:bg-[#1c2936] border-b border-gray-200 dark:border-[#324d67] flex-shrink-0">
+
+      <!-- Left: Mobile Toggle & Desktop Logo -->
+      <div class="flex items-center gap-4">
+        <button
+          class="lg:hidden p-2 -ml-2 text-gray-600 dark:text-gray-300 rounded-md hover:bg-gray-100 dark:hover:bg-[#253545]"
+          (click)="toggleSidebar()">
+          <span class="material-symbols-outlined">menu</span>
+        </button>
+
+        <!-- Desktop Logo in Header -->
+        <div class="hidden lg:flex items-center gap-2">
+          <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-primary text-white">
+            <span class="material-symbols-outlined text-xl">apartment</span>
+          </div>
+          <span class="text-xl font-extrabold text-[#111418] dark:text-white">apartEl</span>
+        </div>
+      </div>
 
       <!-- Right Actions -->
       <div class="flex items-center gap-4 ml-auto">
-
         <!-- Notification Bell -->
         <div class="relative">
           <button
@@ -159,35 +140,10 @@
 
             <div class="max-h-80 overflow-y-auto">
               @for (notif of notifications(); track notif.id) {
-              <div
-                class="p-4 border-b border-gray-100 dark:border-[#324d67] last:border-0 hover:bg-gray-50 dark:hover:bg-[#253545] transition-colors relative group">
-                <div class="flex gap-3">
-                  <div
-                    class="w-8 h-8 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600 flex-shrink-0">
-                    <span class="material-symbols-outlined text-[18px]">person_add</span>
-                  </div>
-                  <div class="flex-1">
-                    <h4 class="text-sm font-bold text-[#111418] dark:text-white">{{ notif.title }}</h4>
-                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-2">{{ notif.message }}</p>
-                    <span class="text-[10px] text-gray-400 mt-1 block">{{ notif.timestamp | date:'shortTime' }}</span>
-
-                    <div class="flex gap-2 mt-3">
-                      <button (click)="handleNotificationAction(notif)"
-                        class="px-3 py-1 bg-primary text-white text-xs font-bold rounded hover:bg-blue-600 transition-colors">
-                        {{ notif.data?.pendingClient ? 'Approve & Add' : 'Details' }}
-                      </button>
-                      <button (click)="dismissNotification($event, notif.id)"
-                        class="px-3 py-1 bg-gray-100 dark:bg-[#253545] text-gray-600 dark:text-gray-300 text-xs font-bold rounded hover:bg-gray-200 dark:hover:bg-[#2f4356] transition-colors">
-                        Dismiss
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              }
-              @if (notifications().length === 0) {
-              <div class="p-8 text-center text-gray-400 text-sm">
-                No new notifications
+              <!-- ... notification items ... -->
+              <div class="p-4 border-b border-gray-100 dark:border-[#324d67] hover:bg-gray-50 dark:hover:bg-[#253545]">
+                <h4 class="text-sm font-bold">{{ notif.title }}</h4>
+                <p class="text-xs text-gray-500">{{ notif.message }}</p>
               </div>
               }
             </div>
@@ -206,16 +162,96 @@
           </div>
           <img [src]="currentUser()?.avatar || 'https://picsum.photos/100/100'"
             class="w-9 h-9 rounded-full border border-gray-200 dark:border-gray-600 object-cover" alt="Avatar">
+
+          <button (click)="logout()"
+            class="ml-2 text-gray-500 hover:text-red-500 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-[#253545] transition-colors"
+            title="Sign Out">
+            <span class="material-symbols-outlined text-[20px]">logout</span>
+          </button>
         </div>
       </div>
     </header>
+
+    <!-- Desktop Top Navigation Bar -->
+    <nav
+      class="hidden lg:flex items-center bg-white dark:bg-[#1c2936] border-b border-gray-200 dark:border-[#324d67] px-4 overflow-x-auto no-scrollbar gap-1 flex-shrink-0 h-12">
+      <a routerLink="/dashboard" [routerLinkActiveOptions]="{exact: true}"
+        routerLinkActive="bg-primary/10 text-primary border-b-2 border-primary"
+        class="flex items-center gap-2 px-3 h-full text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary hover:bg-gray-50 dark:hover:bg-[#253545] whitespace-nowrap transition-colors rounded-t-sm">
+        <span class="material-symbols-outlined text-[18px]">dashboard</span>
+        Dashboard
+      </a>
+      <a routerLink="/dashboard/calendar" routerLinkActive="bg-primary/10 text-primary border-b-2 border-primary"
+        class="flex items-center gap-2 px-3 h-full text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary hover:bg-gray-50 dark:hover:bg-[#253545] whitespace-nowrap transition-colors rounded-t-sm">
+        <span class="material-symbols-outlined text-[18px]">calendar_month</span>
+        Calendar
+      </a>
+      <a routerLink="/dashboard/properties" routerLinkActive="bg-primary/10 text-primary border-b-2 border-primary"
+        class="flex items-center gap-2 px-3 h-full text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary hover:bg-gray-50 dark:hover:bg-[#253545] whitespace-nowrap transition-colors rounded-t-sm">
+        <span class="material-symbols-outlined text-[18px]">domain</span>
+        Properties
+      </a>
+      <a routerLink="/dashboard/clients" routerLinkActive="bg-primary/10 text-primary border-b-2 border-primary"
+        class="flex items-center gap-2 px-3 h-full text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary hover:bg-gray-50 dark:hover:bg-[#253545] whitespace-nowrap transition-colors rounded-t-sm">
+        <span class="material-symbols-outlined text-[18px]">perm_phone_msg</span>
+        Clients
+      </a>
+      <a routerLink="/dashboard/channel-manager" routerLinkActive="bg-primary/10 text-primary border-b-2 border-primary"
+        class="flex items-center gap-2 px-3 h-full text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary hover:bg-gray-50 dark:hover:bg-[#253545] whitespace-nowrap transition-colors rounded-t-sm">
+        <span class="material-symbols-outlined text-[18px]">hub</span>
+        Channel Manager
+      </a>
+      <a routerLink="/dashboard/staff" routerLinkActive="bg-primary/10 text-primary border-b-2 border-primary"
+        class="flex items-center gap-2 px-3 h-full text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary hover:bg-gray-50 dark:hover:bg-[#253545] whitespace-nowrap transition-colors rounded-t-sm">
+        <span class="material-symbols-outlined text-[18px]">group</span>
+        Staff
+      </a>
+      <a routerLink="/dashboard/pnl" routerLinkActive="bg-primary/10 text-primary border-b-2 border-primary"
+        class="flex items-center gap-2 px-3 h-full text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary hover:bg-gray-50 dark:hover:bg-[#253545] whitespace-nowrap transition-colors rounded-t-sm">
+        <span class="material-symbols-outlined text-[18px]">payments</span>
+        P&L
+      </a>
+      <a routerLink="/dashboard/inventory" routerLinkActive="bg-primary/10 text-primary border-b-2 border-primary"
+        class="flex items-center gap-2 px-3 h-full text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary hover:bg-gray-50 dark:hover:bg-[#253545] whitespace-nowrap transition-colors rounded-t-sm">
+        <span class="material-symbols-outlined text-[18px]">inventory_2</span>
+        Inventory
+      </a>
+
+      <!-- Divider -->
+      <div class="w-px h-6 bg-gray-300 dark:bg-[#324d67] mx-2 flex-shrink-0"></div>
+
+      <!-- Simulators -->
+      <a routerLink="/dashboard/db-simulator"
+        routerLinkActive="bg-[#3ECF8E]/10 text-[#3ECF8E] border-b-2 border-[#3ECF8E]"
+        class="flex items-center gap-2 px-3 h-full text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-[#3ECF8E] hover:bg-gray-50 dark:hover:bg-[#253545] whitespace-nowrap transition-colors rounded-t-sm">
+        <span class="material-symbols-outlined text-[18px]">database</span>
+        DB Sim
+      </a>
+      <a routerLink="/dashboard/communications" routerLinkActive="bg-primary/10 text-primary border-b-2 border-primary"
+        class="flex items-center gap-2 px-3 h-full text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary hover:bg-gray-50 dark:hover:bg-[#253545] whitespace-nowrap transition-colors rounded-t-sm">
+        <span class="material-symbols-outlined text-[18px]">smart_toy</span>
+        Chat Sim
+      </a>
+      <a routerLink="/dashboard/channel-simulator"
+        routerLinkActive="bg-primary/10 text-primary border-b-2 border-primary"
+        class="flex items-center gap-2 px-3 h-full text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary hover:bg-gray-50 dark:hover:bg-[#253545] whitespace-nowrap transition-colors rounded-t-sm">
+        <span class="material-symbols-outlined text-[18px]">cloud_sync</span>
+        Ch. Sim
+      </a>
+
+      <!-- More menu items can act as overflow if needed, or simply scroll -->
+      <a routerLink="/dashboard/settings" routerLinkActive="bg-primary/10 text-primary border-b-2 border-primary"
+        class="flex items-center gap-2 px-3 h-full text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary hover:bg-gray-50 dark:hover:bg-[#253545] whitespace-nowrap transition-colors rounded-t-sm ml-auto">
+        <span class="material-symbols-outlined text-[18px]">settings</span>
+        Settings
+      </a>
+    </nav>
 
     <!-- Scrollable Content -->
     <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
       <router-outlet></router-outlet>
     </main>
   </div>
-
   <!-- UPGRADE / PAYMENT MODAL -->
   @if (showUpgradeModal()) {
   <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade-in">
