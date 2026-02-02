@@ -112,6 +112,7 @@
                 [class.border-red-500]="loginEmailError"
                 [class.border-gray-200]="!loginEmailError"
                 [class.dark:border-[#324d67]]="!loginEmailError"
+                [attr.aria-invalid]="loginEmailError ? 'true' : null"
                 placeholder="name@company.com" 
                 type="email"
               />
@@ -120,7 +121,7 @@
             <div class="space-y-1.5">
               <div class="flex justify-between items-center">
                 <label class="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase">Password</label>
-                <a class="text-xs font-semibold text-primary hover:text-primary/80 cursor-pointer">Forgot?</a>
+                <button type="button" class="text-xs font-semibold text-primary hover:text-primary/80 cursor-pointer">Forgot?</button>
               </div>
               <div class="relative">
                 <input 
@@ -129,12 +130,14 @@
                   [class.border-red-500]="loginPassError"
                   [class.border-gray-200]="!loginPassError"
                   [class.dark:border-[#324d67]]="!loginPassError"
+                  [attr.aria-invalid]="loginPassError ? 'true' : null"
                   [type]="showPassword() ? 'text' : 'password'"
                   placeholder="••••••••"
                 />
                 <button 
                   type="button"
                   (click)="togglePasswordVisibility()"
+                  [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'"
                   class="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                 >
                   <span class="material-symbols-outlined text-[20px]">
@@ -184,6 +187,7 @@
                 [class.border-red-500]="regOrgError"
                 [class.border-gray-200]="!regOrgError"
                 [class.dark:border-[#324d67]]="!regOrgError"
+                [attr.aria-invalid]="regOrgError ? 'true' : null"
                 placeholder="e.g. Acme Properties LLC" 
                 type="text"
               />
@@ -198,6 +202,7 @@
                 [class.border-red-500]="regEmailError"
                 [class.border-gray-200]="!regEmailError"
                 [class.dark:border-[#324d67]]="!regEmailError"
+                [attr.aria-invalid]="regEmailError ? 'true' : null"
                 placeholder="name@company.com" 
                 type="email"
               />
@@ -212,12 +217,14 @@
                   [class.border-red-500]="regPassError"
                   [class.border-gray-200]="!regPassError"
                   [class.dark:border-[#324d67]]="!regPassError"
+                  [attr.aria-invalid]="regPassError ? 'true' : null"
                   [type]="showPassword() ? 'text' : 'password'"
                   placeholder="Min 6 characters"
                 />
                 <button 
                   type="button"
                   (click)="togglePasswordVisibility()"
+                  [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'"
                   class="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                 >
                   <span class="material-symbols-outlined text-[20px]">
