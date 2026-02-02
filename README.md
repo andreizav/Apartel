@@ -59,13 +59,13 @@ The server handles data persistence (JSON file-based) and API endpoints.
 
 ```bash
 # From the project root
-npm run server
+npm start
 ```
-*API runs at `http://localhost:3000`*
+*API runs at `http://localhost:3333`*
 
 **Note:** Ensure you have a `.env` file in the `server-nest/` directory.
 ```env
-PORT=3000
+PORT=3333
 JWT_SECRET=your_secret_key
 CORS_ORIGIN=http://localhost:3000
 TELEGRAM_BOT_TOKEN=your_token

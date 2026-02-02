@@ -15,7 +15,7 @@ export class NotificationsService {
     @OnEvent('booking.created')
     async handleBookingCreated(payload: { booking: any, tenantId: string }) {
         const { booking, tenantId } = payload;
-        console.log(`[Notifications] Booking created: ${booking.id} for tenant ${tenantId}`);
+        console.log('⚡ Event received: booking.created', payload);
 
         // 1. Send Telegram Notification
         await this.sendTelegramNotification(tenantId, booking);
