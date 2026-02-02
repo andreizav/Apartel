@@ -52,7 +52,8 @@
             <div class="h-6 w-px bg-white/30"></div>
 
             <!-- Unit Selector (Simulated Dropdown) -->
-            <select [ngModel]="selectedUnitId()" (ngModelChange)="selectedUnitId.set($event)"
+            <select id="channelUnitSelector" name="channelUnitSelector" [ngModel]="selectedUnitId()"
+               (ngModelChange)="selectedUnitId.set($event)"
                class="bg-white/20 border-none text-white text-sm rounded cursor-pointer focus:ring-0 font-medium">
                @for (group of portfolio(); track group.id) {
                <optgroup [label]="group.name" class="text-black">
@@ -156,13 +157,13 @@
             @if (modalType() === 'book') {
             <div class="space-y-1.5 animate-fade-in">
                <label class="text-xs font-bold text-gray-500 uppercase">Guest Name</label>
-               <input type="text" [(ngModel)]="newEventData().guestName"
+               <input type="text" id="simGuestName" name="simGuestName" [(ngModel)]="newEventData().guestName"
                   class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary"
                   placeholder="John Doe">
             </div>
             <div class="space-y-1.5 animate-fade-in">
                <label class="text-xs font-bold text-gray-500 uppercase">Payout Price</label>
-               <input type="number" [(ngModel)]="newEventData().price"
+               <input type="number" id="simPayoutPrice" name="simPayoutPrice" [(ngModel)]="newEventData().price"
                   class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary">
             </div>
             }
@@ -170,12 +171,12 @@
             <div class="grid grid-cols-2 gap-4">
                <div class="space-y-1.5">
                   <label class="text-xs font-bold text-gray-500 uppercase">Start</label>
-                  <input type="date" [(ngModel)]="newEventData().startDate"
+                  <input type="date" id="simStartDate" name="simStartDate" [(ngModel)]="newEventData().startDate"
                      class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white">
                </div>
                <div class="space-y-1.5">
                   <label class="text-xs font-bold text-gray-500 uppercase">End</label>
-                  <input type="date" [(ngModel)]="newEventData().endDate"
+                  <input type="date" id="simEndDate" name="simEndDate" [(ngModel)]="newEventData().endDate"
                      class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white">
                </div>
             </div>
@@ -216,7 +217,7 @@
             <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">
                Paste `.ics` content below or generate random data to simulate an external calendar sync.
             </p>
-            <textarea [(ngModel)]="icalContent"
+            <textarea id="icalContent" name="icalContent" [(ngModel)]="icalContent"
                class="flex-1 w-full bg-gray-900 text-green-400 font-mono text-xs p-4 rounded-lg border border-gray-700 resize-none focus:ring-1 focus:ring-primary mb-4"
                placeholder="BEGIN:VCALENDAR..."></textarea>
 

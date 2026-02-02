@@ -1,258 +1,224 @@
 <div class="flex flex-col h-[calc(100vh-8rem)] animate-fade-in-up">
-  
+
   <!-- Header / Switcher -->
   <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-6">
     <div>
       <h1 class="text-3xl font-extrabold text-[#111418] dark:text-white tracking-tight">Chat Simulator</h1>
       <p class="text-gray-500 dark:text-gray-400 mt-1">Simulate AI Bot interactions with Clients and Staff.</p>
     </div>
-    
+
     <!-- Platform Switcher (Only visible in Clients mode) -->
     @if (chatMode() === 'clients') {
-      <div class="flex bg-white dark:bg-[#1c2936] p-1 rounded-xl border border-gray-200 dark:border-[#324d67] shadow-sm">
-        <button 
-          (click)="setPlatform('whatsapp')"
-          class="flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-bold transition-all relative overflow-hidden"
-          [class.text-white]="activePlatform() === 'whatsapp'"
-          [class.text-gray-500]="activePlatform() !== 'whatsapp'"
-          [class.dark:text-gray-400]="activePlatform() !== 'whatsapp'"
-        >
-          @if (activePlatform() === 'whatsapp') {
-            <div class="absolute inset-0 bg-[#25D366]"></div>
-          }
-          <span class="relative z-10 flex items-center gap-2">
-              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-            WhatsApp
-        </span>
-      </button>
-      <button 
-        (click)="setPlatform('telegram')"
+    <div class="flex bg-white dark:bg-[#1c2936] p-1 rounded-xl border border-gray-200 dark:border-[#324d67] shadow-sm">
+      <button (click)="setPlatform('whatsapp')"
         class="flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-bold transition-all relative overflow-hidden"
-        [class.text-white]="activePlatform() === 'telegram'"
-        [class.text-gray-500]="activePlatform() !== 'telegram'"
-        [class.dark:text-gray-400]="activePlatform() !== 'telegram'"
-      >
-        @if (activePlatform() === 'telegram') {
-          <div class="absolute inset-0 bg-[#0088cc]"></div>
+        [class.text-white]="activePlatform() === 'whatsapp'" [class.text-gray-500]="activePlatform() !== 'whatsapp'"
+        [class.dark:text-gray-400]="activePlatform() !== 'whatsapp'">
+        @if (activePlatform() === 'whatsapp') {
+        <div class="absolute inset-0 bg-[#25D366]"></div>
         }
         <span class="relative z-10 flex items-center gap-2">
-            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 11.944 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
-            Telegram
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+            <path
+              d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+          </svg>
+          WhatsApp
         </span>
       </button>
-      </div>
+      <button (click)="setPlatform('telegram')"
+        class="flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-bold transition-all relative overflow-hidden"
+        [class.text-white]="activePlatform() === 'telegram'" [class.text-gray-500]="activePlatform() !== 'telegram'"
+        [class.dark:text-gray-400]="activePlatform() !== 'telegram'">
+        @if (activePlatform() === 'telegram') {
+        <div class="absolute inset-0 bg-[#0088cc]"></div>
+        }
+        <span class="relative z-10 flex items-center gap-2">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+            <path
+              d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 11.944 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" />
+          </svg>
+          Telegram
+        </span>
+      </button>
+    </div>
     }
   </div>
 
   <!-- Main Chat Container -->
-  <div class="flex-1 flex rounded-2xl border border-gray-200 dark:border-[#324d67] overflow-hidden bg-white dark:bg-[#1c2936] shadow-xl">
-    
+  <div
+    class="flex-1 flex rounded-2xl border border-gray-200 dark:border-[#324d67] overflow-hidden bg-white dark:bg-[#1c2936] shadow-xl">
+
     <!-- Sidebar (Contacts) -->
     <div class="w-80 flex flex-col border-r border-gray-200 dark:border-[#324d67]">
-      
+
       <!-- List Switcher -->
       <div class="flex border-b border-gray-200 dark:border-[#324d67] bg-white dark:bg-[#1c2936]">
-          <button 
-             class="flex-1 py-3 text-sm font-bold transition-colors"
-             [class.text-primary]="chatMode() === 'clients'"
-             [class.border-b-2]="chatMode() === 'clients'"
-             [class.border-primary]="chatMode() === 'clients'"
-             [class.text-gray-500]="chatMode() !== 'clients'"
-             (click)="setChatMode('clients')"
-          >
-             Clients
-          </button>
-          <button 
-             class="flex-1 py-3 text-sm font-bold transition-colors"
-             [class.text-primary]="chatMode() === 'staff'"
-             [class.border-b-2]="chatMode() === 'staff'"
-             [class.border-primary]="chatMode() === 'staff'"
-             [class.text-gray-500]="chatMode() !== 'staff'"
-             (click)="setChatMode('staff')"
-          >
-             Staff
-          </button>
+        <button class="flex-1 py-3 text-sm font-bold transition-colors" [class.text-primary]="chatMode() === 'clients'"
+          [class.border-b-2]="chatMode() === 'clients'" [class.border-primary]="chatMode() === 'clients'"
+          [class.text-gray-500]="chatMode() !== 'clients'" (click)="setChatMode('clients')">
+          Clients
+        </button>
+        <button class="flex-1 py-3 text-sm font-bold transition-colors" [class.text-primary]="chatMode() === 'staff'"
+          [class.border-b-2]="chatMode() === 'staff'" [class.border-primary]="chatMode() === 'staff'"
+          [class.text-gray-500]="chatMode() !== 'staff'" (click)="setChatMode('staff')">
+          Staff
+        </button>
       </div>
 
       <div class="p-4 border-b border-gray-200 dark:border-[#324d67] bg-gray-50 dark:bg-[#18232e] flex gap-2">
-        <input 
-          type="text" 
-          placeholder="Search..." 
-          class="flex-1 bg-white dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-lg px-4 py-2 text-sm focus:ring-1 focus:ring-primary"
-        >
+        <input type="text" id="contactSearch" name="contactSearch" placeholder="Search..."
+          class="flex-1 bg-white dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-lg px-4 py-2 text-sm focus:ring-1 focus:ring-primary">
         @if (chatMode() === 'clients') {
-            <button 
-              (click)="openSimulateModal()" 
-              class="w-10 h-10 flex items-center justify-center bg-primary text-white rounded-lg hover:bg-blue-600 transition-colors shadow-sm"
-              title="Simulate Incoming Message"
-            >
-              <span class="material-symbols-outlined">add_comment</span>
-            </button>
+        <button (click)="openSimulateModal()"
+          class="w-10 h-10 flex items-center justify-center bg-primary text-white rounded-lg hover:bg-blue-600 transition-colors shadow-sm"
+          title="Simulate Incoming Message">
+          <span class="material-symbols-outlined">add_comment</span>
+        </button>
         }
       </div>
-      
+
       <div class="flex-1 overflow-y-auto">
         @for (item of currentList(); track item.id) {
-          <div 
-            (click)="selectContact(item.id)"
-            class="flex items-center gap-3 p-4 cursor-pointer transition-colors hover:bg-gray-50 dark:hover:bg-[#253545]"
-            [class.bg-blue-50]="activeId() === item.id && activePlatform() === 'telegram' && chatMode() === 'clients'"
-            [class.dark:bg-blue-900/10]="activeId() === item.id && activePlatform() === 'telegram' && chatMode() === 'clients'"
-            [class.bg-green-50]="activeId() === item.id && activePlatform() === 'whatsapp' && chatMode() === 'clients'"
-            [class.dark:bg-green-900/10]="activeId() === item.id && activePlatform() === 'whatsapp' && chatMode() === 'clients'"
-            [class.bg-gray-100]="activeId() === item.id && chatMode() === 'staff'"
-            [class.dark:bg-[#253545]]="activeId() === item.id && chatMode() === 'staff'"
-          >
-            <div class="relative">
-              <img [src]="item.avatar" class="w-12 h-12 rounded-full object-cover">
-              @if (item.online) {
-                <span class="absolute bottom-0 right-0 w-3 h-3 border-2 border-white dark:border-[#1c2936] bg-green-500 rounded-full"></span>
+        <div (click)="selectContact(item.id)"
+          class="flex items-center gap-3 p-4 cursor-pointer transition-colors hover:bg-gray-50 dark:hover:bg-[#253545]"
+          [class.bg-blue-50]="activeId() === item.id && activePlatform() === 'telegram' && chatMode() === 'clients'"
+          [class.dark:bg-blue-900/10]="activeId() === item.id && activePlatform() === 'telegram' && chatMode() === 'clients'"
+          [class.bg-green-50]="activeId() === item.id && activePlatform() === 'whatsapp' && chatMode() === 'clients'"
+          [class.dark:bg-green-900/10]="activeId() === item.id && activePlatform() === 'whatsapp' && chatMode() === 'clients'"
+          [class.bg-gray-100]="activeId() === item.id && chatMode() === 'staff'"
+          [class.dark:bg-[#253545]]="activeId() === item.id && chatMode() === 'staff'">
+          <div class="relative">
+            <img [src]="item.avatar" class="w-12 h-12 rounded-full object-cover">
+            @if (item.online) {
+            <span
+              class="absolute bottom-0 right-0 w-3 h-3 border-2 border-white dark:border-[#1c2936] bg-green-500 rounded-full"></span>
+            }
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex justify-between items-baseline mb-0.5">
+              <h3 class="font-bold text-[#111418] dark:text-white truncate">{{ item.name }}</h3>
+              <span class="text-[10px] flex-shrink-0"
+                [class.text-green-600]="item.unread > 0 && activePlatform() === 'whatsapp' && chatMode() === 'clients'"
+                [class.text-blue-500]="item.unread > 0 && activePlatform() === 'telegram' && chatMode() === 'clients'"
+                [class.text-gray-400]="item.unread === 0">
+                {{ item.lastTime }}
+              </span>
+            </div>
+            <div class="flex justify-between items-center">
+              <p class="text-xs text-gray-500 dark:text-gray-400 truncate">{{ item.lastMessage }}</p>
+              @if (item.unread > 0) {
+              <span class="text-[10px] text-white font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center"
+                [class.bg-[#25D366]]="activePlatform() === 'whatsapp' && chatMode() === 'clients'"
+                [class.bg-[#0088cc]]="activePlatform() === 'telegram' && chatMode() === 'clients'"
+                [class.bg-gray-500]="chatMode() === 'staff'">
+                {{ item.unread }}
+              </span>
               }
             </div>
-            <div class="flex-1 min-w-0">
-              <div class="flex justify-between items-baseline mb-0.5">
-                <h3 class="font-bold text-[#111418] dark:text-white truncate">{{ item.name }}</h3>
-                <span 
-                  class="text-[10px] flex-shrink-0"
-                  [class.text-green-600]="item.unread > 0 && activePlatform() === 'whatsapp' && chatMode() === 'clients'"
-                  [class.text-blue-500]="item.unread > 0 && activePlatform() === 'telegram' && chatMode() === 'clients'"
-                  [class.text-gray-400]="item.unread === 0"
-                >
-                  {{ item.lastTime }}
-                </span>
-              </div>
-              <div class="flex justify-between items-center">
-                <p class="text-xs text-gray-500 dark:text-gray-400 truncate">{{ item.lastMessage }}</p>
-                @if (item.unread > 0) {
-                  <span 
-                    class="text-[10px] text-white font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center"
-                    [class.bg-[#25D366]]="activePlatform() === 'whatsapp' && chatMode() === 'clients'"
-                    [class.bg-[#0088cc]]="activePlatform() === 'telegram' && chatMode() === 'clients'"
-                    [class.bg-gray-500]="chatMode() === 'staff'"
-                  >
-                    {{ item.unread }}
-                  </span>
-                }
-              </div>
-            </div>
           </div>
+        </div>
         }
       </div>
     </div>
 
     <!-- Chat Area -->
-    <div class="flex-1 flex flex-col min-w-0 bg-[#e5ddd5] dark:bg-[#0b141a] relative" 
-         [class.bg-wa]="activePlatform() === 'whatsapp' && chatMode() === 'clients'"
-         [class.bg-tg]="activePlatform() === 'telegram' && chatMode() === 'clients'"
-         [class.bg-staff]="chatMode() === 'staff'">
-      
+    <div class="flex-1 flex flex-col min-w-0 bg-[#e5ddd5] dark:bg-[#0b141a] relative"
+      [class.bg-wa]="activePlatform() === 'whatsapp' && chatMode() === 'clients'"
+      [class.bg-tg]="activePlatform() === 'telegram' && chatMode() === 'clients'"
+      [class.bg-staff]="chatMode() === 'staff'">
+
       <!-- WA Background Pattern Overlay (CSS simulated) -->
-      <div *ngIf="activePlatform() === 'whatsapp' && chatMode() === 'clients'" class="absolute inset-0 opacity-[0.06] dark:opacity-[0.03] pointer-events-none" style="background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');"></div>
-      
+      <div *ngIf="activePlatform() === 'whatsapp' && chatMode() === 'clients'"
+        class="absolute inset-0 opacity-[0.06] dark:opacity-[0.03] pointer-events-none"
+        style="background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');">
+      </div>
+
       <!-- Top Bar -->
-      <div class="h-16 bg-gray-50 dark:bg-[#18232e] border-b border-gray-200 dark:border-[#324d67] flex items-center justify-between px-6 z-10">
+      <div
+        class="h-16 bg-gray-50 dark:bg-[#18232e] border-b border-gray-200 dark:border-[#324d67] flex items-center justify-between px-6 z-10">
         @if (activeContact(); as contact) {
-          <div class="flex items-center gap-3">
-            <img [src]="contact.avatar" class="w-10 h-10 rounded-full object-cover">
-            <div>
-              <h3 class="font-bold text-[#111418] dark:text-white text-sm">{{ contact.name }}</h3>
-              <p class="text-xs text-gray-500">
-                @if (isTyping()) {
-                  <span class="text-primary font-bold animate-pulse">typing...</span>
-                } @else if (contact.online) {
-                  online
-                } @else {
-                  last seen recently
-                }
-              </p>
-            </div>
+        <div class="flex items-center gap-3">
+          <img [src]="contact.avatar" class="w-10 h-10 rounded-full object-cover">
+          <div>
+            <h3 class="font-bold text-[#111418] dark:text-white text-sm">{{ contact.name }}</h3>
+            <p class="text-xs text-gray-500">
+              @if (isTyping()) {
+              <span class="text-primary font-bold animate-pulse">typing...</span>
+              } @else if (contact.online) {
+              online
+              } @else {
+              last seen recently
+              }
+            </p>
           </div>
-          <div class="flex gap-4 text-gray-400">
-            <span class="material-symbols-outlined cursor-pointer hover:text-gray-600">search</span>
-            <span class="material-symbols-outlined cursor-pointer hover:text-gray-600">more_vert</span>
-          </div>
+        </div>
+        <div class="flex gap-4 text-gray-400">
+          <span class="material-symbols-outlined cursor-pointer hover:text-gray-600">search</span>
+          <span class="material-symbols-outlined cursor-pointer hover:text-gray-600">more_vert</span>
+        </div>
         }
       </div>
 
       <!-- Messages List -->
       <div #scrollContainer class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-2 z-10">
         @for (msg of activeMessages(); track msg.id) {
-          @let isMe = msg.sender === 'bot' || msg.sender === 'agent';
-          <div 
-            class="flex w-full"
-            [class.justify-end]="isMe"
-            [class.justify-start]="!isMe"
-          >
-            <div 
-              class="max-w-[80%] sm:max-w-[60%] rounded-lg px-3 py-1.5 shadow-sm text-sm relative group"
-              
-              [class.bg-[#d9fdd3]]="isMe && activePlatform() === 'whatsapp' && chatMode() === 'clients'"
-              [class.dark:bg-[#005c4b]]="isMe && activePlatform() === 'whatsapp' && chatMode() === 'clients'"
-              [class.bg-white]="!isMe && activePlatform() === 'whatsapp' && chatMode() === 'clients'"
-              [class.dark:bg-[#1f2c34]]="!isMe && activePlatform() === 'whatsapp' && chatMode() === 'clients'"
-              
-              [class.bg-[#effdde]]="isMe && activePlatform() === 'telegram' && chatMode() === 'clients'"
-              [class.dark:bg-[#2b5278]]="isMe && activePlatform() === 'telegram' && chatMode() === 'clients'"
-              [class.bg-white]="!isMe && activePlatform() === 'telegram' && chatMode() === 'clients'"
-              [class.dark:bg-[#182533]]="!isMe && activePlatform() === 'telegram' && chatMode() === 'clients'"
-              
-              [class.bg-blue-100]="isMe && chatMode() === 'staff'"
-              [class.dark:bg-blue-900/30]="isMe && chatMode() === 'staff'"
-              [class.bg-white]="!isMe && chatMode() === 'staff'"
-              [class.dark:bg-[#253545]]="!isMe && chatMode() === 'staff'"
-            >
-              @if(isMe && chatMode() === 'clients') {
-                 <div class="text-[10px] font-bold mb-0.5 text-blue-500 flex items-center gap-1">
-                    <span class="material-symbols-outlined text-[10px]">smart_toy</span>
-                    Bot
-                 </div>
-              }
+        @let isMe = msg.sender === 'bot' || msg.sender === 'agent';
+        <div class="flex w-full" [class.justify-end]="isMe" [class.justify-start]="!isMe">
+          <div class="max-w-[80%] sm:max-w-[60%] rounded-lg px-3 py-1.5 shadow-sm text-sm relative group"
+            [class.bg-[#d9fdd3]]="isMe && activePlatform() === 'whatsapp' && chatMode() === 'clients'"
+            [class.dark:bg-[#005c4b]]="isMe && activePlatform() === 'whatsapp' && chatMode() === 'clients'"
+            [class.bg-white]="!isMe && activePlatform() === 'whatsapp' && chatMode() === 'clients'"
+            [class.dark:bg-[#1f2c34]]="!isMe && activePlatform() === 'whatsapp' && chatMode() === 'clients'"
+            [class.bg-[#effdde]]="isMe && activePlatform() === 'telegram' && chatMode() === 'clients'"
+            [class.dark:bg-[#2b5278]]="isMe && activePlatform() === 'telegram' && chatMode() === 'clients'"
+            [class.bg-white]="!isMe && activePlatform() === 'telegram' && chatMode() === 'clients'"
+            [class.dark:bg-[#182533]]="!isMe && activePlatform() === 'telegram' && chatMode() === 'clients'"
+            [class.bg-blue-100]="isMe && chatMode() === 'staff'"
+            [class.dark:bg-blue-900/30]="isMe && chatMode() === 'staff'"
+            [class.bg-white]="!isMe && chatMode() === 'staff'"
+            [class.dark:bg-[#253545]]="!isMe && chatMode() === 'staff'">
+            @if(isMe && chatMode() === 'clients') {
+            <div class="text-[10px] font-bold mb-0.5 text-blue-500 flex items-center gap-1">
+              <span class="material-symbols-outlined text-[10px]">smart_toy</span>
+              Bot
+            </div>
+            }
 
-              <p class="text-[#111418] dark:text-white leading-relaxed whitespace-pre-wrap">{{ msg.text }}</p>
-              
-              <div class="flex items-center justify-end gap-1 mt-0.5 select-none">
-                <span class="text-[10px] text-gray-500 dark:text-gray-400">{{ formatTime(msg.timestamp) }}</span>
-                @if (isMe) {
-                  <span 
-                    class="material-symbols-outlined text-[14px]"
-                    [class.text-[#53bdeb]]="msg.status === 'read'"
-                    [class.text-gray-400]="msg.status !== 'read'"
-                  >
-                    done_all
-                  </span>
-                }
-              </div>
+            <p class="text-[#111418] dark:text-white leading-relaxed whitespace-pre-wrap">{{ msg.text }}</p>
+
+            <div class="flex items-center justify-end gap-1 mt-0.5 select-none">
+              <span class="text-[10px] text-gray-500 dark:text-gray-400">{{ formatTime(msg.timestamp) }}</span>
+              @if (isMe) {
+              <span class="material-symbols-outlined text-[14px]" [class.text-[#53bdeb]]="msg.status === 'read'"
+                [class.text-gray-400]="msg.status !== 'read'">
+                done_all
+              </span>
+              }
             </div>
           </div>
+        </div>
         }
       </div>
 
       <!-- Input Area -->
-      <div class="bg-gray-50 dark:bg-[#18232e] p-3 border-t border-gray-200 dark:border-[#324d67] flex items-center gap-3 z-10">
+      <div
+        class="bg-gray-50 dark:bg-[#18232e] p-3 border-t border-gray-200 dark:border-[#324d67] flex items-center gap-3 z-10">
         <button class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
           <span class="material-symbols-outlined">sentiment_satisfied</span>
         </button>
         <button class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
           <span class="material-symbols-outlined">attach_file</span>
         </button>
-        
-        <input 
-          type="text" 
-          [(ngModel)]="userInput" 
-          (keyup.enter)="sendMessage()"
-          placeholder="Type a message (Send as Bot)..." 
-          class="flex-1 bg-white dark:bg-[#111a22] border-none rounded-lg py-2.5 px-4 focus:ring-0 text-sm shadow-sm"
-        >
-        
-        <button 
-          (click)="sendMessage()"
+
+        <input type="text" id="chatUserInput" name="chatUserInput" [(ngModel)]="userInput" (keyup.enter)="sendMessage()"
+          placeholder="Type a message (Send as Bot)..."
+          class="flex-1 bg-white dark:bg-[#111a22] border-none rounded-lg py-2.5 px-4 focus:ring-0 text-sm shadow-sm">
+
+        <button (click)="sendMessage()"
           class="p-2.5 rounded-full flex items-center justify-center transition-colors shadow-sm"
-          [class.text-white]="true"
-          [class.bg-[#005c4b]]="activePlatform() === 'whatsapp' && chatMode() === 'clients'"
+          [class.text-white]="true" [class.bg-[#005c4b]]="activePlatform() === 'whatsapp' && chatMode() === 'clients'"
           [class.bg-[#0088cc]]="activePlatform() === 'telegram' && chatMode() === 'clients'"
-          [class.bg-gray-600]="chatMode() === 'staff'"
-          [class.hover:opacity-90]="true"
-        >
+          [class.bg-gray-600]="chatMode() === 'staff'" [class.hover:opacity-90]="true">
           <span class="material-symbols-outlined">send</span>
         </button>
       </div>
@@ -262,86 +228,69 @@
 
   <!-- Simulation Modal -->
   @if (isSimulateModalOpen()) {
-    <div class="absolute inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in fixed">
-      <div class="bg-white dark:bg-[#1c2936] w-full max-w-sm rounded-xl shadow-2xl border border-gray-200 dark:border-[#324d67] overflow-hidden flex flex-col">
-        <div class="px-6 py-4 border-b border-gray-200 dark:border-[#324d67] flex items-center justify-between">
-          <h3 class="text-lg font-bold text-[#111418] dark:text-white">Simulate Incoming Message</h3>
-          <button (click)="isSimulateModalOpen.set(false)" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
-            <span class="material-symbols-outlined">close</span>
+  <div
+    class="absolute inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in fixed">
+    <div
+      class="bg-white dark:bg-[#1c2936] w-full max-w-sm rounded-xl shadow-2xl border border-gray-200 dark:border-[#324d67] overflow-hidden flex flex-col">
+      <div class="px-6 py-4 border-b border-gray-200 dark:border-[#324d67] flex items-center justify-between">
+        <h3 class="text-lg font-bold text-[#111418] dark:text-white">Simulate Incoming Message</h3>
+        <button (click)="isSimulateModalOpen.set(false)"
+          class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <div class="p-6 space-y-4">
+        <!-- Platform Selector -->
+        <div class="flex p-1 bg-gray-100 dark:bg-[#111a22] rounded-lg">
+          <button
+            class="flex-1 py-1.5 text-sm font-bold rounded-md transition-all flex items-center justify-center gap-2"
+            [class.bg-white]="simPlatform() === 'whatsapp'" [class.text-[#25D366]]="simPlatform() === 'whatsapp'"
+            [class.shadow-sm]="simPlatform() === 'whatsapp'" [class.dark:bg-[#253545]]="simPlatform() === 'whatsapp'"
+            [class.text-gray-500]="simPlatform() !== 'whatsapp'" (click)="simPlatform.set('whatsapp')">
+            <i class="fa fa-whatsapp"></i> WhatsApp
+          </button>
+          <button
+            class="flex-1 py-1.5 text-sm font-bold rounded-md transition-all flex items-center justify-center gap-2"
+            [class.bg-white]="simPlatform() === 'telegram'" [class.text-[#0088cc]]="simPlatform() === 'telegram'"
+            [class.shadow-sm]="simPlatform() === 'telegram'" [class.dark:bg-[#253545]]="simPlatform() === 'telegram'"
+            [class.text-gray-500]="simPlatform() !== 'telegram'" (click)="simPlatform.set('telegram')">
+            <i class="fa fa-telegram"></i> Telegram
           </button>
         </div>
-        
-        <div class="p-6 space-y-4">
-          <!-- Platform Selector -->
-          <div class="flex p-1 bg-gray-100 dark:bg-[#111a22] rounded-lg">
-             <button 
-                class="flex-1 py-1.5 text-sm font-bold rounded-md transition-all flex items-center justify-center gap-2"
-                [class.bg-white]="simPlatform() === 'whatsapp'"
-                [class.text-[#25D366]]="simPlatform() === 'whatsapp'"
-                [class.shadow-sm]="simPlatform() === 'whatsapp'"
-                [class.dark:bg-[#253545]]="simPlatform() === 'whatsapp'"
-                [class.text-gray-500]="simPlatform() !== 'whatsapp'"
-                (click)="simPlatform.set('whatsapp')"
-             >
-                <i class="fa fa-whatsapp"></i> WhatsApp
-             </button>
-             <button 
-                class="flex-1 py-1.5 text-sm font-bold rounded-md transition-all flex items-center justify-center gap-2"
-                [class.bg-white]="simPlatform() === 'telegram'"
-                [class.text-[#0088cc]]="simPlatform() === 'telegram'"
-                [class.shadow-sm]="simPlatform() === 'telegram'"
-                [class.dark:bg-[#253545]]="simPlatform() === 'telegram'"
-                [class.text-gray-500]="simPlatform() !== 'telegram'"
-                (click)="simPlatform.set('telegram')"
-             >
-                <i class="fa fa-telegram"></i> Telegram
-             </button>
-          </div>
 
-          <div class="space-y-1.5">
-             <label class="text-xs font-bold text-gray-500 uppercase">Phone Number</label>
-             <input 
-                type="text" 
-                [ngModel]="simPhone()"
-                (ngModelChange)="simPhone.set($event)"
-                class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary"
-                placeholder="+1 234 567 8900"
-                autofocus
-             >
-          </div>
-
-          <div class="space-y-1.5">
-             <label class="text-xs font-bold text-gray-500 uppercase">User Name (Optional)</label>
-             <input 
-                type="text" 
-                [ngModel]="simName()"
-                (ngModelChange)="simName.set($event)"
-                class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary"
-                placeholder="Unknown User"
-             >
-          </div>
-
-          <div class="space-y-1.5">
-             <label class="text-xs font-bold text-gray-500 uppercase">Incoming Message</label>
-             <textarea 
-                [ngModel]="simMessage()"
-                (ngModelChange)="simMessage.set($event)"
-                rows="3"
-                class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary resize-none"
-             ></textarea>
-          </div>
+        <div class="space-y-1.5">
+          <label class="text-xs font-bold text-gray-500 uppercase">Phone Number</label>
+          <input type="text" id="simPhone" name="simPhone" [ngModel]="simPhone()" (ngModelChange)="simPhone.set($event)"
+            class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary"
+            placeholder="+1 234 567 8900" autofocus>
         </div>
 
-        <div class="px-6 py-4 bg-gray-50 dark:bg-[#111a22] border-t border-gray-200 dark:border-[#324d67] flex justify-end gap-3">
-           <button (click)="isSimulateModalOpen.set(false)" class="px-4 py-2 text-sm font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#253545] rounded-lg">Cancel</button>
-           <button 
-             (click)="submitSimulation()" 
-             [disabled]="!simPhone() || !simMessage()"
-             class="px-4 py-2 text-sm font-bold text-white bg-primary hover:bg-blue-600 rounded-lg shadow-lg shadow-primary/25 disabled:opacity-50 disabled:cursor-not-allowed"
-           >Receive Message</button>
+        <div class="space-y-1.5">
+          <label class="text-xs font-bold text-gray-500 uppercase">User Name (Optional)</label>
+          <input type="text" id="simName" name="simName" [ngModel]="simName()" (ngModelChange)="simName.set($event)"
+            class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary"
+            placeholder="Unknown User">
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="text-xs font-bold text-gray-500 uppercase">Incoming Message</label>
+          <textarea id="simMessage" name="simMessage" [ngModel]="simMessage()" (ngModelChange)="simMessage.set($event)"
+            rows="3"
+            class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary resize-none"></textarea>
         </div>
       </div>
+
+      <div
+        class="px-6 py-4 bg-gray-50 dark:bg-[#111a22] border-t border-gray-200 dark:border-[#324d67] flex justify-end gap-3">
+        <button (click)="isSimulateModalOpen.set(false)"
+          class="px-4 py-2 text-sm font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#253545] rounded-lg">Cancel</button>
+        <button (click)="submitSimulation()" [disabled]="!simPhone() || !simMessage()"
+          class="px-4 py-2 text-sm font-bold text-white bg-primary hover:bg-blue-600 rounded-lg shadow-lg shadow-primary/25 disabled:opacity-50 disabled:cursor-not-allowed">Receive
+          Message</button>
+      </div>
     </div>
+  </div>
   }
 
 </div>
@@ -349,14 +298,17 @@
 <!-- Styles for TG Background (Solid Color usually) -->
 <style>
   .bg-tg {
-    background-color: #87a3b3; 
+    background-color: #87a3b3;
   }
+
   .dark .bg-tg {
     background-color: #0f161e;
   }
+
   .bg-staff {
     background-color: #f0f2f5;
   }
+
   .dark .bg-staff {
     background-color: #0b141a;
   }

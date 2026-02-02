@@ -165,7 +165,7 @@
             @if (activeView() === 'sql') {
             <div class="flex-1 flex flex-col bg-[#141414]">
                 <div class="h-1/2 border-b border-[#333] flex flex-col">
-                    <textarea [(ngModel)]="sqlQuery"
+                    <textarea id="sqlQueryEditor" name="sqlQueryEditor" [(ngModel)]="sqlQuery"
                         class="flex-1 bg-[#141414] text-[#3178c6] p-4 focus:outline-none resize-none font-mono text-sm leading-relaxed border-none focus:ring-0"
                         placeholder="Enter SQL query..." spellcheck="false"></textarea>
                     <div class="px-4 py-2 bg-[#111] flex justify-end border-t border-[#333]">
@@ -264,7 +264,8 @@
                 <span class="absolute inset-y-0 left-0 flex items-center pl-2">
                     <span class="material-symbols-outlined text-gray-500 text-[16px]">search</span>
                 </span>
-                <input type="text" [(ngModel)]="searchUserQuery" placeholder="Search by email or phone"
+                <input type="text" id="userSearchBar" name="userSearchBar" [(ngModel)]="searchUserQuery"
+                    placeholder="Search by email or phone"
                     class="bg-[#111] border border-[#333] rounded px-2 py-1 pl-8 text-xs text-white w-64 focus:ring-1 focus:ring-[#3178c6]">
             </div>
             <button (click)="inviteUser()"

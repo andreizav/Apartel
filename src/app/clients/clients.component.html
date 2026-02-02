@@ -23,7 +23,8 @@
             <span class="absolute inset-y-0 left-0 flex items-center pl-3">
                <span class="material-symbols-outlined text-[18px] text-gray-400">search</span>
             </span>
-            <input type="text" [ngModel]="searchQuery()" (ngModelChange)="searchQuery.set($event)"
+            <input type="text" id="clientSearch" name="clientSearch" [ngModel]="searchQuery()"
+               (ngModelChange)="searchQuery.set($event)"
                class="block w-full pl-9 pr-3 py-2 rounded-lg border-gray-200 dark:border-[#324d67] bg-gray-50 dark:bg-[#111a22] text-sm text-[#111418] dark:text-white placeholder-gray-500 focus:ring-primary focus:border-primary transition-colors"
                placeholder="Search phone or name...">
          </div>
@@ -124,7 +125,8 @@
             </div>
          </div>
          <div class="flex gap-2 items-center">
-            <input #fileInput type="file" (change)="handleImport($event)" accept=".txt, .csv" class="hidden">
+            <input #fileInput type="file" id="chatImportInput" name="chatImportInput" (change)="handleImport($event)"
+               accept=".txt, .csv" class="hidden">
             <button (click)="fileInput.click()"
                class="p-2 text-gray-500 hover:text-primary hover:bg-gray-100 dark:hover:bg-[#253545] rounded-full transition-colors"
                title="Import Chat File">
@@ -287,7 +289,7 @@
                title="Attach File">
                <span class="material-symbols-outlined text-[20px] block">attach_file</span>
             </button>
-            <textarea [ngModel]="replyText()" (ngModelChange)="replyText.set($event)"
+            <textarea id="replyText" name="replyText" [ngModel]="replyText()" (ngModelChange)="replyText.set($event)"
                (keydown.enter)="$event.preventDefault(); sendReply()" rows="1"
                class="flex-1 bg-transparent border-none focus:ring-0 text-sm p-2 text-[#111418] dark:text-white placeholder-gray-500 resize-none max-h-32"
                placeholder="Type a message..."></textarea>
@@ -335,13 +337,14 @@
             <div class="grid grid-cols-2 gap-4">
                <div class="space-y-1.5">
                   <label class="text-xs font-bold text-gray-500 uppercase">Name</label>
-                  <input type="text" [ngModel]="currentClient().name" (ngModelChange)="currentClient().name = $event"
+                  <input type="text" id="clientName" name="clientName" [ngModel]="currentClient().name"
+                     (ngModelChange)="currentClient().name = $event"
                      class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary"
                      placeholder="Full Name">
                </div>
                <div class="space-y-1.5">
                   <label class="text-xs font-bold text-gray-500 uppercase">Phone Number</label>
-                  <input type="text" [ngModel]="currentClient().phoneNumber"
+                  <input type="text" id="clientPhone" name="clientPhone" [ngModel]="currentClient().phoneNumber"
                      (ngModelChange)="currentClient().phoneNumber = $event"
                      class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary"
                      placeholder="+1 234 567 890">
@@ -350,7 +353,8 @@
 
             <div class="space-y-1.5">
                <label class="text-xs font-bold text-gray-500 uppercase">Email</label>
-               <input type="email" [ngModel]="currentClient().email" (ngModelChange)="currentClient().email = $event"
+               <input type="email" id="clientEmail" name="clientEmail" [ngModel]="currentClient().email"
+                  (ngModelChange)="currentClient().email = $event"
                   class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary"
                   placeholder="name@example.com">
             </div>
@@ -358,14 +362,15 @@
             <div class="grid grid-cols-2 gap-4">
                <div class="space-y-1.5">
                   <label class="text-xs font-bold text-gray-500 uppercase">Country</label>
-                  <input type="text" [ngModel]="currentClient().country"
+                  <input type="text" id="clientCountry" name="clientCountry" [ngModel]="currentClient().country"
                      (ngModelChange)="currentClient().country = $event"
                      class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary"
                      placeholder="USA">
                </div>
                <div class="space-y-1.5">
                   <label class="text-xs font-bold text-gray-500 uppercase">Platform</label>
-                  <select [ngModel]="currentClient().platform" (ngModelChange)="currentClient().platform = $event"
+                  <select id="clientPlatform" name="clientPlatform" [ngModel]="currentClient().platform"
+                     (ngModelChange)="currentClient().platform = $event"
                      class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary">
                      <option value="whatsapp">WhatsApp</option>
                      <option value="telegram">Telegram</option>
@@ -375,7 +380,8 @@
 
             <div class="space-y-1.5">
                <label class="text-xs font-bold text-gray-500 uppercase">Address</label>
-               <input type="text" [ngModel]="currentClient().address" (ngModelChange)="currentClient().address = $event"
+               <input type="text" id="clientAddress" name="clientAddress" [ngModel]="currentClient().address"
+                  (ngModelChange)="currentClient().address = $event"
                   class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary"
                   placeholder="123 Main St">
             </div>
@@ -383,7 +389,8 @@
             <div class="grid grid-cols-2 gap-4">
                <div class="space-y-1.5">
                   <label class="text-xs font-bold text-gray-500 uppercase">Status</label>
-                  <select [ngModel]="currentClient().status" (ngModelChange)="currentClient().status = $event"
+                  <select id="clientStatus" name="clientStatus" [ngModel]="currentClient().status"
+                     (ngModelChange)="currentClient().status = $event"
                      class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary">
                      <option value="New">New</option>
                      <option value="Replied">Replied</option>
@@ -392,7 +399,8 @@
                </div>
                <div class="space-y-1.5">
                   <label class="text-xs font-bold text-gray-500 uppercase">Bookings</label>
-                  <input type="number" [ngModel]="currentClient().previousBookings"
+                  <input type="number" id="clientBookings" name="clientBookings"
+                     [ngModel]="currentClient().previousBookings"
                      (ngModelChange)="currentClient().previousBookings = $event"
                      class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary">
                </div>
@@ -442,7 +450,8 @@
             <!-- Unit Selection -->
             <div class="space-y-1.5">
                <label class="text-xs font-bold text-gray-500 uppercase">Unit / Property</label>
-               <select [ngModel]="newBookingData().unitId" (ngModelChange)="newBookingData().unitId = $event"
+               <select id="bookingUnit" name="bookingUnit" [ngModel]="newBookingData().unitId"
+                  (ngModelChange)="newBookingData().unitId = $event"
                   class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary">
                   <option value="" disabled>Select a unit...</option>
                   @for (group of portfolio(); track group.id) {
@@ -459,13 +468,13 @@
             <div class="grid grid-cols-2 gap-4">
                <div class="space-y-1.5">
                   <label class="text-xs font-bold text-gray-500 uppercase">Check-in</label>
-                  <input type="date" [ngModel]="newBookingData().startDate"
-                     (ngModelChange)="newBookingData().startDate = $event"
+                  <input type="date" id="bookingStartDate" name="bookingStartDate"
+                     [ngModel]="newBookingData().startDate" (ngModelChange)="newBookingData().startDate = $event"
                      class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary">
                </div>
                <div class="space-y-1.5">
                   <label class="text-xs font-bold text-gray-500 uppercase">Check-out</label>
-                  <input type="date" [ngModel]="newBookingData().endDate"
+                  <input type="date" id="bookingEndDate" name="bookingEndDate" [ngModel]="newBookingData().endDate"
                      (ngModelChange)="newBookingData().endDate = $event"
                      class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary">
                </div>
@@ -476,7 +485,7 @@
                <label class="text-xs font-bold text-gray-500 uppercase">Total Price</label>
                <div class="relative">
                   <span class="absolute left-3 top-2 text-gray-500">$</span>
-                  <input type="number" [ngModel]="newBookingData().price"
+                  <input type="number" id="bookingPrice" name="bookingPrice" [ngModel]="newBookingData().price"
                      (ngModelChange)="newBookingData().price = $event"
                      class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md pl-7 pr-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary font-mono"
                      placeholder="0.00">
@@ -486,7 +495,8 @@
             <!-- Notes -->
             <div class="space-y-1.5">
                <label class="text-xs font-bold text-gray-500 uppercase">Notes</label>
-               <textarea [ngModel]="newBookingData().notes" (ngModelChange)="newBookingData().notes = $event" rows="3"
+               <textarea id="bookingNotes" name="bookingNotes" [ngModel]="newBookingData().notes"
+                  (ngModelChange)="newBookingData().notes = $event" rows="3"
                   class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary resize-none"
                   placeholder="Optional details..."></textarea>
             </div>

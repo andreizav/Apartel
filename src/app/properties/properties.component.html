@@ -1,36 +1,28 @@
 <div class="flex flex-col lg:flex-row h-[calc(100vh-8rem)] gap-6 animate-fade-in-up relative">
-  
+
   <!-- Left Column: Portfolio Sidebar -->
-  <div class="w-full lg:w-80 flex flex-col bg-white dark:bg-[#1c2936] rounded-xl border border-gray-200 dark:border-[#324d67] overflow-hidden flex-shrink-0">
+  <div
+    class="w-full lg:w-80 flex flex-col bg-white dark:bg-[#1c2936] rounded-xl border border-gray-200 dark:border-[#324d67] overflow-hidden flex-shrink-0">
     <!-- Header -->
     <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-[#324d67]">
       <h2 class="font-bold text-[#111418] dark:text-white">Portfolio</h2>
-      
+
       <div class="flex gap-2">
         <!-- Hidden File Input -->
-        <input 
-          #fileInput 
-          type="file" 
-          (change)="handleImport($event)" 
-          accept=".xlsx, .xls, .csv" 
-          class="hidden"
-        >
-        
+        <input #fileInput type="file" id="importFileInput" name="importFileInput" (change)="handleImport($event)"
+          accept=".xlsx, .xls, .csv" class="hidden">
+
         <!-- Import Button -->
-        <button 
-          (click)="fileInput.click()" 
+        <button (click)="fileInput.click()"
           class="flex items-center gap-1 bg-white dark:bg-[#253545] border border-gray-200 dark:border-[#324d67] text-gray-700 dark:text-gray-200 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-gray-50 dark:hover:bg-[#2f4356] transition-colors"
-          title="Import Excel (.xlsx)"
-        >
+          title="Import Excel (.xlsx)">
           <span class="material-symbols-outlined text-[16px]">upload_file</span>
           Import
         </button>
 
         <!-- New Button -->
-        <button 
-          (click)="openNewModal()"
-          class="flex items-center gap-1 bg-primary text-white px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-blue-600 transition-colors"
-        >
+        <button (click)="openNewModal()"
+          class="flex items-center gap-1 bg-primary text-white px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-blue-600 transition-colors">
           <span class="material-symbols-outlined text-[16px]">add</span>
           New
         </button>
@@ -40,479 +32,445 @@
     <!-- Tree View -->
     <div class="flex-1 overflow-y-auto p-2">
       @for (group of portfolio(); track group.id) {
-        <div class="mb-1">
-          <!-- Group Header -->
-          <div 
-            class="flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-[#253545] text-gray-700 dark:text-gray-200 transition-colors relative"
-            (click)="toggleGroup(group.id)"
-          >
+      <div class="mb-1">
+        <!-- Group Header -->
+        <div
+          class="flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-[#253545] text-gray-700 dark:text-gray-200 transition-colors relative"
+          (click)="toggleGroup(group.id)">
+          <div class="flex items-center gap-2 overflow-hidden">
+            <span class="material-symbols-outlined text-yellow-500 text-[20px] flex-shrink-0">folder</span>
+            <span class="font-semibold text-sm truncate">{{ group.name }}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-gray-400 bg-gray-100 dark:bg-[#111a22] px-1.5 py-0.5 rounded">{{
+              group.units.length }}</span>
+            <span class="material-symbols-outlined text-[16px] text-gray-400 transition-transform duration-200"
+              [class.rotate-90]="group.expanded">chevron_right</span>
+          </div>
+        </div>
+
+        <!-- Group Items (Units) -->
+        @if (group.expanded) {
+        <div class="ml-3 pl-3 border-l border-gray-200 dark:border-[#324d67] mt-1 space-y-0.5">
+          @for (unit of group.units; track unit.id) {
+          <div
+            class="flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer text-sm transition-colors relative"
+            [class.bg-primary/10]="selectedUnitId() === unit.id" [class.text-primary]="selectedUnitId() === unit.id"
+            [class.text-gray-600]="selectedUnitId() !== unit.id"
+            [class.dark:text-gray-400]="selectedUnitId() !== unit.id"
+            [class.hover:bg-gray-50]="selectedUnitId() !== unit.id"
+            [class.dark:hover:bg-[#253545]]="selectedUnitId() !== unit.id" (click)="selectUnit(unit.id)">
             <div class="flex items-center gap-2 overflow-hidden">
-              <span class="material-symbols-outlined text-yellow-500 text-[20px] flex-shrink-0">folder</span>
-              <span class="font-semibold text-sm truncate">{{ group.name }}</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <span class="text-xs text-gray-400 bg-gray-100 dark:bg-[#111a22] px-1.5 py-0.5 rounded">{{ group.units.length }}</span>
-              <span class="material-symbols-outlined text-[16px] text-gray-400 transition-transform duration-200" [class.rotate-90]="group.expanded">chevron_right</span>
+              <span class="material-symbols-outlined text-[18px] flex-shrink-0"
+                [class.text-primary]="selectedUnitId() === unit.id">home</span>
+              <span class="truncate">{{ unit.name }}</span>
             </div>
           </div>
-
-          <!-- Group Items (Units) -->
-          @if (group.expanded) {
-            <div class="ml-3 pl-3 border-l border-gray-200 dark:border-[#324d67] mt-1 space-y-0.5">
-              @for (unit of group.units; track unit.id) {
-                <div 
-                  class="flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer text-sm transition-colors relative"
-                  [class.bg-primary/10]="selectedUnitId() === unit.id"
-                  [class.text-primary]="selectedUnitId() === unit.id"
-                  [class.text-gray-600]="selectedUnitId() !== unit.id"
-                  [class.dark:text-gray-400]="selectedUnitId() !== unit.id"
-                  [class.hover:bg-gray-50]="selectedUnitId() !== unit.id"
-                  [class.dark:hover:bg-[#253545]]="selectedUnitId() !== unit.id"
-                  (click)="selectUnit(unit.id)"
-                >
-                  <div class="flex items-center gap-2 overflow-hidden">
-                    <span class="material-symbols-outlined text-[18px] flex-shrink-0" [class.text-primary]="selectedUnitId() === unit.id">home</span>
-                    <span class="truncate">{{ unit.name }}</span>
-                  </div>
-                </div>
-              }
-            </div>
           }
         </div>
+        }
+      </div>
       }
     </div>
   </div>
 
   <!-- Right Column: Details Area -->
   @if (selectedUnit(); as unit) {
-    <div class="flex-1 flex flex-col bg-white dark:bg-[#1c2936] rounded-xl border border-gray-200 dark:border-[#324d67] overflow-hidden">
-      
-      <!-- Top Header -->
-      <div class="px-6 pt-6 pb-0">
-        <div class="flex items-start justify-between mb-6">
-          <div class="flex flex-col gap-1">
-            <div class="flex items-center gap-3">
-              <h1 class="text-2xl font-bold text-[#111418] dark:text-white">{{ unit.name }}</h1>
-              <span class="px-2 py-0.5 bg-[#253545] border border-[#324d67] text-[#92adc9] text-[10px] font-bold uppercase tracking-wider rounded">Rentable Unit</span>
-            </div>
-            <div class="text-xs text-gray-500 font-mono">ID: {{ unit.id }}</div>
-          </div>
+  <div
+    class="flex-1 flex flex-col bg-white dark:bg-[#1c2936] rounded-xl border border-gray-200 dark:border-[#324d67] overflow-hidden">
 
-          <!-- Actions -->
+    <!-- Top Header -->
+    <div class="px-6 pt-6 pb-0">
+      <div class="flex items-start justify-between mb-6">
+        <div class="flex flex-col gap-1">
           <div class="flex items-center gap-3">
-            <!-- Status Toggle -->
-            <div class="flex bg-gray-100 dark:bg-[#111a22] rounded-full p-1 border border-gray-200 dark:border-[#324d67]">
-              <button 
-                class="px-4 py-1.5 rounded-full text-xs font-bold transition-all"
-                [class.bg-green-500]="unit.status === 'Active'"
-                [class.text-white]="unit.status === 'Active'"
-                [class.text-gray-500]="unit.status !== 'Active'"
-                (click)="updateUnitStatus(unit.id, 'Active')"
-              >
-                Active
-              </button>
-              <button 
-                class="px-4 py-1.5 rounded-full text-xs font-bold transition-all"
-                [class.bg-gray-600]="unit.status === 'Maintenance'"
-                [class.text-white]="unit.status === 'Maintenance'"
-                [class.text-gray-500]="unit.status !== 'Maintenance'"
-                (click)="updateUnitStatus(unit.id, 'Maintenance')"
-              >
-                Maintenance
-              </button>
-            </div>
+            <h1 class="text-2xl font-bold text-[#111418] dark:text-white">{{ unit.name }}</h1>
+            <span
+              class="px-2 py-0.5 bg-[#253545] border border-[#324d67] text-[#92adc9] text-[10px] font-bold uppercase tracking-wider rounded">Rentable
+              Unit</span>
           </div>
+          <div class="text-xs text-gray-500 font-mono">ID: {{ unit.id }}</div>
         </div>
 
-        <!-- Tabs -->
-        <div class="flex gap-6 border-b border-gray-200 dark:border-[#324d67] overflow-x-auto">
-          @for (tab of tabs; track tab) {
-            <button 
-              class="pb-3 text-sm font-bold transition-all border-b-2 whitespace-nowrap"
-              [class.text-primary]="activeTab() === tab"
-              [class.border-primary]="activeTab() === tab"
-              [class.text-gray-500]="activeTab() !== tab"
-              [class.border-transparent]="activeTab() !== tab"
-              [class.hover:text-gray-700]="activeTab() !== tab"
-              [class.dark:hover:text-gray-300]="activeTab() !== tab"
-              (click)="setActiveTab(tab)"
-            >
-              {{ tab }}
+        <!-- Actions -->
+        <div class="flex items-center gap-3">
+          <!-- Status Toggle -->
+          <div class="flex bg-gray-100 dark:bg-[#111a22] rounded-full p-1 border border-gray-200 dark:border-[#324d67]">
+            <button class="px-4 py-1.5 rounded-full text-xs font-bold transition-all"
+              [class.bg-green-500]="unit.status === 'Active'" [class.text-white]="unit.status === 'Active'"
+              [class.text-gray-500]="unit.status !== 'Active'" (click)="updateUnitStatus(unit.id, 'Active')">
+              Active
             </button>
-          }
+            <button class="px-4 py-1.5 rounded-full text-xs font-bold transition-all"
+              [class.bg-gray-600]="unit.status === 'Maintenance'" [class.text-white]="unit.status === 'Maintenance'"
+              [class.text-gray-500]="unit.status !== 'Maintenance'" (click)="updateUnitStatus(unit.id, 'Maintenance')">
+              Maintenance
+            </button>
+          </div>
         </div>
       </div>
 
-      <!-- Scrollable Content Area -->
-      <div class="flex-1 overflow-y-auto p-6 space-y-6 bg-gray-50/50 dark:bg-[#111a22]/30">
-        
-        @if (activeTab() === 'Basic Info') {
-          <!-- Location & Address -->
-          <section class="bg-white dark:bg-[#1c2936] rounded-lg border border-gray-200 dark:border-[#324d67] p-5 shadow-sm">
-            <div class="flex items-center gap-2 mb-4 text-primary">
-              <span class="material-symbols-outlined">location_on</span>
-              <h3 class="font-bold text-[#111418] dark:text-white">Location & Address</h3>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div class="space-y-1.5">
-                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide">Internal Name</label>
-                <input 
-                  type="text" 
-                  [ngModel]="unit.internalName" 
-                  class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
-                >
-              </div>
-              <div class="space-y-1.5">
-                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide">Official Address</label>
-                <input 
-                  type="text" 
-                  [ngModel]="unit.officialAddress" 
-                  class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
-                >
-              </div>
-            </div>
-          </section>
-
-          <!-- Base Pricing -->
-          <section class="bg-white dark:bg-[#1c2936] rounded-lg border border-gray-200 dark:border-[#324d67] p-5 shadow-sm">
-            <div class="flex items-center gap-2 mb-4 text-primary">
-              <span class="material-symbols-outlined">payments</span>
-              <h3 class="font-bold text-[#111418] dark:text-white">Base Pricing</h3>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div class="space-y-1.5">
-                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide">Base Price</label>
-                <div class="relative">
-                  <span class="absolute left-3 top-2 text-gray-500">$</span>
-                  <input 
-                    type="number" 
-                    [ngModel]="unit.basePrice" 
-                    class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md pl-7 pr-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
-                  >
-                </div>
-              </div>
-              <div class="space-y-1.5">
-                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide">Cleaning Fee</label>
-                <div class="relative">
-                  <span class="absolute left-3 top-2 text-gray-500">$</span>
-                  <input 
-                    type="number" 
-                    [ngModel]="unit.cleaningFee" 
-                    class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md pl-7 pr-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
-                  >
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <!-- Connectivity & Access -->
-          <section class="bg-white dark:bg-[#1c2936] rounded-lg border border-gray-200 dark:border-[#324d67] p-5 shadow-sm">
-            <div class="flex items-center gap-2 mb-4 text-primary">
-              <span class="material-symbols-outlined">wifi</span>
-              <h3 class="font-bold text-[#111418] dark:text-white">Connectivity & Access</h3>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              <div class="space-y-1.5">
-                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide">Wifi SSID</label>
-                <input 
-                  type="text" 
-                  [ngModel]="unit.wifiSsid" 
-                  class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
-                >
-              </div>
-              <div class="space-y-1.5">
-                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide">Wifi Password</label>
-                <div class="relative">
-                   <input 
-                    type="text" 
-                    [ngModel]="unit.wifiPassword" 
-                    class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
-                  >
-                  <span class="material-symbols-outlined absolute right-3 top-2 text-[18px] text-gray-500 cursor-pointer">content_copy</span>
-                </div>
-              </div>
-            </div>
-            <div class="space-y-1.5">
-              <label class="text-xs font-bold text-gray-500 uppercase tracking-wide">Access Codes (Door/Alarm)</label>
-              <textarea 
-                [ngModel]="unit.accessCodes" 
-                rows="3"
-                class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary transition-colors resize-none"
-              ></textarea>
-              <p class="text-[10px] text-gray-500 mt-1">This info will be sent to confirmed guests 24h before check-in.</p>
-            </div>
-          </section>
-        }
-        @else if (activeTab() === 'Guest History') {
-           <div class="animate-fade-in">
-              <section class="bg-white dark:bg-[#1c2936] rounded-lg border border-gray-200 dark:border-[#324d67] overflow-hidden shadow-sm">
-                 <div class="px-5 py-4 bg-gray-50 dark:bg-[#18232e] border-b border-gray-200 dark:border-[#324d67] flex items-center justify-between">
-                    <h3 class="font-bold text-[#111418] dark:text-white">Booking History</h3>
-                    <span class="text-xs bg-gray-200 dark:bg-[#253545] text-gray-600 dark:text-gray-300 px-2 py-0.5 rounded font-bold">{{ unitBookings().length }} records</span>
-                 </div>
-                 
-                 @if(unitBookings().length > 0) {
-                   <div class="overflow-x-auto">
-                     <table class="w-full text-sm text-left">
-                       <thead class="text-xs text-gray-500 uppercase bg-gray-50 dark:bg-[#111a22] border-b border-gray-200 dark:border-[#324d67]">
-                         <tr>
-                           <th class="px-6 py-3 font-bold">Guest</th>
-                           <th class="px-6 py-3 font-bold">Dates</th>
-                           <th class="px-6 py-3 font-bold">Source</th>
-                           <th class="px-6 py-3 font-bold">Status</th>
-                           <th class="px-6 py-3 font-bold text-right">Action</th>
-                         </tr>
-                       </thead>
-                       <tbody class="divide-y divide-gray-100 dark:divide-[#324d67]">
-                         @for (booking of unitBookings(); track booking.id) {
-                           <tr class="hover:bg-gray-50 dark:hover:bg-[#253545] transition-colors">
-                             <td class="px-6 py-3">
-                               <div class="font-bold text-[#111418] dark:text-white">{{ booking.guestName }}</div>
-                               <div class="text-xs text-gray-400 font-mono">{{ booking.guestPhone }}</div>
-                             </td>
-                             <td class="px-6 py-3 text-gray-600 dark:text-gray-300">
-                               {{ booking.startDate | date:'MMM d' }} - {{ booking.endDate | date:'MMM d, y' }}
-                             </td>
-                             <td class="px-6 py-3">
-                                <span 
-                                  class="text-[10px] font-bold uppercase px-2 py-0.5 rounded"
-                                  [class.bg-[#ff385c]/10]="booking.source === 'airbnb'"
-                                  [class.text-[#ff385c]]="booking.source === 'airbnb'"
-                                  [class.bg-[#003580]/10]="booking.source === 'booking'"
-                                  [class.text-[#003580]]="booking.source === 'booking'"
-                                  [class.bg-yellow-400/10]="booking.source === 'expedia'"
-                                  [class.text-yellow-600]="booking.source === 'expedia'"
-                                  [class.bg-green-500/10]="booking.source === 'direct'"
-                                  [class.text-green-600]="booking.source === 'direct'"
-                                >{{ booking.source }}</span>
-                             </td>
-                             <td class="px-6 py-3">
-                                <span class="flex items-center gap-1 text-xs font-medium text-gray-500">
-                                   @if(booking.status === 'confirmed') { <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> Confirmed }
-                                   @if(booking.status === 'pending') { <span class="w-1.5 h-1.5 rounded-full bg-yellow-500"></span> Pending }
-                                   @if(booking.status === 'cancelled') { <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> Cancelled }
-                                </span>
-                             </td>
-                             <td class="px-6 py-3 text-right">
-                                <button 
-                                  (click)="navigateToClient(booking)"
-                                  class="text-primary hover:text-blue-700 text-xs font-bold hover:underline flex items-center justify-end gap-1"
-                                >
-                                  <span class="material-symbols-outlined text-[14px]">chat</span>
-                                  Open Chat
-                                </button>
-                             </td>
-                           </tr>
-                         }
-                       </tbody>
-                     </table>
-                   </div>
-                 } @else {
-                    <div class="p-8 text-center text-gray-400 italic">
-                       No booking history found for this unit.
-                    </div>
-                 }
-              </section>
-           </div>
-        }
-        @else if (activeTab() === 'Settings') {
-           <div class="animate-fade-in">
-              <!-- Danger Zone -->
-              <section class="bg-white dark:bg-[#1c2936] rounded-lg border border-red-200 dark:border-red-900/30 overflow-hidden">
-                 <div class="px-6 py-4 bg-red-50 dark:bg-red-900/10 border-b border-red-100 dark:border-red-900/30 flex items-center gap-2">
-                    <span class="material-symbols-outlined text-red-600 dark:text-red-400">warning</span>
-                    <h3 class="font-bold text-red-700 dark:text-red-400">Danger Zone</h3>
-                 </div>
-                 <div class="p-6">
-                    <div class="flex items-center justify-between">
-                       <div>
-                          <h4 class="font-bold text-[#111418] dark:text-white">Delete Property</h4>
-                          <p class="text-sm text-gray-500 mt-1">Once you delete a property, there is no going back. Please be certain.</p>
-                       </div>
-                       <button 
-                         (click)="deleteCurrentUnit()"
-                         class="px-4 py-2 bg-white dark:bg-[#253545] border border-red-300 dark:border-red-800 text-red-600 dark:text-red-400 font-bold text-sm rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
-                       >
-                         Delete Property
-                       </button>
-                    </div>
-                 </div>
-              </section>
-           </div>
-        }
-        @else {
-          <div class="flex flex-col items-center justify-center h-full text-gray-500">
-             <span class="material-symbols-outlined text-4xl mb-2">construction</span>
-             <p>This tab is under construction</p>
-          </div>
+      <!-- Tabs -->
+      <div class="flex gap-6 border-b border-gray-200 dark:border-[#324d67] overflow-x-auto">
+        @for (tab of tabs; track tab) {
+        <button class="pb-3 text-sm font-bold transition-all border-b-2 whitespace-nowrap"
+          [class.text-primary]="activeTab() === tab" [class.border-primary]="activeTab() === tab"
+          [class.text-gray-500]="activeTab() !== tab" [class.border-transparent]="activeTab() !== tab"
+          [class.hover:text-gray-700]="activeTab() !== tab" [class.dark:hover:text-gray-300]="activeTab() !== tab"
+          (click)="setActiveTab(tab)">
+          {{ tab }}
+        </button>
         }
       </div>
     </div>
-  } @else {
-    <div class="flex-1 flex flex-col items-center justify-center bg-white dark:bg-[#1c2936] rounded-xl border border-gray-200 dark:border-[#324d67] text-gray-500 dark:text-gray-400">
-      <span class="material-symbols-outlined text-6xl mb-4 text-gray-300 dark:text-gray-600">apartment</span>
-      <h3 class="text-xl font-bold mb-2">Select a Unit</h3>
-      <p>Select a property unit from the sidebar to view details</p>
+
+    <!-- Scrollable Content Area -->
+    <div class="flex-1 overflow-y-auto p-6 space-y-6 bg-gray-50/50 dark:bg-[#111a22]/30">
+
+      @if (activeTab() === 'Basic Info') {
+      <!-- Location & Address -->
+      <section class="bg-white dark:bg-[#1c2936] rounded-lg border border-gray-200 dark:border-[#324d67] p-5 shadow-sm">
+        <div class="flex items-center gap-2 mb-4 text-primary">
+          <span class="material-symbols-outlined">location_on</span>
+          <h3 class="font-bold text-[#111418] dark:text-white">Location & Address</h3>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="space-y-1.5">
+            <label class="text-xs font-bold text-gray-500 uppercase tracking-wide">Internal Name</label>
+            <input type="text" id="internalName" name="internalName" [ngModel]="unit.internalName"
+              class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary transition-colors">
+          </div>
+          <div class="space-y-1.5">
+            <label class="text-xs font-bold text-gray-500 uppercase tracking-wide">Official Address</label>
+            <input type="text" id="officialAddress" name="officialAddress" [ngModel]="unit.officialAddress"
+              class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary transition-colors">
+          </div>
+        </div>
+      </section>
+
+      <!-- Base Pricing -->
+      <section class="bg-white dark:bg-[#1c2936] rounded-lg border border-gray-200 dark:border-[#324d67] p-5 shadow-sm">
+        <div class="flex items-center gap-2 mb-4 text-primary">
+          <span class="material-symbols-outlined">payments</span>
+          <h3 class="font-bold text-[#111418] dark:text-white">Base Pricing</h3>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="space-y-1.5">
+            <label class="text-xs font-bold text-gray-500 uppercase tracking-wide">Base Price</label>
+            <div class="relative">
+              <span class="absolute left-3 top-2 text-gray-500">$</span>
+              <input type="number" id="basePrice" name="basePrice" [ngModel]="unit.basePrice"
+                class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md pl-7 pr-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary transition-colors">
+            </div>
+          </div>
+          <div class="space-y-1.5">
+            <label class="text-xs font-bold text-gray-500 uppercase tracking-wide">Cleaning Fee</label>
+            <div class="relative">
+              <span class="absolute left-3 top-2 text-gray-500">$</span>
+              <input type="number" id="cleaningFee" name="cleaningFee" [ngModel]="unit.cleaningFee"
+                class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md pl-7 pr-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary transition-colors">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Connectivity & Access -->
+      <section class="bg-white dark:bg-[#1c2936] rounded-lg border border-gray-200 dark:border-[#324d67] p-5 shadow-sm">
+        <div class="flex items-center gap-2 mb-4 text-primary">
+          <span class="material-symbols-outlined">wifi</span>
+          <h3 class="font-bold text-[#111418] dark:text-white">Connectivity & Access</h3>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <div class="space-y-1.5">
+            <label class="text-xs font-bold text-gray-500 uppercase tracking-wide">Wifi SSID</label>
+            <input type="text" id="wifiSsid" name="wifiSsid" [ngModel]="unit.wifiSsid"
+              class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary transition-colors">
+          </div>
+          <div class="space-y-1.5">
+            <label class="text-xs font-bold text-gray-500 uppercase tracking-wide">Wifi Password</label>
+            <div class="relative">
+              <input type="text" id="wifiPassword" name="wifiPassword" [ngModel]="unit.wifiPassword"
+                class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary transition-colors">
+              <span
+                class="material-symbols-outlined absolute right-3 top-2 text-[18px] text-gray-500 cursor-pointer">content_copy</span>
+            </div>
+          </div>
+        </div>
+        <div class="space-y-1.5">
+          <label class="text-xs font-bold text-gray-500 uppercase tracking-wide">Access Codes (Door/Alarm)</label>
+          <textarea id="accessCodes" name="accessCodes" [ngModel]="unit.accessCodes" rows="3"
+            class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary transition-colors resize-none"></textarea>
+          <p class="text-[10px] text-gray-500 mt-1">This info will be sent to confirmed guests 24h before check-in.</p>
+        </div>
+      </section>
+      }
+      @else if (activeTab() === 'Guest History') {
+      <div class="animate-fade-in">
+        <section
+          class="bg-white dark:bg-[#1c2936] rounded-lg border border-gray-200 dark:border-[#324d67] overflow-hidden shadow-sm">
+          <div
+            class="px-5 py-4 bg-gray-50 dark:bg-[#18232e] border-b border-gray-200 dark:border-[#324d67] flex items-center justify-between">
+            <h3 class="font-bold text-[#111418] dark:text-white">Booking History</h3>
+            <span
+              class="text-xs bg-gray-200 dark:bg-[#253545] text-gray-600 dark:text-gray-300 px-2 py-0.5 rounded font-bold">{{
+              unitBookings().length }} records</span>
+          </div>
+
+          @if(unitBookings().length > 0) {
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left">
+              <thead
+                class="text-xs text-gray-500 uppercase bg-gray-50 dark:bg-[#111a22] border-b border-gray-200 dark:border-[#324d67]">
+                <tr>
+                  <th class="px-6 py-3 font-bold">Guest</th>
+                  <th class="px-6 py-3 font-bold">Dates</th>
+                  <th class="px-6 py-3 font-bold">Source</th>
+                  <th class="px-6 py-3 font-bold">Status</th>
+                  <th class="px-6 py-3 font-bold text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-100 dark:divide-[#324d67]">
+                @for (booking of unitBookings(); track booking.id) {
+                <tr class="hover:bg-gray-50 dark:hover:bg-[#253545] transition-colors">
+                  <td class="px-6 py-3">
+                    <div class="font-bold text-[#111418] dark:text-white">{{ booking.guestName }}</div>
+                    <div class="text-xs text-gray-400 font-mono">{{ booking.guestPhone }}</div>
+                  </td>
+                  <td class="px-6 py-3 text-gray-600 dark:text-gray-300">
+                    {{ booking.startDate | date:'MMM d' }} - {{ booking.endDate | date:'MMM d, y' }}
+                  </td>
+                  <td class="px-6 py-3">
+                    <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded"
+                      [class.bg-[#ff385c]/10]="booking.source === 'airbnb'"
+                      [class.text-[#ff385c]]="booking.source === 'airbnb'"
+                      [class.bg-[#003580]/10]="booking.source === 'booking'"
+                      [class.text-[#003580]]="booking.source === 'booking'"
+                      [class.bg-yellow-400/10]="booking.source === 'expedia'"
+                      [class.text-yellow-600]="booking.source === 'expedia'"
+                      [class.bg-green-500/10]="booking.source === 'direct'"
+                      [class.text-green-600]="booking.source === 'direct'">{{ booking.source }}</span>
+                  </td>
+                  <td class="px-6 py-3">
+                    <span class="flex items-center gap-1 text-xs font-medium text-gray-500">
+                      @if(booking.status === 'confirmed') { <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                      Confirmed }
+                      @if(booking.status === 'pending') { <span class="w-1.5 h-1.5 rounded-full bg-yellow-500"></span>
+                      Pending }
+                      @if(booking.status === 'cancelled') { <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                      Cancelled }
+                    </span>
+                  </td>
+                  <td class="px-6 py-3 text-right">
+                    <button (click)="navigateToClient(booking)"
+                      class="text-primary hover:text-blue-700 text-xs font-bold hover:underline flex items-center justify-end gap-1">
+                      <span class="material-symbols-outlined text-[14px]">chat</span>
+                      Open Chat
+                    </button>
+                  </td>
+                </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+          } @else {
+          <div class="p-8 text-center text-gray-400 italic">
+            No booking history found for this unit.
+          </div>
+          }
+        </section>
+      </div>
+      }
+      @else if (activeTab() === 'Settings') {
+      <div class="animate-fade-in">
+        <!-- Danger Zone -->
+        <section
+          class="bg-white dark:bg-[#1c2936] rounded-lg border border-red-200 dark:border-red-900/30 overflow-hidden">
+          <div
+            class="px-6 py-4 bg-red-50 dark:bg-red-900/10 border-b border-red-100 dark:border-red-900/30 flex items-center gap-2">
+            <span class="material-symbols-outlined text-red-600 dark:text-red-400">warning</span>
+            <h3 class="font-bold text-red-700 dark:text-red-400">Danger Zone</h3>
+          </div>
+          <div class="p-6">
+            <div class="flex items-center justify-between">
+              <div>
+                <h4 class="font-bold text-[#111418] dark:text-white">Delete Property</h4>
+                <p class="text-sm text-gray-500 mt-1">Once you delete a property, there is no going back. Please be
+                  certain.</p>
+              </div>
+              <button (click)="deleteCurrentUnit()"
+                class="px-4 py-2 bg-white dark:bg-[#253545] border border-red-300 dark:border-red-800 text-red-600 dark:text-red-400 font-bold text-sm rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
+                Delete Property
+              </button>
+            </div>
+          </div>
+        </section>
+      </div>
+      }
+      @else {
+      <div class="flex flex-col items-center justify-center h-full text-gray-500">
+        <span class="material-symbols-outlined text-4xl mb-2">construction</span>
+        <p>This tab is under construction</p>
+      </div>
+      }
     </div>
+  </div>
+  } @else {
+  <div
+    class="flex-1 flex flex-col items-center justify-center bg-white dark:bg-[#1c2936] rounded-xl border border-gray-200 dark:border-[#324d67] text-gray-500 dark:text-gray-400">
+    <span class="material-symbols-outlined text-6xl mb-4 text-gray-300 dark:text-gray-600">apartment</span>
+    <h3 class="text-xl font-bold mb-2">Select a Unit</h3>
+    <p>Select a property unit from the sidebar to view details</p>
+  </div>
   }
 
   <!-- Preview Modal Overlay -->
   @if (importPreview()) {
-    <div class="absolute inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
-      <div class="bg-white dark:bg-[#1c2936] w-full max-w-2xl rounded-xl shadow-2xl border border-gray-200 dark:border-[#324d67] flex flex-col max-h-[80vh]">
-        <!-- Modal Header -->
-        <div class="px-6 py-4 border-b border-gray-200 dark:border-[#324d67] flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <span class="material-symbols-outlined text-primary">fact_check</span>
-            <h3 class="text-lg font-bold text-[#111418] dark:text-white">Confirm Import (New Items Only)</h3>
-          </div>
-          <button (click)="cancelImport()" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
-            <span class="material-symbols-outlined">close</span>
-          </button>
+  <div class="absolute inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
+    <div
+      class="bg-white dark:bg-[#1c2936] w-full max-w-2xl rounded-xl shadow-2xl border border-gray-200 dark:border-[#324d67] flex flex-col max-h-[80vh]">
+      <!-- Modal Header -->
+      <div class="px-6 py-4 border-b border-gray-200 dark:border-[#324d67] flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary">fact_check</span>
+          <h3 class="text-lg font-bold text-[#111418] dark:text-white">Confirm Import (New Items Only)</h3>
         </div>
+        <button (click)="cancelImport()" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
 
-        <!-- Modal Body (Preview List) -->
-        <div class="flex-1 overflow-y-auto p-6 bg-gray-50 dark:bg-[#111a22]">
-          <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
-            The following <strong class="text-primary">new</strong> properties will be added. Existing duplicates were automatically skipped.
-          </p>
-          
-          <div class="space-y-3">
-            @for (group of importPreview(); track group.id) {
-              <div class="bg-white dark:bg-[#253545] rounded-lg border border-gray-200 dark:border-[#324d67] overflow-hidden relative group/preview-item">
-                @if (group.isMerge) {
-                    <div class="absolute top-0 right-0 px-2 py-0.5 bg-blue-500 text-white text-[10px] uppercase font-bold rounded-bl-lg z-10">Merging</div>
-                }
-                <div class="px-4 py-2 bg-gray-100 dark:bg-[#1c2936] border-b border-gray-200 dark:border-[#324d67] flex items-center justify-between">
-                  <span class="font-bold text-sm text-[#111418] dark:text-white flex items-center gap-2">
-                    <span class="material-symbols-outlined text-yellow-500 text-[18px]">folder</span>
-                    {{ group.name }}
-                  </span>
-                  <div class="flex items-center gap-2">
-                     <span class="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded font-medium">{{ group.units.length }} New Units</span>
-                     @if (!group.isMerge) {
-                        <button (click)="removePreviewGroup(group.id)" class="text-gray-400 hover:text-red-500" title="Remove entire group from import">
-                           <span class="material-symbols-outlined text-[18px]">delete</span>
-                        </button>
-                     }
-                  </div>
-                </div>
-                <div class="divide-y divide-gray-100 dark:divide-[#324d67]">
-                  @for (unit of group.units; track unit.id) {
-                    <div class="px-4 py-2 text-sm text-gray-600 dark:text-gray-300 pl-9 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-[#2f4356]">
-                       <div class="flex items-center gap-2">
-                          <span class="material-symbols-outlined text-[16px] text-green-500">add_circle</span>
-                          {{ unit.name }}
-                       </div>
-                       <button (click)="removePreviewUnit(group.id, unit.id)" class="text-gray-400 hover:text-red-500" title="Remove unit from import">
-                          <span class="material-symbols-outlined text-[16px]">close</span>
-                       </button>
-                    </div>
-                  }
-                  @if (group.units.length === 0) {
-                     <div class="px-4 py-2 text-xs text-gray-400 italic pl-9">No units in this group</div>
-                  }
-                </div>
-              </div>
+      <!-- Modal Body (Preview List) -->
+      <div class="flex-1 overflow-y-auto p-6 bg-gray-50 dark:bg-[#111a22]">
+        <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+          The following <strong class="text-primary">new</strong> properties will be added. Existing duplicates were
+          automatically skipped.
+        </p>
+
+        <div class="space-y-3">
+          @for (group of importPreview(); track group.id) {
+          <div
+            class="bg-white dark:bg-[#253545] rounded-lg border border-gray-200 dark:border-[#324d67] overflow-hidden relative group/preview-item">
+            @if (group.isMerge) {
+            <div
+              class="absolute top-0 right-0 px-2 py-0.5 bg-blue-500 text-white text-[10px] uppercase font-bold rounded-bl-lg z-10">
+              Merging</div>
             }
+            <div
+              class="px-4 py-2 bg-gray-100 dark:bg-[#1c2936] border-b border-gray-200 dark:border-[#324d67] flex items-center justify-between">
+              <span class="font-bold text-sm text-[#111418] dark:text-white flex items-center gap-2">
+                <span class="material-symbols-outlined text-yellow-500 text-[18px]">folder</span>
+                {{ group.name }}
+              </span>
+              <div class="flex items-center gap-2">
+                <span class="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded font-medium">{{ group.units.length
+                  }} New Units</span>
+                @if (!group.isMerge) {
+                <button (click)="removePreviewGroup(group.id)" class="text-gray-400 hover:text-red-500"
+                  title="Remove entire group from import">
+                  <span class="material-symbols-outlined text-[18px]">delete</span>
+                </button>
+                }
+              </div>
+            </div>
+            <div class="divide-y divide-gray-100 dark:divide-[#324d67]">
+              @for (unit of group.units; track unit.id) {
+              <div
+                class="px-4 py-2 text-sm text-gray-600 dark:text-gray-300 pl-9 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-[#2f4356]">
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-[16px] text-green-500">add_circle</span>
+                  {{ unit.name }}
+                </div>
+                <button (click)="removePreviewUnit(group.id, unit.id)" class="text-gray-400 hover:text-red-500"
+                  title="Remove unit from import">
+                  <span class="material-symbols-outlined text-[16px]">close</span>
+                </button>
+              </div>
+              }
+              @if (group.units.length === 0) {
+              <div class="px-4 py-2 text-xs text-gray-400 italic pl-9">No units in this group</div>
+              }
+            </div>
           </div>
-        </div>
-
-        <!-- Modal Footer -->
-        <div class="px-6 py-4 border-t border-gray-200 dark:border-[#324d67] flex justify-end gap-3 bg-white dark:bg-[#1c2936] rounded-b-xl">
-          <button 
-            (click)="cancelImport()" 
-            class="px-4 py-2 text-sm font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#253545] rounded-lg transition-colors"
-          >
-            Cancel
-          </button>
-          <button 
-            (click)="confirmImport()" 
-            class="px-4 py-2 text-sm font-bold text-white bg-primary hover:bg-blue-600 shadow-lg shadow-primary/25 rounded-lg transition-colors flex items-center gap-2"
-          >
-            <span class="material-symbols-outlined text-[18px]">check</span>
-            Confirm Import
-          </button>
+          }
         </div>
       </div>
+
+      <!-- Modal Footer -->
+      <div
+        class="px-6 py-4 border-t border-gray-200 dark:border-[#324d67] flex justify-end gap-3 bg-white dark:bg-[#1c2936] rounded-b-xl">
+        <button (click)="cancelImport()"
+          class="px-4 py-2 text-sm font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#253545] rounded-lg transition-colors">
+          Cancel
+        </button>
+        <button (click)="confirmImport()"
+          class="px-4 py-2 text-sm font-bold text-white bg-primary hover:bg-blue-600 shadow-lg shadow-primary/25 rounded-lg transition-colors flex items-center gap-2">
+          <span class="material-symbols-outlined text-[18px]">check</span>
+          Confirm Import
+        </button>
+      </div>
     </div>
+  </div>
   }
 
   <!-- New Item Modal -->
   @if (isNewModalOpen()) {
-    <div class="absolute inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
-      <div class="bg-white dark:bg-[#1c2936] w-full max-w-md rounded-xl shadow-2xl border border-gray-200 dark:border-[#324d67] overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-200 dark:border-[#324d67] flex items-center justify-between">
-          <h3 class="text-lg font-bold text-[#111418] dark:text-white">Add New</h3>
-          <button (click)="isNewModalOpen.set(false)" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
-            <span class="material-symbols-outlined">close</span>
-          </button>
+  <div class="absolute inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
+    <div
+      class="bg-white dark:bg-[#1c2936] w-full max-w-md rounded-xl shadow-2xl border border-gray-200 dark:border-[#324d67] overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-200 dark:border-[#324d67] flex items-center justify-between">
+        <h3 class="text-lg font-bold text-[#111418] dark:text-white">Add New</h3>
+        <button (click)="isNewModalOpen.set(false)" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <div class="p-6 space-y-4">
+        <!-- Type Selector -->
+        <div class="flex p-1 bg-gray-100 dark:bg-[#111a22] rounded-lg">
+          <button class="flex-1 py-1.5 text-sm font-bold rounded-md transition-all"
+            [class.bg-white]="newEntryType() === 'group'" [class.dark:bg-[#253545]]="newEntryType() === 'group'"
+            [class.shadow-sm]="newEntryType() === 'group'" [class.text-[#111418]]="newEntryType() === 'group'"
+            [class.dark:text-white]="newEntryType() === 'group'" [class.text-gray-500]="newEntryType() !== 'group'"
+            (click)="newEntryType.set('group')">Group</button>
+          <button class="flex-1 py-1.5 text-sm font-bold rounded-md transition-all"
+            [class.bg-white]="newEntryType() === 'unit'" [class.dark:bg-[#253545]]="newEntryType() === 'unit'"
+            [class.shadow-sm]="newEntryType() === 'unit'" [class.text-[#111418]]="newEntryType() === 'unit'"
+            [class.dark:text-white]="newEntryType() === 'unit'" [class.text-gray-500]="newEntryType() !== 'unit'"
+            (click)="newEntryType.set('unit')">Unit</button>
         </div>
-        
-        <div class="p-6 space-y-4">
-          <!-- Type Selector -->
-          <div class="flex p-1 bg-gray-100 dark:bg-[#111a22] rounded-lg">
-            <button 
-               class="flex-1 py-1.5 text-sm font-bold rounded-md transition-all"
-               [class.bg-white]="newEntryType() === 'group'"
-               [class.dark:bg-[#253545]]="newEntryType() === 'group'"
-               [class.shadow-sm]="newEntryType() === 'group'"
-               [class.text-[#111418]]="newEntryType() === 'group'"
-               [class.dark:text-white]="newEntryType() === 'group'"
-               [class.text-gray-500]="newEntryType() !== 'group'"
-               (click)="newEntryType.set('group')"
-            >Group</button>
-            <button 
-               class="flex-1 py-1.5 text-sm font-bold rounded-md transition-all"
-               [class.bg-white]="newEntryType() === 'unit'"
-               [class.dark:bg-[#253545]]="newEntryType() === 'unit'"
-               [class.shadow-sm]="newEntryType() === 'unit'"
-               [class.text-[#111418]]="newEntryType() === 'unit'"
-               [class.dark:text-white]="newEntryType() === 'unit'"
-               [class.text-gray-500]="newEntryType() !== 'unit'"
-               (click)="newEntryType.set('unit')"
-            >Unit</button>
-          </div>
-    
-          <!-- Name Input -->
-          <div class="space-y-1.5">
-             <label class="text-xs font-bold text-gray-500 uppercase">Name</label>
-             <input 
-                type="text" 
-                [ngModel]="newEntryName()"
-                (ngModelChange)="newEntryName.set($event)"
-                class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
-                placeholder="e.g., Downtown Loft"
-                autofocus
-             >
-          </div>
-    
-          <!-- Group Select (Only for Unit) -->
-          @if (newEntryType() === 'unit') {
-            <div class="space-y-1.5 animate-fade-in">
-               <label class="text-xs font-bold text-gray-500 uppercase">Parent Group</label>
-               <select 
-                  [ngModel]="newEntryGroupId()"
-                  (ngModelChange)="newEntryGroupId.set($event)"
-                  class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
-               >
-                  @for(g of portfolio(); track g.id) {
-                     <option [value]="g.id">{{ g.name }}</option>
-                  }
-               </select>
-            </div>
-          }
+
+        <!-- Name Input -->
+        <div class="space-y-1.5">
+          <label class="text-xs font-bold text-gray-500 uppercase">Name</label>
+          <input type="text" id="newEntryName" name="newEntryName" [ngModel]="newEntryName()"
+            (ngModelChange)="newEntryName.set($event)"
+            class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
+            placeholder="e.g., Downtown Loft" autofocus>
         </div>
-    
-        <div class="px-6 py-4 bg-gray-50 dark:bg-[#111a22] border-t border-gray-200 dark:border-[#324d67] flex justify-end gap-3">
-           <button (click)="isNewModalOpen.set(false)" class="px-4 py-2 text-sm font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#253545] rounded-lg">Cancel</button>
-           <button 
-             (click)="createEntry()" 
-             [disabled]="!newEntryName()"
-             class="px-4 py-2 text-sm font-bold text-white bg-primary hover:bg-blue-600 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
-           >Create</button>
+
+        <!-- Group Select (Only for Unit) -->
+        @if (newEntryType() === 'unit') {
+        <div class="space-y-1.5 animate-fade-in">
+          <label class="text-xs font-bold text-gray-500 uppercase">Parent Group</label>
+          <select id="newEntryGroupId" name="newEntryGroupId" [ngModel]="newEntryGroupId()"
+            (ngModelChange)="newEntryGroupId.set($event)"
+            class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary transition-colors">
+            @for(g of portfolio(); track g.id) {
+            <option [value]="g.id">{{ g.name }}</option>
+            }
+          </select>
         </div>
+        }
+      </div>
+
+      <div
+        class="px-6 py-4 bg-gray-50 dark:bg-[#111a22] border-t border-gray-200 dark:border-[#324d67] flex justify-end gap-3">
+        <button (click)="isNewModalOpen.set(false)"
+          class="px-4 py-2 text-sm font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#253545] rounded-lg">Cancel</button>
+        <button (click)="createEntry()" [disabled]="!newEntryName()"
+          class="px-4 py-2 text-sm font-bold text-white bg-primary hover:bg-blue-600 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed">Create</button>
       </div>
     </div>
+  </div>
   }
 </div>

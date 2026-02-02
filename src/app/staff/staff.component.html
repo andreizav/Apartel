@@ -23,7 +23,8 @@
             <span class="absolute inset-y-0 left-0 flex items-center pl-3">
                <span class="material-symbols-outlined text-[18px] text-gray-400">search</span>
             </span>
-            <input type="text" [ngModel]="searchQuery()" (ngModelChange)="searchQuery.set($event)"
+            <input type="text" id="staffSearch" name="staffSearch" [ngModel]="searchQuery()"
+               (ngModelChange)="searchQuery.set($event)"
                class="block w-full pl-9 pr-3 py-2 rounded-lg border-gray-200 dark:border-[#324d67] bg-gray-50 dark:bg-[#111a22] text-sm text-[#111418] dark:text-white placeholder-gray-500 focus:ring-primary focus:border-primary transition-colors"
                placeholder="Search staff...">
          </div>
@@ -199,7 +200,7 @@
                title="Attach File">
                <span class="material-symbols-outlined text-[20px] block">attach_file</span>
             </button>
-            <textarea [ngModel]="replyText()" (ngModelChange)="replyText.set($event)"
+            <textarea id="staffReply" name="staffReply" [ngModel]="replyText()" (ngModelChange)="replyText.set($event)"
                (keydown.enter)="$event.preventDefault(); sendReply()" rows="1"
                class="flex-1 bg-transparent border-none focus:ring-0 text-sm p-2 text-[#111418] dark:text-white placeholder-gray-500 resize-none max-h-32"
                placeholder="Write a message or task update..."></textarea>
@@ -245,7 +246,8 @@
             <!-- Name -->
             <div class="space-y-1.5">
                <label class="text-xs font-bold text-gray-500 uppercase">Full Name</label>
-               <input type="text" [ngModel]="currentMember().name" (ngModelChange)="currentMember().name = $event"
+               <input type="text" id="staffName" name="staffName" [ngModel]="currentMember().name"
+                  (ngModelChange)="currentMember().name = $event"
                   class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary"
                   placeholder="Full Name">
             </div>
@@ -254,7 +256,8 @@
             <div class="grid grid-cols-2 gap-4">
                <div class="space-y-1.5">
                   <label class="text-xs font-bold text-gray-500 uppercase">Role</label>
-                  <select [ngModel]="currentMember().role" (ngModelChange)="currentMember().role = $event"
+                  <select id="staffRole" name="staffRole" [ngModel]="currentMember().role"
+                     (ngModelChange)="currentMember().role = $event"
                      class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary">
                      @for(role of roles; track role) {
                      <option [value]="role">{{ role }}</option>
@@ -263,7 +266,8 @@
                </div>
                <div class="space-y-1.5">
                   <label class="text-xs font-bold text-gray-500 uppercase">Status</label>
-                  <select [ngModel]="currentMember().status" (ngModelChange)="currentMember().status = $event"
+                  <select id="staffStatus" name="staffStatus" [ngModel]="currentMember().status"
+                     (ngModelChange)="currentMember().status = $event"
                      class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary">
                      <option value="Active">Active</option>
                      <option value="Inactive">Inactive</option>
@@ -275,13 +279,15 @@
             <div class="grid grid-cols-2 gap-4">
                <div class="space-y-1.5">
                   <label class="text-xs font-bold text-gray-500 uppercase">Email</label>
-                  <input type="email" [ngModel]="currentMember().email" (ngModelChange)="currentMember().email = $event"
+                  <input type="email" id="staffEmail" name="staffEmail" [ngModel]="currentMember().email"
+                     (ngModelChange)="currentMember().email = $event"
                      class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary"
                      placeholder="name@apartel.com">
                </div>
                <div class="space-y-1.5">
                   <label class="text-xs font-bold text-gray-500 uppercase">Phone</label>
-                  <input type="tel" [ngModel]="currentMember().phone" (ngModelChange)="currentMember().phone = $event"
+                  <input type="tel" id="staffPhone" name="staffPhone" [ngModel]="currentMember().phone"
+                     (ngModelChange)="currentMember().phone = $event"
                      class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary"
                      placeholder="+1 234 567 890">
                </div>

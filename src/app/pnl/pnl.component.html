@@ -1,106 +1,79 @@
 <div class="flex flex-col h-[calc(100vh-8rem)] animate-fade-in-up pb-8">
-  
+
   <!-- Header & Controls -->
   <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
     <div>
       <h1 class="text-3xl font-extrabold text-[#111418] dark:text-white tracking-tight">Financial Performance</h1>
       <p class="text-gray-500 dark:text-gray-400 mt-1">Profit & Loss Statement (Values in {{ selectedCurrency() }})</p>
     </div>
-    
+
     <div class="flex flex-wrap items-center gap-4">
-      
+
       <!-- Date Filter & Nav -->
-      <div class="flex items-center bg-white dark:bg-[#1c2936] rounded-lg border border-gray-200 dark:border-[#324d67] p-1 shadow-sm">
+      <div
+        class="flex items-center bg-white dark:bg-[#1c2936] rounded-lg border border-gray-200 dark:border-[#324d67] p-1 shadow-sm">
         <!-- View Toggle -->
         <div class="flex bg-gray-100 dark:bg-[#111a22] rounded-md p-0.5 mr-2">
-           <button 
-             (click)="setFilterMode('month')"
-             class="px-3 py-1 text-xs font-bold rounded transition-colors"
-             [class.bg-white]="filterMode() === 'month'"
-             [class.shadow-sm]="filterMode() === 'month'"
-             [class.text-[#111418]]="filterMode() === 'month'"
-             [class.dark:bg-[#253545]]="filterMode() === 'month'"
-             [class.dark:text-white]="filterMode() === 'month'"
-             [class.text-gray-500]="filterMode() !== 'month'"
-           >Month</button>
-           <button 
-             (click)="setFilterMode('year')"
-             class="px-3 py-1 text-xs font-bold rounded transition-colors"
-             [class.bg-white]="filterMode() === 'year'"
-             [class.shadow-sm]="filterMode() === 'year'"
-             [class.text-[#111418]]="filterMode() === 'year'"
-             [class.dark:bg-[#253545]]="filterMode() === 'year'"
-             [class.dark:text-white]="filterMode() === 'year'"
-             [class.text-gray-500]="filterMode() !== 'year'"
-           >Year</button>
-           <button 
-             (click)="setFilterMode('all')"
-             class="px-3 py-1 text-xs font-bold rounded transition-colors"
-             [class.bg-white]="filterMode() === 'all'"
-             [class.shadow-sm]="filterMode() === 'all'"
-             [class.text-[#111418]]="filterMode() === 'all'"
-             [class.dark:bg-[#253545]]="filterMode() === 'all'"
-             [class.dark:text-white]="filterMode() === 'all'"
-             [class.text-gray-500]="filterMode() !== 'all'"
-           >All</button>
+          <button (click)="setFilterMode('month')" class="px-3 py-1 text-xs font-bold rounded transition-colors"
+            [class.bg-white]="filterMode() === 'month'" [class.shadow-sm]="filterMode() === 'month'"
+            [class.text-[#111418]]="filterMode() === 'month'" [class.dark:bg-[#253545]]="filterMode() === 'month'"
+            [class.dark:text-white]="filterMode() === 'month'"
+            [class.text-gray-500]="filterMode() !== 'month'">Month</button>
+          <button (click)="setFilterMode('year')" class="px-3 py-1 text-xs font-bold rounded transition-colors"
+            [class.bg-white]="filterMode() === 'year'" [class.shadow-sm]="filterMode() === 'year'"
+            [class.text-[#111418]]="filterMode() === 'year'" [class.dark:bg-[#253545]]="filterMode() === 'year'"
+            [class.dark:text-white]="filterMode() === 'year'"
+            [class.text-gray-500]="filterMode() !== 'year'">Year</button>
+          <button (click)="setFilterMode('all')" class="px-3 py-1 text-xs font-bold rounded transition-colors"
+            [class.bg-white]="filterMode() === 'all'" [class.shadow-sm]="filterMode() === 'all'"
+            [class.text-[#111418]]="filterMode() === 'all'" [class.dark:bg-[#253545]]="filterMode() === 'all'"
+            [class.dark:text-white]="filterMode() === 'all'" [class.text-gray-500]="filterMode() !== 'all'">All</button>
         </div>
 
         <!-- Navigation (Hidden if All) -->
         @if (filterMode() !== 'all') {
-          <button (click)="prevPeriod()" class="p-1.5 hover:bg-gray-100 dark:hover:bg-[#253545] rounded text-gray-500 dark:text-gray-400">
-            <span class="material-symbols-outlined text-[18px]">chevron_left</span>
-          </button>
-          <div class="px-3 font-bold text-sm text-[#111418] dark:text-white min-w-[100px] text-center select-none">
-            {{ dateLabel() }}
-          </div>
-          <button (click)="nextPeriod()" class="p-1.5 hover:bg-gray-100 dark:hover:bg-[#253545] rounded text-gray-500 dark:text-gray-400">
-            <span class="material-symbols-outlined text-[18px]">chevron_right</span>
-          </button>
+        <button (click)="prevPeriod()"
+          class="p-1.5 hover:bg-gray-100 dark:hover:bg-[#253545] rounded text-gray-500 dark:text-gray-400">
+          <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+        </button>
+        <div class="px-3 font-bold text-sm text-[#111418] dark:text-white min-w-[100px] text-center select-none">
+          {{ dateLabel() }}
+        </div>
+        <button (click)="nextPeriod()"
+          class="p-1.5 hover:bg-gray-100 dark:hover:bg-[#253545] rounded text-gray-500 dark:text-gray-400">
+          <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+        </button>
         } @else {
-           <div class="px-3 font-bold text-sm text-[#111418] dark:text-white min-w-[100px] text-center select-none">
-            All History
-          </div>
+        <div class="px-3 font-bold text-sm text-[#111418] dark:text-white min-w-[100px] text-center select-none">
+          All History
+        </div>
         }
       </div>
 
       <!-- Currency Switcher -->
       <div class="flex bg-gray-100 dark:bg-[#1c2936] p-1 rounded-lg border border-gray-200 dark:border-[#324d67]">
         @for (cur of ['USD', 'UAH', 'EUR']; track cur) {
-          <button 
-            (click)="setCurrency(cur)"
-            class="px-3 py-1.5 text-xs font-bold rounded-md transition-all"
-            [class.bg-primary]="selectedCurrency() === cur"
-            [class.text-white]="selectedCurrency() === cur"
-            [class.text-gray-500]="selectedCurrency() !== cur"
-            [class.dark:text-gray-400]="selectedCurrency() !== cur"
-          >
-            {{ cur }}
-          </button>
+        <button (click)="setCurrency(cur)" class="px-3 py-1.5 text-xs font-bold rounded-md transition-all"
+          [class.bg-primary]="selectedCurrency() === cur" [class.text-white]="selectedCurrency() === cur"
+          [class.text-gray-500]="selectedCurrency() !== cur" [class.dark:text-gray-400]="selectedCurrency() !== cur">
+          {{ cur }}
+        </button>
         }
       </div>
 
       <!-- Hidden File Input -->
-      <input 
-        #fileInput 
-        type="file" 
-        (change)="handleImport($event)" 
-        accept=".xlsx, .xls, .csv" 
-        class="hidden"
-      >
+      <input #fileInput type="file" id="pnlImportFile" name="pnlImportFile" (change)="handleImport($event)"
+        accept=".xlsx, .xls, .csv" class="hidden">
 
       <!-- Import Button -->
-      <button 
-        (click)="fileInput.click()"
-        class="flex items-center gap-2 bg-white dark:bg-[#253545] border border-gray-200 dark:border-[#324d67] hover:bg-gray-50 dark:hover:bg-[#2f4356] text-[#111418] dark:text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors"
-      >
+      <button (click)="fileInput.click()"
+        class="flex items-center gap-2 bg-white dark:bg-[#253545] border border-gray-200 dark:border-[#324d67] hover:bg-gray-50 dark:hover:bg-[#2f4356] text-[#111418] dark:text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">
         <span class="material-symbols-outlined text-[18px]">upload_file</span>
         Import
       </button>
 
-      <button 
-        (click)="openAddModal()"
-        class="flex items-center gap-2 bg-primary hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition-all shadow-lg shadow-primary/25 active:scale-[0.98]"
-      >
+      <button (click)="openAddModal()"
+        class="flex items-center gap-2 bg-primary hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition-all shadow-lg shadow-primary/25 active:scale-[0.98]">
         <span class="material-symbols-outlined text-[18px]">add</span>
         Add
       </button>
@@ -109,9 +82,10 @@
 
   <!-- Stats Grid -->
   <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
-    
+
     <!-- Total Revenue -->
-    <div class="bg-white dark:bg-[#1c2936] p-6 rounded-2xl border border-gray-200 dark:border-[#324d67] shadow-sm relative overflow-hidden group">
+    <div
+      class="bg-white dark:bg-[#1c2936] p-6 rounded-2xl border border-gray-200 dark:border-[#324d67] shadow-sm relative overflow-hidden group">
       <div class="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
         <span class="material-symbols-outlined text-6xl text-primary">payments</span>
       </div>
@@ -125,7 +99,8 @@
     </div>
 
     <!-- Total Expenses -->
-    <div class="bg-white dark:bg-[#1c2936] p-6 rounded-2xl border border-gray-200 dark:border-[#324d67] shadow-sm relative overflow-hidden group">
+    <div
+      class="bg-white dark:bg-[#1c2936] p-6 rounded-2xl border border-gray-200 dark:border-[#324d67] shadow-sm relative overflow-hidden group">
       <div class="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
         <span class="material-symbols-outlined text-6xl text-red-500">trending_down</span>
       </div>
@@ -136,7 +111,8 @@
     </div>
 
     <!-- Net Profit -->
-    <div class="bg-white dark:bg-[#1c2936] p-6 rounded-2xl border border-gray-200 dark:border-[#324d67] shadow-sm relative overflow-hidden group">
+    <div
+      class="bg-white dark:bg-[#1c2936] p-6 rounded-2xl border border-gray-200 dark:border-[#324d67] shadow-sm relative overflow-hidden group">
       <div class="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
         <span class="material-symbols-outlined text-6xl text-blue-400">savings</span>
       </div>
@@ -147,7 +123,8 @@
     </div>
 
     <!-- Margin -->
-    <div class="bg-white dark:bg-[#1c2936] p-6 rounded-2xl border border-gray-200 dark:border-[#324d67] shadow-sm relative overflow-hidden group">
+    <div
+      class="bg-white dark:bg-[#1c2936] p-6 rounded-2xl border border-gray-200 dark:border-[#324d67] shadow-sm relative overflow-hidden group">
       <div class="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
         <span class="material-symbols-outlined text-6xl text-purple-400">analytics</span>
       </div>
@@ -160,47 +137,43 @@
 
   <!-- Main Content: Split View -->
   <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 flex-1 overflow-hidden">
-    
+
     <!-- Left: Category Breakdown -->
-    <div class="bg-white dark:bg-[#1c2936] rounded-2xl border border-gray-200 dark:border-[#324d67] shadow-sm flex flex-col overflow-hidden">
+    <div
+      class="bg-white dark:bg-[#1c2936] rounded-2xl border border-gray-200 dark:border-[#324d67] shadow-sm flex flex-col overflow-hidden">
       <div class="px-6 py-5 border-b border-gray-200 dark:border-[#324d67] flex items-center justify-between">
         <h3 class="font-bold text-lg text-[#111418] dark:text-white">Category Breakdown</h3>
-        
+
         <!-- Download Menu -->
         <div class="relative">
-            <button 
-                (click)="toggleDownloadMenu()"
-                class="text-primary text-sm font-bold hover:underline cursor-pointer flex items-center gap-1"
-            >
-                Download Report
-                <span class="material-symbols-outlined text-[16px]">expand_more</span>
+          <button (click)="toggleDownloadMenu()"
+            class="text-primary text-sm font-bold hover:underline cursor-pointer flex items-center gap-1">
+            Download Report
+            <span class="material-symbols-outlined text-[16px]">expand_more</span>
+          </button>
+
+          @if (isDownloadMenuOpen()) {
+          <!-- Backdrop -->
+          <div class="fixed inset-0 z-10 cursor-default" (click)="isDownloadMenuOpen.set(false)"></div>
+
+          <!-- Menu -->
+          <div
+            class="absolute right-0 top-full mt-1 w-48 bg-white dark:bg-[#1c2936] rounded-xl shadow-xl border border-gray-200 dark:border-[#324d67] z-20 overflow-hidden animate-fade-in flex flex-col">
+            <button (click)="downloadReport('xlsx')"
+              class="text-left px-4 py-3 text-sm hover:bg-gray-50 dark:hover:bg-[#253545] text-[#111418] dark:text-white flex items-center gap-2 transition-colors">
+              <span class="material-symbols-outlined text-green-600 text-[18px]">table_view</span>
+              Excel (.xlsx)
             </button>
-            
-            @if (isDownloadMenuOpen()) {
-                <!-- Backdrop -->
-                <div class="fixed inset-0 z-10 cursor-default" (click)="isDownloadMenuOpen.set(false)"></div>
-                
-                <!-- Menu -->
-                <div class="absolute right-0 top-full mt-1 w-48 bg-white dark:bg-[#1c2936] rounded-xl shadow-xl border border-gray-200 dark:border-[#324d67] z-20 overflow-hidden animate-fade-in flex flex-col">
-                    <button 
-                        (click)="downloadReport('xlsx')"
-                        class="text-left px-4 py-3 text-sm hover:bg-gray-50 dark:hover:bg-[#253545] text-[#111418] dark:text-white flex items-center gap-2 transition-colors"
-                    >
-                        <span class="material-symbols-outlined text-green-600 text-[18px]">table_view</span>
-                        Excel (.xlsx)
-                    </button>
-                    <button 
-                        (click)="downloadReport('json')"
-                        class="text-left px-4 py-3 text-sm hover:bg-gray-50 dark:hover:bg-[#253545] text-[#111418] dark:text-white flex items-center gap-2 border-t border-gray-100 dark:border-[#324d67] transition-colors"
-                    >
-                        <span class="material-symbols-outlined text-yellow-600 text-[18px]">data_object</span>
-                        JSON Data
-                    </button>
-                </div>
-            }
+            <button (click)="downloadReport('json')"
+              class="text-left px-4 py-3 text-sm hover:bg-gray-50 dark:hover:bg-[#253545] text-[#111418] dark:text-white flex items-center gap-2 border-t border-gray-100 dark:border-[#324d67] transition-colors">
+              <span class="material-symbols-outlined text-yellow-600 text-[18px]">data_object</span>
+              JSON Data
+            </button>
+          </div>
+          }
         </div>
       </div>
-      
+
       <div class="flex-1 overflow-y-auto p-2">
         <!-- Table Header -->
         <div class="grid grid-cols-12 px-4 py-2 text-xs font-bold text-gray-500 uppercase">
@@ -211,103 +184,96 @@
 
         <!-- List -->
         @for (cat of categoryBreakdown(); track cat.name) {
-          <div class="mb-1">
-            <!-- Parent Row -->
-            <div 
-              (click)="toggleCategory(cat.name)"
-              class="grid grid-cols-12 px-4 py-3 rounded-lg hover:bg-gray-50 dark:hover:bg-[#253545] cursor-pointer items-center transition-colors group"
-            >
-              <div class="col-span-6 flex items-center gap-2">
-                <span 
-                  class="material-symbols-outlined text-[16px] text-gray-400 transition-transform duration-200"
-                  [class.rotate-90]="isExpanded(cat.name)"
-                >chevron_right</span>
-                <span class="font-bold text-sm text-[#111418] dark:text-white">{{ cat.name }}</span>
-              </div>
-              <div class="col-span-3 text-right font-mono font-bold text-sm text-[#111418] dark:text-white">
-                {{ getCurrencySymbol(selectedCurrency()) }}{{ cat.amount | number:'1.2-2' }}
-              </div>
-              <div class="col-span-3 text-right">
-                <span 
-                  class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded"
-                  [class.text-green-500]="cat.type === 'income'"
-                  [class.bg-green-500/10]="cat.type === 'income'"
-                  [class.text-red-500]="cat.type === 'expense'"
-                  [class.bg-red-500/10]="cat.type === 'expense'"
-                >
-                  {{ cat.type }}
-                </span>
-              </div>
+        <div class="mb-1">
+          <!-- Parent Row -->
+          <div (click)="toggleCategory(cat.name)"
+            class="grid grid-cols-12 px-4 py-3 rounded-lg hover:bg-gray-50 dark:hover:bg-[#253545] cursor-pointer items-center transition-colors group">
+            <div class="col-span-6 flex items-center gap-2">
+              <span class="material-symbols-outlined text-[16px] text-gray-400 transition-transform duration-200"
+                [class.rotate-90]="isExpanded(cat.name)">chevron_right</span>
+              <span class="font-bold text-sm text-[#111418] dark:text-white">{{ cat.name }}</span>
             </div>
+            <div class="col-span-3 text-right font-mono font-bold text-sm text-[#111418] dark:text-white">
+              {{ getCurrencySymbol(selectedCurrency()) }}{{ cat.amount | number:'1.2-2' }}
+            </div>
+            <div class="col-span-3 text-right">
+              <span class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded"
+                [class.text-green-500]="cat.type === 'income'" [class.bg-green-500/10]="cat.type === 'income'"
+                [class.text-red-500]="cat.type === 'expense'" [class.bg-red-500/10]="cat.type === 'expense'">
+                {{ cat.type }}
+              </span>
+            </div>
+          </div>
 
-            <!-- Children Rows -->
-            @if (isExpanded(cat.name)) {
-              <div class="space-y-0.5 mt-1 mb-2">
-                @for (child of cat.children; track child.name) {
-                  <div class="grid grid-cols-12 px-4 py-2 hover:bg-gray-50 dark:hover:bg-[#253545]/50 text-sm text-gray-500 dark:text-gray-400 transition-colors">
-                    <div class="col-span-6 pl-10 flex items-center gap-2">
-                      <span class="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-600"></span>
-                      {{ child.name }}
-                    </div>
-                    <div class="col-span-3 text-right font-mono text-xs">
-                      {{ getCurrencySymbol(selectedCurrency()) }}{{ child.amount | number:'1.2-2' }}
-                    </div>
-                    <div class="col-span-3"></div>
-                  </div>
-                }
+          <!-- Children Rows -->
+          @if (isExpanded(cat.name)) {
+          <div class="space-y-0.5 mt-1 mb-2">
+            @for (child of cat.children; track child.name) {
+            <div
+              class="grid grid-cols-12 px-4 py-2 hover:bg-gray-50 dark:hover:bg-[#253545]/50 text-sm text-gray-500 dark:text-gray-400 transition-colors">
+              <div class="col-span-6 pl-10 flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-600"></span>
+                {{ child.name }}
               </div>
+              <div class="col-span-3 text-right font-mono text-xs">
+                {{ getCurrencySymbol(selectedCurrency()) }}{{ child.amount | number:'1.2-2' }}
+              </div>
+              <div class="col-span-3"></div>
+            </div>
             }
           </div>
+          }
+        </div>
         }
         @if (categoryBreakdown().length === 0) {
-           <div class="p-8 text-center text-gray-400 italic">No data for this period</div>
+        <div class="p-8 text-center text-gray-400 italic">No data for this period</div>
         }
       </div>
     </div>
 
     <!-- Right: Recent Transactions -->
-    <div class="bg-white dark:bg-[#1c2936] rounded-2xl border border-gray-200 dark:border-[#324d67] shadow-sm flex flex-col overflow-hidden">
+    <div
+      class="bg-white dark:bg-[#1c2936] rounded-2xl border border-gray-200 dark:border-[#324d67] shadow-sm flex flex-col overflow-hidden">
       <div class="px-6 py-5 border-b border-gray-200 dark:border-[#324d67]">
         <h3 class="font-bold text-lg text-[#111418] dark:text-white">Transactions ({{ dateLabel() }})</h3>
       </div>
-      
+
       <div class="flex-1 overflow-y-auto p-6 space-y-4">
         @for (tx of processedTransactions(); track tx.id) {
-          <div class="flex items-center justify-between p-4 rounded-xl border border-gray-200 dark:border-[#324d67] bg-gray-50/50 dark:bg-[#111a22]/30 hover:border-primary/30 transition-colors">
-            <div>
-              <div class="flex items-center gap-2 mb-1">
-                <span class="font-bold text-sm text-[#111418] dark:text-white">{{ tx.category }}</span>
-                <span class="text-gray-400 text-xs">•</span>
-                <span class="text-gray-500 text-sm">{{ tx.subCategory }}</span>
-              </div>
-              <div class="flex items-center gap-2 text-xs">
-                <span class="text-gray-400 font-mono">{{ tx.date }}</span>
-                <span class="text-gray-300 dark:text-gray-600">•</span>
-                <span class="text-gray-500 font-bold">{{ tx.property }}</span>
-              </div>
+        <div
+          class="flex items-center justify-between p-4 rounded-xl border border-gray-200 dark:border-[#324d67] bg-gray-50/50 dark:bg-[#111a22]/30 hover:border-primary/30 transition-colors">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <span class="font-bold text-sm text-[#111418] dark:text-white">{{ tx.category }}</span>
+              <span class="text-gray-400 text-xs">•</span>
+              <span class="text-gray-500 text-sm">{{ tx.subCategory }}</span>
             </div>
-            <div class="text-right">
-              <div 
-                class="font-mono font-bold text-lg"
-                [class.text-green-500]="tx.type === 'income'"
-                [class.text-red-400]="tx.type === 'expense'"
-              >
-                {{ tx.type === 'income' ? '+' : '-' }}{{ getCurrencySymbol(selectedCurrency()) }}{{ tx.convertedAmount | number:'1.2-2' }}
-              </div>
-              <!-- Show original currency if different -->
-              @if (tx.currency !== selectedCurrency()) {
-                <div class="text-[10px] text-gray-400 font-mono">
-                  Orig: {{ getCurrencySymbol(tx.currency) }}{{ tx.amount | number:'1.2-2' }}
-                </div>
-              }
+            <div class="flex items-center gap-2 text-xs">
+              <span class="text-gray-400 font-mono">{{ tx.date }}</span>
+              <span class="text-gray-300 dark:text-gray-600">•</span>
+              <span class="text-gray-500 font-bold">{{ tx.property }}</span>
             </div>
           </div>
+          <div class="text-right">
+            <div class="font-mono font-bold text-lg" [class.text-green-500]="tx.type === 'income'"
+              [class.text-red-400]="tx.type === 'expense'">
+              {{ tx.type === 'income' ? '+' : '-' }}{{ getCurrencySymbol(selectedCurrency()) }}{{ tx.convertedAmount |
+              number:'1.2-2' }}
+            </div>
+            <!-- Show original currency if different -->
+            @if (tx.currency !== selectedCurrency()) {
+            <div class="text-[10px] text-gray-400 font-mono">
+              Orig: {{ getCurrencySymbol(tx.currency) }}{{ tx.amount | number:'1.2-2' }}
+            </div>
+            }
+          </div>
+        </div>
         }
         @if (processedTransactions().length === 0) {
-           <div class="flex flex-col items-center justify-center h-40 text-gray-400 italic">
-              <span class="material-symbols-outlined text-4xl mb-2 opacity-50">receipt_long</span>
-              No transactions for {{ dateLabel() }}.
-           </div>
+        <div class="flex flex-col items-center justify-center h-40 text-gray-400 italic">
+          <span class="material-symbols-outlined text-4xl mb-2 opacity-50">receipt_long</span>
+          No transactions for {{ dateLabel() }}.
+        </div>
         }
       </div>
     </div>
@@ -315,228 +281,229 @@
 
   <!-- Add Modal -->
   @if (isModalOpen()) {
-    <div class="absolute inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
-      <div class="bg-white dark:bg-[#1c2936] w-full max-w-lg rounded-xl shadow-2xl border border-gray-200 dark:border-[#324d67] overflow-hidden flex flex-col max-h-[90vh]">
-        <div class="px-6 py-4 border-b border-gray-200 dark:border-[#324d67] flex items-center justify-between">
-          <h3 class="text-lg font-bold text-[#111418] dark:text-white">Add Transaction</h3>
-          <button (click)="isModalOpen.set(false)" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
-            <span class="material-symbols-outlined">close</span>
-          </button>
+  <div class="absolute inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
+    <div
+      class="bg-white dark:bg-[#1c2936] w-full max-w-lg rounded-xl shadow-2xl border border-gray-200 dark:border-[#324d67] overflow-hidden flex flex-col max-h-[90vh]">
+      <div class="px-6 py-4 border-b border-gray-200 dark:border-[#324d67] flex items-center justify-between">
+        <h3 class="text-lg font-bold text-[#111418] dark:text-white">Add Transaction</h3>
+        <button (click)="isModalOpen.set(false)" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <div class="p-6 overflow-y-auto space-y-4">
+        <!-- Type Toggle -->
+        <div class="flex bg-gray-100 dark:bg-[#111a22] rounded-lg p-1">
+          <button (click)="updateNewTx('type', 'income')"
+            class="flex-1 py-2 rounded-md text-sm font-bold transition-all"
+            [class.bg-white]="newTransaction().type === 'income'"
+            [class.text-green-600]="newTransaction().type === 'income'"
+            [class.shadow-sm]="newTransaction().type === 'income'"
+            [class.text-gray-500]="newTransaction().type !== 'income'"
+            [class.dark:bg-[#253545]]="newTransaction().type === 'income'">Revenue</button>
+          <button (click)="updateNewTx('type', 'expense')"
+            class="flex-1 py-2 rounded-md text-sm font-bold transition-all"
+            [class.bg-white]="newTransaction().type === 'expense'"
+            [class.text-red-500]="newTransaction().type === 'expense'"
+            [class.shadow-sm]="newTransaction().type === 'expense'"
+            [class.text-gray-500]="newTransaction().type !== 'expense'"
+            [class.dark:bg-[#253545]]="newTransaction().type === 'expense'">Expense</button>
         </div>
-        
-        <div class="p-6 overflow-y-auto space-y-4">
-          <!-- Type Toggle -->
-          <div class="flex bg-gray-100 dark:bg-[#111a22] rounded-lg p-1">
-             <button 
-                (click)="updateNewTx('type', 'income')"
-                class="flex-1 py-2 rounded-md text-sm font-bold transition-all"
-                [class.bg-white]="newTransaction().type === 'income'"
-                [class.text-green-600]="newTransaction().type === 'income'"
-                [class.shadow-sm]="newTransaction().type === 'income'"
-                [class.text-gray-500]="newTransaction().type !== 'income'"
-                [class.dark:bg-[#253545]]="newTransaction().type === 'income'"
-             >Revenue</button>
-             <button 
-                (click)="updateNewTx('type', 'expense')"
-                class="flex-1 py-2 rounded-md text-sm font-bold transition-all"
-                [class.bg-white]="newTransaction().type === 'expense'"
-                [class.text-red-500]="newTransaction().type === 'expense'"
-                [class.shadow-sm]="newTransaction().type === 'expense'"
-                [class.text-gray-500]="newTransaction().type !== 'expense'"
-                [class.dark:bg-[#253545]]="newTransaction().type === 'expense'"
-             >Expense</button>
-          </div>
 
-          <!-- Date & Property -->
-          <div class="grid grid-cols-2 gap-4">
-             <div class="space-y-1.5">
-                <label class="text-xs font-bold text-gray-500 uppercase">Date</label>
-                <input 
-                   type="date" 
-                   [ngModel]="newTransaction().date"
-                   (ngModelChange)="updateNewTx('date', $event)"
-                   class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary"
-                >
-             </div>
-             <div class="space-y-1.5">
-                <label class="text-xs font-bold text-gray-500 uppercase">Property</label>
-                <select 
-                   [ngModel]="newTransaction().property"
-                   (ngModelChange)="updateNewTx('property', $event)"
-                   class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary"
-                >
-                   @for(p of properties; track p) {
-                      <option [value]="p">{{ p }}</option>
-                   }
-                </select>
-             </div>
-          </div>
-
-          <!-- Category & Sub -->
-          <div class="grid grid-cols-2 gap-4">
-             <div class="space-y-1.5">
-                <label class="text-xs font-bold text-gray-500 uppercase">Category</label>
-                <select 
-                   [ngModel]="newTransaction().category"
-                   (ngModelChange)="updateNewTx('category', $event)"
-                   class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary"
-                >
-                   @for(c of availableCategories(); track c.name) {
-                      <option [value]="c.name">{{ c.name }}</option>
-                   }
-                </select>
-             </div>
-             <div class="space-y-1.5">
-                <label class="text-xs font-bold text-gray-500 uppercase">Sub-Category</label>
-                <select 
-                   [ngModel]="newTransaction().subCategory"
-                   (ngModelChange)="updateNewTx('subCategory', $event)"
-                   class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary"
-                >
-                   @for(sub of availableSubCategories(); track sub) {
-                      <option [value]="sub">{{ sub }}</option>
-                   }
-                </select>
-             </div>
-          </div>
-
-          <!-- Amount -->
-          <div class="grid grid-cols-3 gap-4">
-            <div class="col-span-1 space-y-1.5">
-               <label class="text-xs font-bold text-gray-500 uppercase">Currency</label>
-               <select 
-                 [ngModel]="newTransaction().currency"
-                 (ngModelChange)="updateNewTx('currency', $event)"
-                 class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary"
-               >
-                 <option value="USD">USD</option>
-                 <option value="UAH">UAH</option>
-                 <option value="EUR">EUR</option>
-               </select>
-            </div>
-            <div class="col-span-2 space-y-1.5">
-               <label class="text-xs font-bold text-gray-500 uppercase">Amount</label>
-               <input 
-                  type="number" 
-                  [ngModel]="newTransaction().amount"
-                  (ngModelChange)="updateNewTx('amount', $event)"
-                  class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary"
-                  placeholder="0.00"
-               >
-            </div>
-          </div>
-
-          <!-- Description -->
+        <!-- Date & Property -->
+        <div class="grid grid-cols-2 gap-4">
           <div class="space-y-1.5">
-             <label class="text-xs font-bold text-gray-500 uppercase">Description</label>
-             <textarea 
-                [ngModel]="newTransaction().description"
-                (ngModelChange)="updateNewTx('description', $event)"
-                class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm focus:ring-1 focus:ring-primary resize-none h-20 text-[#111418] dark:text-white"
-                placeholder="Optional details..."
-             ></textarea>
+            <label class="text-xs font-bold text-gray-500 uppercase">Date</label>
+            <input type="date" id="pnlTxDate" name="pnlTxDate" [ngModel]="newTransaction().date"
+              (ngModelChange)="updateNewTx('date', $event)"
+              class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary">
+          </div>
+          <div class="space-y-1.5">
+            <label class="text-xs font-bold text-gray-500 uppercase">Property</label>
+            <select id="pnlTxProperty" name="pnlTxProperty" [ngModel]="newTransaction().property"
+              (ngModelChange)="updateNewTx('property', $event)"
+              class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary">
+              @for(p of properties; track p) {
+              <option [value]="p">{{ p }}</option>
+              }
+            </select>
           </div>
         </div>
 
-        <div class="px-6 py-4 bg-gray-50 dark:bg-[#111a22] border-t border-gray-200 dark:border-[#324d67] flex justify-end gap-3">
-           <button (click)="isModalOpen.set(false)" class="px-4 py-2 text-sm font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#253545] rounded-lg">Cancel</button>
-           <button 
-             (click)="saveTransaction()" 
-             class="px-4 py-2 text-sm font-bold text-white bg-primary hover:bg-blue-600 rounded-lg shadow-lg shadow-primary/25"
-           >Save Transaction</button>
+        <!-- Category & Sub -->
+        <div class="grid grid-cols-2 gap-4">
+          <div class="space-y-1.5">
+            <label class="text-xs font-bold text-gray-500 uppercase">Category</label>
+            <select id="pnlTxCategory" name="pnlTxCategory" [ngModel]="newTransaction().category"
+              (ngModelChange)="updateNewTx('category', $event)"
+              class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary">
+              @for(c of availableCategories(); track c.name) {
+              <option [value]="c.name">{{ c.name }}</option>
+              }
+            </select>
+          </div>
+          <div class="space-y-1.5">
+            <label class="text-xs font-bold text-gray-500 uppercase">Sub-Category</label>
+            <select id="pnlTxSubCategory" name="pnlTxSubCategory" [ngModel]="newTransaction().subCategory"
+              (ngModelChange)="updateNewTx('subCategory', $event)"
+              class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary">
+              @for(sub of availableSubCategories(); track sub) {
+              <option [value]="sub">{{ sub }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <!-- Amount -->
+        <div class="grid grid-cols-3 gap-4">
+          <div class="col-span-1 space-y-1.5">
+            <label class="text-xs font-bold text-gray-500 uppercase">Currency</label>
+            <select id="pnlTxCurrency" name="pnlTxCurrency" [ngModel]="newTransaction().currency"
+              (ngModelChange)="updateNewTx('currency', $event)"
+              class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary">
+              <option value="USD">USD</option>
+              <option value="UAH">UAH</option>
+              <option value="EUR">EUR</option>
+            </select>
+          </div>
+          <div class="col-span-2 space-y-1.5">
+            <label class="text-xs font-bold text-gray-500 uppercase">Amount</label>
+            <input type="number" id="pnlTxAmount" name="pnlTxAmount" [ngModel]="newTransaction().amount"
+              (ngModelChange)="updateNewTx('amount', $event)"
+              class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary"
+              placeholder="0.00">
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="space-y-1.5">
+          <label class="text-xs font-bold text-gray-500 uppercase">Description</label>
+          <textarea id="pnlTxDescription" name="pnlTxDescription" [ngModel]="newTransaction().description"
+            (ngModelChange)="updateNewTx('description', $event)"
+            class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm focus:ring-1 focus:ring-primary resize-none h-20 text-[#111418] dark:text-white"
+            placeholder="Optional details..."></textarea>
         </div>
       </div>
+
+      <div
+        class="px-6 py-4 bg-gray-50 dark:bg-[#111a22] border-t border-gray-200 dark:border-[#324d67] flex justify-end gap-3">
+        <button (click)="isModalOpen.set(false)"
+          class="px-4 py-2 text-sm font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#253545] rounded-lg">Cancel</button>
+        <button (click)="saveTransaction()"
+          class="px-4 py-2 text-sm font-bold text-white bg-primary hover:bg-blue-600 rounded-lg shadow-lg shadow-primary/25">Save
+          Transaction</button>
+      </div>
     </div>
+  </div>
   }
 
   <!-- Import Preview Modal -->
   @if (isImportModalOpen()) {
-    <div class="absolute inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
-      <div class="bg-white dark:bg-[#1c2936] w-full max-w-6xl rounded-xl shadow-2xl border border-gray-200 dark:border-[#324d67] overflow-hidden flex flex-col max-h-[90vh]">
-        <div class="px-6 py-4 border-b border-gray-200 dark:border-[#324d67] flex items-center justify-between">
-          <h3 class="text-lg font-bold text-[#111418] dark:text-white">Review Import Data</h3>
-          <button (click)="cancelImport()" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
-            <span class="material-symbols-outlined">close</span>
-          </button>
-        </div>
+  <div class="absolute inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
+    <div
+      class="bg-white dark:bg-[#1c2936] w-full max-w-6xl rounded-xl shadow-2xl border border-gray-200 dark:border-[#324d67] overflow-hidden flex flex-col max-h-[90vh]">
+      <div class="px-6 py-4 border-b border-gray-200 dark:border-[#324d67] flex items-center justify-between">
+        <h3 class="text-lg font-bold text-[#111418] dark:text-white">Review Import Data</h3>
+        <button (click)="cancelImport()" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
 
-        <div class="flex-1 overflow-auto p-0">
-          <table class="w-full text-sm text-left border-collapse">
-            <thead class="text-xs text-gray-500 uppercase bg-gray-50 dark:bg-[#111a22] sticky top-0 z-10 shadow-sm">
-              <tr>
-                <th class="px-4 py-3 font-bold border-b dark:border-[#324d67]">Date</th>
-                <th class="px-4 py-3 font-bold border-b dark:border-[#324d67]">Type</th>
-                <th class="px-4 py-3 font-bold border-b dark:border-[#324d67]">Property</th>
-                <th class="px-4 py-3 font-bold border-b dark:border-[#324d67]">Category</th>
-                <th class="px-4 py-3 font-bold border-b dark:border-[#324d67]">Sub Category</th>
-                <th class="px-4 py-3 font-bold border-b dark:border-[#324d67]">Description</th>
-                <th class="px-4 py-3 font-bold border-b dark:border-[#324d67] text-right">Amount</th>
-                <th class="px-4 py-3 font-bold border-b dark:border-[#324d67]">Curr</th>
-                <th class="px-4 py-3 font-bold border-b dark:border-[#324d67]"></th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200 dark:divide-[#324d67]">
-              @for (item of importPreviewData(); track item.id; let i = $index) {
-                <tr class="bg-white dark:bg-[#1c2936] hover:bg-gray-50 dark:hover:bg-[#253545]">
-                  <td class="p-2">
-                    <input type="date" [ngModel]="item.date" (ngModelChange)="updatePreviewItem(i, 'date', $event)" class="w-32 bg-transparent border border-gray-200 dark:border-[#324d67] text-[#111418] dark:text-white rounded px-2 py-1 text-xs focus:ring-1 focus:ring-primary">
-                  </td>
-                  <td class="p-2">
-                     <select [ngModel]="item.type" (ngModelChange)="updatePreviewItem(i, 'type', $event)" class="bg-transparent border border-gray-200 dark:border-[#324d67] text-[#111418] dark:text-white rounded px-2 py-1 text-xs focus:ring-1 focus:ring-primary">
-                        <option value="income">Income</option>
-                        <option value="expense">Expense</option>
-                     </select>
-                  </td>
-                  <td class="p-2">
-                     <select [ngModel]="item.property" (ngModelChange)="updatePreviewItem(i, 'property', $event)" class="w-32 bg-transparent border border-gray-200 dark:border-[#324d67] text-[#111418] dark:text-white rounded px-2 py-1 text-xs focus:ring-1 focus:ring-primary">
-                        @for(p of properties; track p) { <option [value]="p">{{p}}</option> }
-                     </select>
-                  </td>
-                  <td class="p-2">
-                     <select [ngModel]="item.category" (ngModelChange)="updatePreviewItem(i, 'category', $event)" class="w-32 bg-transparent border border-gray-200 dark:border-[#324d67] text-[#111418] dark:text-white rounded px-2 py-1 text-xs focus:ring-1 focus:ring-primary">
-                        @for(c of categories; track c.name) { <option [value]="c.name">{{c.name}}</option> }
-                     </select>
-                  </td>
-                  <td class="p-2">
-                     <input type="text" [ngModel]="item.subCategory" (ngModelChange)="updatePreviewItem(i, 'subCategory', $event)" class="w-24 bg-transparent border border-gray-200 dark:border-[#324d67] text-[#111418] dark:text-white rounded px-2 py-1 text-xs focus:ring-1 focus:ring-primary">
-                  </td>
-                  <td class="p-2">
-                     <input type="text" [ngModel]="item.description" (ngModelChange)="updatePreviewItem(i, 'description', $event)" class="w-48 bg-transparent border border-gray-200 dark:border-[#324d67] text-[#111418] dark:text-white rounded px-2 py-1 text-xs focus:ring-1 focus:ring-primary">
-                  </td>
-                  <td class="p-2 text-right">
-                     <input type="number" [ngModel]="item.amount" (ngModelChange)="updatePreviewItem(i, 'amount', $event)" class="w-20 text-right bg-transparent border border-gray-200 dark:border-[#324d67] text-[#111418] dark:text-white rounded px-2 py-1 text-xs focus:ring-1 focus:ring-primary">
-                  </td>
-                  <td class="p-2">
-                     <select [ngModel]="item.currency" (ngModelChange)="updatePreviewItem(i, 'currency', $event)" class="w-16 bg-transparent border border-gray-200 dark:border-[#324d67] text-[#111418] dark:text-white rounded px-2 py-1 text-xs focus:ring-1 focus:ring-primary">
-                        <option value="USD">USD</option>
-                        <option value="UAH">UAH</option>
-                        <option value="EUR">EUR</option>
-                     </select>
-                  </td>
-                  <td class="p-2 text-center">
-                    <button (click)="removePreviewItem(i)" class="text-gray-400 hover:text-red-500 transition-colors">
-                      <span class="material-symbols-outlined text-[18px]">delete</span>
-                    </button>
-                  </td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        </div>
+      <div class="flex-1 overflow-auto p-0">
+        <table class="w-full text-sm text-left border-collapse">
+          <thead class="text-xs text-gray-500 uppercase bg-gray-50 dark:bg-[#111a22] sticky top-0 z-10 shadow-sm">
+            <tr>
+              <th class="px-4 py-3 font-bold border-b dark:border-[#324d67]">Date</th>
+              <th class="px-4 py-3 font-bold border-b dark:border-[#324d67]">Type</th>
+              <th class="px-4 py-3 font-bold border-b dark:border-[#324d67]">Property</th>
+              <th class="px-4 py-3 font-bold border-b dark:border-[#324d67]">Category</th>
+              <th class="px-4 py-3 font-bold border-b dark:border-[#324d67]">Sub Category</th>
+              <th class="px-4 py-3 font-bold border-b dark:border-[#324d67]">Description</th>
+              <th class="px-4 py-3 font-bold border-b dark:border-[#324d67] text-right">Amount</th>
+              <th class="px-4 py-3 font-bold border-b dark:border-[#324d67]">Curr</th>
+              <th class="px-4 py-3 font-bold border-b dark:border-[#324d67]"></th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200 dark:divide-[#324d67]">
+            @for (item of importPreviewData(); track item.id; let i = $index) {
+            <tr class="bg-white dark:bg-[#1c2936] hover:bg-gray-50 dark:hover:bg-[#253545]">
+              <td class="p-2">
+                <input type="date" [attr.id]="'impDate-' + i" [attr.name]="'impDate-' + i" [ngModel]="item.date"
+                  (ngModelChange)="updatePreviewItem(i, 'date', $event)"
+                  class="w-32 bg-transparent border border-gray-200 dark:border-[#324d67] text-[#111418] dark:text-white rounded px-2 py-1 text-xs focus:ring-1 focus:ring-primary">
+              </td>
+              <td class="p-2">
+                <select [attr.id]="'impType-' + i" [attr.name]="'impType-' + i" [ngModel]="item.type"
+                  (ngModelChange)="updatePreviewItem(i, 'type', $event)"
+                  class="bg-transparent border border-gray-200 dark:border-[#324d67] text-[#111418] dark:text-white rounded px-2 py-1 text-xs focus:ring-1 focus:ring-primary">
+                  <option value="income">Income</option>
+                  <option value="expense">Expense</option>
+                </select>
+              </td>
+              <td class="p-2">
+                <select [attr.id]="'impProp-' + i" [attr.name]="'impProp-' + i" [ngModel]="item.property"
+                  (ngModelChange)="updatePreviewItem(i, 'property', $event)"
+                  class="w-32 bg-transparent border border-gray-200 dark:border-[#324d67] text-[#111418] dark:text-white rounded px-2 py-1 text-xs focus:ring-1 focus:ring-primary">
+                  @for(p of properties; track p) { <option [value]="p">{{p}}</option> }
+                </select>
+              </td>
+              <td class="p-2">
+                <select [attr.id]="'impCat-' + i" [attr.name]="'impCat-' + i" [ngModel]="item.category"
+                  (ngModelChange)="updatePreviewItem(i, 'category', $event)"
+                  class="w-32 bg-transparent border border-gray-200 dark:border-[#324d67] text-[#111418] dark:text-white rounded px-2 py-1 text-xs focus:ring-1 focus:ring-primary">
+                  @for(c of categories; track c.name) { <option [value]="c.name">{{c.name}}</option> }
+                </select>
+              </td>
+              <td class="p-2">
+                <input type="text" [attr.id]="'impSubCat-' + i" [attr.name]="'impSubCat-' + i"
+                  [ngModel]="item.subCategory" (ngModelChange)="updatePreviewItem(i, 'subCategory', $event)"
+                  class="w-24 bg-transparent border border-gray-200 dark:border-[#324d67] text-[#111418] dark:text-white rounded px-2 py-1 text-xs focus:ring-1 focus:ring-primary">
+              </td>
+              <td class="p-2">
+                <input type="text" [attr.id]="'impDesc-' + i" [attr.name]="'impDesc-' + i" [ngModel]="item.description"
+                  (ngModelChange)="updatePreviewItem(i, 'description', $event)"
+                  class="w-48 bg-transparent border border-gray-200 dark:border-[#324d67] text-[#111418] dark:text-white rounded px-2 py-1 text-xs focus:ring-1 focus:ring-primary">
+              </td>
+              <td class="p-2 text-right">
+                <input type="number" [attr.id]="'impAmount-' + i" [attr.name]="'impAmount-' + i" [ngModel]="item.amount"
+                  (ngModelChange)="updatePreviewItem(i, 'amount', $event)"
+                  class="w-20 text-right bg-transparent border border-gray-200 dark:border-[#324d67] text-[#111418] dark:text-white rounded px-2 py-1 text-xs focus:ring-1 focus:ring-primary">
+              </td>
+              <td class="p-2">
+                <select [attr.id]="'impCurr-' + i" [attr.name]="'impCurr-' + i" [ngModel]="item.currency"
+                  (ngModelChange)="updatePreviewItem(i, 'currency', $event)"
+                  class="w-16 bg-transparent border border-gray-200 dark:border-[#324d67] text-[#111418] dark:text-white rounded px-2 py-1 text-xs focus:ring-1 focus:ring-primary">
+                  <option value="USD">USD</option>
+                  <option value="UAH">UAH</option>
+                  <option value="EUR">EUR</option>
+                </select>
+              </td>
+              <td class="p-2 text-center">
+                <button (click)="removePreviewItem(i)" class="text-gray-400 hover:text-red-500 transition-colors">
+                  <span class="material-symbols-outlined text-[18px]">delete</span>
+                </button>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
 
-        <div class="px-6 py-4 bg-gray-50 dark:bg-[#111a22] border-t border-gray-200 dark:border-[#324d67] flex justify-between items-center">
-           <div class="text-sm text-gray-500">
-              <strong class="text-[#111418] dark:text-white">{{ importPreviewData().length }}</strong> transactions ready to import.
-           </div>
-           <div class="flex gap-3">
-             <button (click)="cancelImport()" class="px-4 py-2 text-sm font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#253545] rounded-lg transition-colors">Discard</button>
-             <button 
-               (click)="saveImport()" 
-               class="px-4 py-2 text-sm font-bold text-white bg-primary hover:bg-blue-600 rounded-lg shadow-lg shadow-primary/25 transition-colors"
-             >Import All</button>
-           </div>
+      <div
+        class="px-6 py-4 bg-gray-50 dark:bg-[#111a22] border-t border-gray-200 dark:border-[#324d67] flex justify-between items-center">
+        <div class="text-sm text-gray-500">
+          <strong class="text-[#111418] dark:text-white">{{ importPreviewData().length }}</strong> transactions ready to
+          import.
+        </div>
+        <div class="flex gap-3">
+          <button (click)="cancelImport()"
+            class="px-4 py-2 text-sm font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#253545] rounded-lg transition-colors">Discard</button>
+          <button (click)="saveImport()"
+            class="px-4 py-2 text-sm font-bold text-white bg-primary hover:bg-blue-600 rounded-lg shadow-lg shadow-primary/25 transition-colors">Import
+            All</button>
         </div>
       </div>
     </div>
+  </div>
   }
 </div>
