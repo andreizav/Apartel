@@ -1,12 +1,27 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import * as jwt from 'jsonwebtoken';
 import { PrismaService } from '../../shared/prisma.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-    private readonly jwtSecret = process.env.JWT_SECRET || 'dev-secret-change-in-production';
+    constructor(
+        private prisma: PrismaService,
+        private configService: ConfigService,
+    ) {}
 
-    constructor(private prisma: PrismaService) { }
+    private getJwtSecret(): string {
+        const secret = this.configService.get<string>('JWT_SECRET');
+        const isProduction = this.configService.get<string>('NODE_ENV') === 'production';
+
+        if (!secret) {
+            if (isProduction) {
+                throw new Error('CRITICAL SECURITY ERROR: JWT_SECRET is not defined in environment variables.');
+            }
+            return 'dev-secret-change-in-production';
+        }
+        return secret;
+    }
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const request = context.switchToHttp().getRequest();
@@ -18,7 +33,7 @@ export class AuthGuard implements CanActivate {
         }
 
         try {
-            const decoded: any = jwt.verify(token, this.jwtSecret);
+            const decoded: any = jwt.verify(token, this.getJwtSecret());
 
             const user = await this.prisma.staff.findFirst({
                 where: { id: decoded.userId, tenantId: decoded.tenantId }

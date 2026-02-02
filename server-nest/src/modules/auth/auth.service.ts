@@ -1,4 +1,5 @@
 import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../../shared/prisma.service';
 import { LoginDto } from './dto/login.dto';
 import * as jwt from 'jsonwebtoken';
@@ -6,14 +7,29 @@ import { RegisterDto } from './dto/register.dto';
 
 @Injectable()
 export class AuthService {
-    private readonly jwtSecret = process.env.JWT_SECRET || 'dev-secret-change-in-production';
+    constructor(
+        private prisma: PrismaService,
+        private configService: ConfigService,
+    ) {}
 
-    constructor(private prisma: PrismaService) { }
+    private getJwtSecret(): string {
+        const secret = this.configService.get<string>('JWT_SECRET');
+        const isProduction = this.configService.get<string>('NODE_ENV') === 'production';
+
+        if (!secret) {
+            if (isProduction) {
+                throw new Error('CRITICAL SECURITY ERROR: JWT_SECRET is not defined in environment variables.');
+            }
+            console.warn('SECURITY WARNING: Using insecure default JWT secret. Do not use this in production!');
+            return 'dev-secret-change-in-production';
+        }
+        return secret;
+    }
 
     private createToken(user: any) {
         return jwt.sign(
             { userId: user.id, tenantId: user.tenantId, email: user.email },
-            this.jwtSecret,
+            this.getJwtSecret(),
             { expiresIn: '7d' }
         );
     }
