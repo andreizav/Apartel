@@ -15,21 +15,24 @@
         <!-- Export Button -->
         <button (click)="exportPortfolio()"
           class="flex items-center justify-center w-8 h-8 bg-white dark:bg-[#253545] border border-gray-200 dark:border-[#324d67] text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-50 dark:hover:bg-[#2f4356] transition-colors"
-          title="Export to Excel">
+          title="Export to Excel"
+          aria-label="Export to Excel">
           <span class="material-symbols-outlined text-[20px]">download</span>
         </button>
 
         <!-- Import Button -->
         <button (click)="fileInput.click()"
           class="flex items-center justify-center w-8 h-8 bg-white dark:bg-[#253545] border border-gray-200 dark:border-[#324d67] text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-50 dark:hover:bg-[#2f4356] transition-colors"
-          title="Import Excel (.xlsx)">
+          title="Import Excel (.xlsx)"
+          aria-label="Import Excel">
           <span class="material-symbols-outlined text-[20px]">upload_file</span>
         </button>
 
         <!-- New Button -->
         <button (click)="openNewModal()"
           class="flex items-center justify-center w-8 h-8 bg-primary text-white rounded-lg hover:bg-blue-600 transition-colors"
-          title="Add New Group or Unit">
+          title="Add New Group or Unit"
+          aria-label="Add New Group or Unit">
           <span class="material-symbols-outlined text-[20px]">add</span>
         </button>
       </div>
@@ -228,7 +231,8 @@
                   </div>
                   <button (click)="openMap(form.officialAddress)"
                     class="p-2.5 bg-gray-100 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-lg text-gray-500 hover:text-primary transition-colors flex-shrink-0"
-                    title="Open on Map">
+                    title="Open on Map"
+                    aria-label="Open on Map">
                     <span class="material-symbols-outlined text-[20px]">map</span>
                   </button>
                 </div>
@@ -468,7 +472,8 @@
               class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
               <button (click)="removePhoto(i)"
                 class="p-2 bg-red-500/80 hover:bg-red-500 text-white rounded-full backdrop-blur-sm transition-colors"
-                title="Delete Photo">
+                title="Delete Photo"
+                aria-label="Delete Photo">
                 <span class="material-symbols-outlined text-[20px]">delete</span>
               </button>
             </div>
@@ -520,12 +525,14 @@
                 <div class="flex items-center opacity-0 group-hover/inv-item:opacity-100 transition-opacity gap-1">
                   <button (click)="openInventoryModal(item)"
                     class="p-1.5 text-gray-400 hover:text-primary hover:bg-primary/10 rounded transition-colors"
-                    title="Edit">
+                    title="Edit"
+                    aria-label="Edit item">
                     <span class="material-symbols-outlined text-[18px]">edit</span>
                   </button>
                   <button (click)="deleteInventoryItem(item.id)"
                     class="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-500/10 rounded transition-colors"
-                    title="Delete">
+                    title="Delete"
+                    aria-label="Delete item">
                     <span class="material-symbols-outlined text-[18px]">delete</span>
                   </button>
                 </div>
