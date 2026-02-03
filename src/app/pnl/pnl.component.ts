@@ -1,4 +1,5 @@
 import { Component, signal, computed, effect, inject } from '@angular/core';
+import { lastValueFrom } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import * as XLSX from 'xlsx';
@@ -9,10 +10,11 @@ interface ProcessedTransaction extends Transaction {
   convertedAmount: number;
 }
 
-interface Category {
+export interface Category {
+  id: string;
   name: string;
   type: 'income' | 'expense';
-  subCategories: string[];
+  subCategories: { id: string; name: string }[];
 }
 
 interface CategoryBreakdown {
@@ -40,27 +42,18 @@ export class PnLComponent {
   exchangeRates = this.portfolioService.exchangeRates;
 
   properties = [
-    'Art Apartments', 'Stylish Apartments', 'Boutique Apartments', 'Lesi 3', 
+    'Art Apartments', 'Stylish Apartments', 'Boutique Apartments', 'Lesi 3',
     'S45', 'Basseynaya', 'Kreschatyk', 'Story Apartments', 'Panorama', 'Office'
   ];
 
-  categories: Category[] = [
-    { name: 'Rent_Income', type: 'income', subCategories: ['General', 'Long Term', 'Short Term'] },
-    { name: 'Services_Income', type: 'income', subCategories: ['Cleaning Fee', 'Extra Services'] },
-    { name: 'Transport', type: 'expense', subCategories: ['Fuel - Gas', 'Fuel - Petrol', 'Parking', 'Car Wash', 'Maintenance', 'Taxi'] },
-    { name: 'Cleaning', type: 'expense', subCategories: ['Cleaning Service', 'Deep Cleaning'] },
-    { name: 'Staff', type: 'expense', subCategories: ['Lunches', 'Salaries', 'Bonuses'] },
-    { name: 'Utilities', type: 'expense', subCategories: ['Heating', 'Water', 'Internet', 'Electricity'] },
-    { name: 'Cleaning Agents', type: 'expense', subCategories: ['Toilet', 'Floor', 'Consumables'] },
-    { name: 'Repairs', type: 'expense', subCategories: ['Repair Works', 'Spare Parts'] },
-  ];
+  categories = signal<Category[]>([]);
 
   transactions = this.portfolioService.transactions;
 
   importPreviewData = signal<Transaction[]>([]);
   isImportModalOpen = signal(false);
   isModalOpen = signal(false);
-  
+
   newTransaction = signal<Partial<Transaction>>({
     date: new Date().toISOString().split('T')[0],
     currency: 'USD',
@@ -73,6 +66,20 @@ export class PnLComponent {
 
   constructor() {
     this.fetchLiveRates();
+    this.loadCategories();
+  }
+
+  loadCategories() {
+    this.apiService.getCategories().subscribe(res => {
+      // Map API response to match Category interface
+      const cats: Category[] = res.map(r => ({
+        id: r.id,
+        name: r.name,
+        type: r.type,
+        subCategories: r.subCategories || []
+      }));
+      this.categories.set(cats);
+    });
   }
 
   async fetchLiveRates() {
@@ -104,7 +111,7 @@ export class PnLComponent {
     const targetCurrency = this.selectedCurrency();
     const rates = this.exchangeRates();
     const txs = this.transactions();
-    
+
     const mode = this.filterMode();
     const current = this.currentDate();
     const currentMonth = current.getMonth();
@@ -151,11 +158,11 @@ export class PnLComponent {
     return Object.values(groups).sort((a, b) => b.amount - a.amount);
   });
 
-  availableCategories = computed(() => this.categories.filter(c => c.type === this.newTransaction().type));
+  availableCategories = computed(() => this.categories().filter(c => c.type === this.newTransaction().type));
   availableSubCategories = computed(() => {
     const catName = this.newTransaction().category;
-    const cat = this.categories.find(c => c.name === catName);
-    return cat ? cat.subCategories : [];
+    const cat = this.categories().find(c => c.name === catName);
+    return cat ? cat.subCategories.map(s => s.name) : [];
   });
 
   expandedCategories = signal<Map<string, boolean>>(new Map());
@@ -230,18 +237,18 @@ export class PnLComponent {
   updateNewTx(field: keyof Transaction, value: any) {
     this.newTransaction.update(prev => ({ ...prev, [field]: value }));
     if (field === 'type') {
-       const firstCat = this.categories.find(c => c.type === value);
-       if (firstCat) this.updateNewTx('category', firstCat.name);
+      const firstCat = this.categories().find(c => c.type === value);
+      if (firstCat) this.updateNewTx('category', firstCat.name);
     }
     if (field === 'category') {
-       const cat = this.categories.find(c => c.name === value);
-       if (cat && cat.subCategories.length > 0) this.updateNewTx('subCategory', cat.subCategories[0]);
-       else this.updateNewTx('subCategory', '');
+      const cat = this.categories().find(c => c.name === value);
+      if (cat && cat.subCategories.length > 0) this.updateNewTx('subCategory', cat.subCategories[0].name);
+      else this.updateNewTx('subCategory', '');
     }
   }
 
   getCurrencySymbol(cur: string) {
-    switch(cur) { case 'EUR': return '€'; case 'UAH': return '₴'; default: return '$'; }
+    switch (cur) { case 'EUR': return '€'; case 'UAH': return '₴'; default: return '$'; }
   }
 
   handleImport(event: Event) {
@@ -267,14 +274,14 @@ export class PnLComponent {
     let startIndex = 0;
     let formatType: 'export' | 'specific' | 'generic' = 'generic';
 
-    for(let i=0; i<Math.min(rows.length, 20); i++) {
-       const row = rows[i];
-       const rowSig = row.map(c => c ? c.toString().toLowerCase().trim() : '');
-       if (rowSig.includes('originalamount') && rowSig.includes('date')) {
-          startIndex = i + 1; formatType = 'export'; break;
-       } else if (rowSig.includes('item of p&l')) {
-          startIndex = i + 1; formatType = 'specific'; break;
-       }
+    for (let i = 0; i < Math.min(rows.length, 20); i++) {
+      const row = rows[i];
+      const rowSig = row.map(c => c ? c.toString().toLowerCase().trim() : '');
+      if (rowSig.includes('originalamount') && rowSig.includes('date')) {
+        startIndex = i + 1; formatType = 'export'; break;
+      } else if (rowSig.includes('item of p&l')) {
+        startIndex = i + 1; formatType = 'specific'; break;
+      }
     }
 
     for (let i = startIndex; i < rows.length; i++) {
@@ -284,93 +291,152 @@ export class PnLComponent {
       let rawDate, property, category, subCategory, description, amount, currency, type;
 
       if (formatType === 'export') {
-          rawDate = row[1];
-          const rawType = row[2] ? row[2].toString().toLowerCase() : '';
-          property = row[3]; category = row[4]; subCategory = row[5]; description = row[6];
-          amount = this.parseNumber(row[7]); currency = this.parseCurrency(row[8]);
-          type = rawType.includes('income') ? 'income' : 'expense';
+        rawDate = row[1];
+        const rawType = row[2] ? row[2].toString().toLowerCase() : '';
+        property = row[3]; category = row[4]; subCategory = row[5]; description = row[6];
+        amount = this.parseNumber(row[7]); currency = this.parseCurrency(row[8]);
+        type = rawType.includes('income') ? 'income' : 'expense';
       } else if (formatType === 'specific') {
-          rawDate = row[0];
-          property = row[2] || row[3] || 'General';
-          category = row[5]; subCategory = row[6]; description = row[7];
-          const amountInput = this.parseNumber(row[8]);
-          const amountOutput = this.parseNumber(row[9]);
-          if (amountInput > 0) { amount = amountInput; type = 'income'; }
-          else if (amountOutput > 0) { amount = amountOutput; type = 'expense'; }
-          else continue;
-          currency = this.parseCurrency(row[10]);
+        rawDate = row[0];
+        property = row[2] || row[3] || 'General';
+        category = row[5]; subCategory = row[6]; description = row[7];
+        const amountInput = this.parseNumber(row[8]);
+        const amountOutput = this.parseNumber(row[9]);
+        if (amountInput > 0) { amount = amountInput; type = 'income'; }
+        else if (amountOutput > 0) { amount = amountOutput; type = 'expense'; }
+        else continue;
+        currency = this.parseCurrency(row[10]);
       } else {
-          rawDate = row[0];
-          property = row[2] || row[3] || 'General'; 
-          category = row[5] || 'Uncategorized';
-          subCategory = row[6] || row[4] || 'General'; 
-          description = row[7] || '';
-          amount = this.parseNumber(row[8]) || this.parseNumber(row[7]);
-          currency = this.parseCurrency(row[10]);
-          type = (category && category.toString().toLowerCase().includes('income')) ? 'income' : 'expense';
+        rawDate = row[0];
+        property = row[2] || row[3] || 'General';
+        category = row[5] || 'Uncategorized';
+        subCategory = row[6] || row[4] || 'General';
+        description = row[7] || '';
+        amount = this.parseNumber(row[8]) || this.parseNumber(row[7]);
+        currency = this.parseCurrency(row[10]);
+        type = (category && category.toString().toLowerCase().includes('income')) ? 'income' : 'expense';
       }
 
       const dateStr = this.parseDate(rawDate);
       if (amount !== undefined && amount !== null && !isNaN(amount)) {
-         newTransactions.push({
-            id: `imp-${Date.now()}-${i}-${Math.random().toString(36).substr(2, 5)}`,
-            date: dateStr,
-            property: property ? property.toString().trim() : 'General',
-            category: category ? category.toString().trim() : 'Uncategorized',
-            subCategory: subCategory ? subCategory.toString().trim() : '',
-            description: description ? description.toString().trim() : '',
-            amount: amount, currency: currency, type: type as 'income' | 'expense'
-         });
+        newTransactions.push({
+          id: `imp-${Date.now()}-${i}-${Math.random().toString(36).substr(2, 5)}`,
+          date: dateStr,
+          property: property ? property.toString().trim() : 'General',
+          category: category ? category.toString().trim() : 'Uncategorized',
+          subCategory: subCategory ? subCategory.toString().trim() : '',
+          description: description ? description.toString().trim() : '',
+          amount: amount, currency: currency, type: type as 'income' | 'expense'
+        });
       }
     }
 
     if (newTransactions.length > 0) {
-       this.importPreviewData.set(newTransactions);
-       this.isImportModalOpen.set(true);
+      this.importPreviewData.set(newTransactions);
+      this.isImportModalOpen.set(true);
     } else {
-       alert('No valid transactions found.');
+      alert('No valid transactions found.');
     }
   }
 
   private parseNumber(val: any): number {
-      if (typeof val === 'number') return val;
-      if (typeof val === 'string') {
-          let clean = val.replace(/[$€£\s]/g, '');
-          if (clean.includes(',') && !clean.includes('.')) clean = clean.replace(/,/g, '.');
-          else if (clean.includes(',') && clean.includes('.')) clean = clean.replace(/,/g, '');
-          const num = parseFloat(clean);
-          return isNaN(num) ? 0 : num;
-      }
-      return 0;
+    if (typeof val === 'number') return val;
+    if (typeof val === 'string') {
+      let clean = val.replace(/[$€£\s]/g, '');
+      if (clean.includes(',') && !clean.includes('.')) clean = clean.replace(/,/g, '.');
+      else if (clean.includes(',') && clean.includes('.')) clean = clean.replace(/,/g, '');
+      const num = parseFloat(clean);
+      return isNaN(num) ? 0 : num;
+    }
+    return 0;
   }
 
   private parseCurrency(val: any): 'USD' | 'UAH' | 'EUR' {
-      const s = val ? val.toString().toUpperCase() : '';
-      if (s.includes('USD')) return 'USD';
-      if (s.includes('EUR')) return 'EUR';
-      return 'UAH';
+    const s = val ? val.toString().toUpperCase() : '';
+    if (s.includes('USD')) return 'USD';
+    if (s.includes('EUR')) return 'EUR';
+    return 'UAH';
   }
 
   private parseDate(val: any): string {
-      if (val instanceof Date) return new Date(val.getTime() - (val.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
-      if (typeof val === 'number' && val > 20000) return new Date(Math.round((val - 25569)*86400*1000)).toISOString().split('T')[0];
-      if (typeof val === 'string') {
-          const parts = val.split(/[\/\-\.]/);
-          if (parts.length === 3) {
-             let d = parseInt(parts[1]), m = parseInt(parts[0]), y = parseInt(parts[2]);
-             if (m > 12) { const t = d; d = m; m = t; }
-             if (y < 100) y += 2000;
-             if (!isNaN(d) && !isNaN(m) && !isNaN(y)) return `${y}-${m.toString().padStart(2,'0')}-${d.toString().padStart(2,'0')}`;
-          }
+    if (val instanceof Date) return new Date(val.getTime() - (val.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
+    if (typeof val === 'number' && val > 20000) return new Date(Math.round((val - 25569) * 86400 * 1000)).toISOString().split('T')[0];
+    if (typeof val === 'string') {
+      const parts = val.split(/[\/\-\.]/);
+      if (parts.length === 3) {
+        let d = parseInt(parts[1]), m = parseInt(parts[0]), y = parseInt(parts[2]);
+        if (m > 12) { const t = d; d = m; m = t; }
+        if (y < 100) y += 2000;
+        if (!isNaN(d) && !isNaN(m) && !isNaN(y)) return `${y}-${m.toString().padStart(2, '0')}-${d.toString().padStart(2, '0')}`;
       }
-      return new Date().toISOString().split('T')[0];
+    }
+    return new Date().toISOString().split('T')[0];
   }
 
-  saveImport() {
+  async saveImport() {
     const data = this.importPreviewData();
+    const currentCats = this.categories();
+
+    // 1. Identify missing Categories
+    const uniqueCats = new Map<string, 'income' | 'expense'>();
+    data.forEach(t => {
+      if (t.category && t.category !== 'Uncategorized' && !currentCats.find(c => c.name === t.category && c.type === t.type)) {
+        uniqueCats.set(t.category, t.type as 'income' | 'expense');
+      }
+    });
+
+    // 2. Create missing Categories
+    for (const [name, type] of uniqueCats.entries()) {
+      try {
+        await lastValueFrom(this.apiService.createCategory(name, type));
+      } catch (e) {
+        console.error(`Failed to create category ${name}`, e);
+      }
+    }
+
+    // 3. Refresh Categories to get IDs
+    let freshCats: Category[] = [];
+    try {
+      const res = await lastValueFrom(this.apiService.getCategories());
+      freshCats = res.map(r => ({
+        id: r.id, name: r.name, type: r.type, subCategories: r.subCategories || []
+      }));
+      this.categories.set(freshCats);
+    } catch (e) { console.error('Failed to refresh categories', e); }
+
+    // 4. Identify missing SubCategories
+    const uniqueSubs = new Set<string>();
+    const subsToCreate: { catId: string, name: string }[] = [];
+
+    data.forEach(t => {
+      if (!t.category || !t.subCategory || t.subCategory === 'General') return;
+      const cat = freshCats.find(c => c.name === t.category && c.type === t.type);
+      if (cat) {
+        const subExists = cat.subCategories.find(s => s.name === t.subCategory);
+        if (!subExists) {
+          const key = `${t.category}|${t.subCategory}`;
+          if (!uniqueSubs.has(key)) {
+            uniqueSubs.add(key);
+            subsToCreate.push({ catId: cat.id, name: t.subCategory });
+          }
+        }
+      }
+    });
+
+    // 5. Create missing SubCategories
+    for (const sub of subsToCreate) {
+      try {
+        await lastValueFrom(this.apiService.createSubCategory(sub.catId, sub.name));
+      } catch (e) { console.error('Failed to create subcategory', sub.name, e); }
+    }
+
+    // 6. Save Transactions
     data.forEach(t => this.apiService.addTransaction(t));
     this.importPreviewData.set([]);
     this.isImportModalOpen.set(false);
+
+    // Final Load
+    this.loadCategories();
   }
 
   cancelImport() {
@@ -388,5 +454,48 @@ export class PnLComponent {
 
   removePreviewItem(index: number) {
     this.importPreviewData.update(data => data.filter((_, i) => i !== index));
+  }
+
+  // Category Management
+  isManageCategoriesOpen = signal(false);
+  newCategoryName = signal('');
+  newCategoryType = signal<'income' | 'expense'>('expense');
+  newSubCategoryName = signal('');
+  selectedCategoryForSub = signal<string | null>(null);
+
+  openManageCategories() {
+    this.isManageCategoriesOpen.set(true);
+  }
+
+  addCategory() {
+    const name = this.newCategoryName().trim();
+    if (!name) return;
+    this.apiService.createCategory(name, this.newCategoryType()).subscribe({
+      next: () => {
+        this.newCategoryName.set('');
+        this.loadCategories();
+      },
+      error: (err) => alert('Failed to create category: ' + err.message)
+    });
+  }
+
+  deleteCategory(id: string) {
+    if (!confirm('Delete this category? Transactions may lose their category link.')) return;
+    this.apiService.deleteCategory(id).subscribe(() => this.loadCategories());
+  }
+
+  addSubCategory(categoryId: string) {
+    const name = this.newSubCategoryName().trim();
+    if (!name) return;
+    this.apiService.createSubCategory(categoryId, name).subscribe(() => {
+      this.newSubCategoryName.set('');
+      this.selectedCategoryForSub.set(null);
+      this.loadCategories();
+    });
+  }
+
+  deleteSubCategory(id: string) {
+    if (!confirm('Delete subcategory?')) return;
+    this.apiService.deleteSubCategory(id).subscribe(() => this.loadCategories());
   }
 }

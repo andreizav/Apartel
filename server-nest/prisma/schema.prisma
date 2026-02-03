@@ -37,6 +37,7 @@ model Tenant {
   otaConfigs     String? // serializing { airbnb: {...}, ... }
 
   inventoryCategories InventoryCategory[]
+  transactionCategories TransactionCategory[]
 }
 
 model Staff {
@@ -170,6 +171,27 @@ model Transaction {
   amount      Float
   currency    String
   type        String
+}
+
+model TransactionCategory {
+  id          String   @id
+  tenantId    String
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  name        String
+  type        String   // 'income' | 'expense'
+  
+  subCategories TransactionSubCategory[]
+
+  @@unique([tenantId, name, type])
+}
+
+model TransactionSubCategory {
+  id          String              @id
+  categoryId  String
+  category    TransactionCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  name        String
+
+  @@unique([categoryId, name])
 }
 
 model InventoryCategory {

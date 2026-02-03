@@ -295,4 +295,25 @@ export class ApiService {
   currentUser() {
     return this.portfolio.currentUser;
   }
+
+  // P&L Categories
+  getCategories(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/api/transactions/categories`);
+  }
+
+  createCategory(name: string, type: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/api/transactions/categories`, { name, type });
+  }
+
+  deleteCategory(id: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/api/transactions/categories/${id}/delete`, {});
+  }
+
+  createSubCategory(categoryId: string, name: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/api/transactions/subcategories`, { categoryId, name });
+  }
+
+  deleteSubCategory(id: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/api/transactions/subcategories/${id}/delete`, {});
+  }
 }

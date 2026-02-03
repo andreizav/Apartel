@@ -28,4 +28,68 @@ export class TransactionsService {
             }
         });
     }
+
+    async getCategories(tenantId: string) {
+        return this.prisma.transactionCategory.findMany({
+            where: { tenantId },
+            include: { subCategories: true },
+            orderBy: { name: 'asc' }
+        });
+    }
+
+    async createCategory(tenantId: string, data: { name: string; type: string }) {
+        return this.prisma.transactionCategory.create({
+            data: {
+                id: `cat-${Date.now()}`,
+                tenantId,
+                name: data.name,
+                type: data.type
+            },
+            include: { subCategories: true }
+        });
+    }
+
+    async deleteCategory(tenantId: string, id: string) {
+        // Verify ownership
+        const cat = await this.prisma.transactionCategory.findFirst({
+            where: { id, tenantId }
+        });
+        if (!cat) throw new Error('Category not found');
+
+        return this.prisma.transactionCategory.delete({
+            where: { id }
+        });
+    }
+
+    async createSubCategory(tenantId: string, categoryId: string, name: string) {
+        // Verify category exists and belongs to tenant
+        const cat = await this.prisma.transactionCategory.findFirst({
+            where: { id: categoryId, tenantId }
+        });
+        if (!cat) throw new Error('Category not found');
+
+        return this.prisma.transactionSubCategory.create({
+            data: {
+                id: `sub-${Date.now()}`,
+                categoryId,
+                name
+            }
+        });
+    }
+
+    async deleteSubCategory(tenantId: string, id: string) {
+        // Verify ownership via category
+        const sub = await this.prisma.transactionSubCategory.findUnique({
+            where: { id },
+            include: { category: true }
+        });
+
+        if (!sub || sub.category.tenantId !== tenantId) {
+            throw new Error('Subcategory not found');
+        }
+
+        return this.prisma.transactionSubCategory.delete({
+            where: { id }
+        });
+    }
 }
