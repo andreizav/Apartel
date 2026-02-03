@@ -92,4 +92,26 @@ export class TransactionsService {
             where: { id }
         });
     }
+
+    async updateCategory(tenantId: string, id: string, name: string, type: string) {
+        const cat = await this.prisma.transactionCategory.findFirst({ where: { id, tenantId } });
+        if (!cat) throw new Error('Category not found');
+        return this.prisma.transactionCategory.update({
+            where: { id },
+            data: { name, type }
+        });
+    }
+
+    async updateSubCategory(tenantId: string, id: string, name: string) {
+        const sub = await this.prisma.transactionSubCategory.findUnique({
+            where: { id },
+            include: { category: true }
+        });
+        if (!sub || sub.category.tenantId !== tenantId) throw new Error('Subcategory not found');
+
+        return this.prisma.transactionSubCategory.update({
+            where: { id },
+            data: { name }
+        });
+    }
 }

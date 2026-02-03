@@ -551,63 +551,109 @@
         </div>
 
         <!-- Categories List -->
-        <div class="space-y-4">
-          @for (cat of categories(); track cat.id) {
+        <div class="space-y-4 max-h-[500px] overflow-y-auto pr-2">
+          @for(cat of categories(); track cat.id) {
           <div class="border border-gray-200 dark:border-[#324d67] rounded-lg overflow-hidden">
             <div
-              class="bg-white dark:bg-[#1c2936] px-4 py-3 flex items-center justify-between group hover:bg-gray-50 dark:hover:bg-[#253545]">
-              <div class="flex items-center gap-3">
-                <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded"
-                  [class.bg-red-100]="cat.type === 'expense'" [class.text-red-700]="cat.type === 'expense'"
-                  [class.bg-green-100]="cat.type === 'income'" [class.text-green-700]="cat.type === 'income'">
-                  {{ cat.type }}
-                </span>
-                <span class="font-bold text-[#111418] dark:text-white">{{ cat.name }}</span>
-              </div>
-              <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button (click)="selectedCategoryForSub.set(selectedCategoryForSub() === cat.id ? null : cat.id)"
-                  class="text-xs font-bold text-primary hover:underline px-2">
-                  {{ selectedCategoryForSub() === cat.id ? 'Close' : 'Add Sub' }}
+              class="bg-gray-50 dark:bg-[#253545] p-3 flex items-center justify-between group hover:bg-gray-100 dark:hover:bg-[#2f4356] transition-colors">
+
+              @if (editingCategoryId() === cat.id) {
+              <!-- Edit Mode -->
+              <div class="flex items-center gap-2 flex-1">
+                <input [(ngModel)]="editingCategoryName"
+                  class="flex-1 bg-white dark:bg-[#111418] border border-gray-300 dark:border-[#324d67] rounded px-2 py-1 text-sm text-[#111418] dark:text-white" />
+                <select [(ngModel)]="editingCategoryType"
+                  class="bg-white dark:bg-[#111418] border border-gray-300 dark:border-[#324d67] rounded px-2 py-1 text-sm text-[#111418] dark:text-white">
+                  <option value="income">Income</option>
+                  <option value="expense">Expense</option>
+                </select>
+                <button (click)="saveEditCategory()"
+                  class="text-green-500 hover:bg-green-50 dark:hover:bg-green-900/20 p-1 rounded">
+                  <span class="material-symbols-outlined text-[18px]">check</span>
                 </button>
-                <button (click)="deleteCategory(cat.id)" class="text-gray-400 hover:text-red-500">
+                <button (click)="cancelEditCategory()"
+                  class="text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 p-1 rounded">
+                  <span class="material-symbols-outlined text-[18px]">close</span>
+                </button>
+              </div>
+              } @else {
+              <!-- View Mode -->
+              <div class="flex items-center gap-3 cursor-pointer flex-1"
+                (click)="selectedCategoryForSub.set(cat.id === selectedCategoryForSub() ? null : cat.id)">
+                <span class="material-symbols-outlined text-gray-400 transform transition-transform"
+                  [class.rotate-90]="selectedCategoryForSub() === cat.id">chevron_right</span>
+                <div class="flex flex-col">
+                  <span class="font-medium text-[#111418] dark:text-white">{{cat.name}}</span>
+                  <span class="text-xs text-gray-500 uppercase tracking-wider">{{cat.type}}</span>
+                </div>
+              </div>
+              <div class="flex items-center gap-1 transition-opacity">
+                <button (click)="startEditCategory(cat)"
+                  class="text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 p-1.5 rounded-lg transition-colors"
+                  title="Edit Category">
+                  <span class="material-symbols-outlined text-[18px]">edit</span>
+                </button>
+                <button (click)="deleteCategory(cat.id)"
+                  class="text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 p-1.5 rounded-lg transition-colors"
+                  title="Delete Category">
                   <span class="material-symbols-outlined text-[18px]">delete</span>
                 </button>
               </div>
+              }
             </div>
 
-            <!-- Subcategories -->
-            <div
-              class="bg-gray-50 dark:bg-[#111a22] px-4 py-2 space-y-2 border-t border-gray-100 dark:border-[#324d67]">
-
-              @if(selectedCategoryForSub() === cat.id) {
-              <div
-                class="flex items-center gap-2 mb-3 pb-3 border-b border-gray-200 dark:border-[#324d67] animate-fade-in">
-                <input type="text" [ngModel]="newSubCategoryName()" (ngModelChange)="newSubCategoryName.set($event)"
-                  placeholder="New Subcategory Name"
-                  class="flex-1 bg-white dark:bg-[#1c2936] border border-gray-200 dark:border-[#324d67] rounded-md px-2 py-1.5 text-xs">
+            @if(selectedCategoryForSub() === cat.id) {
+            <div class="bg-white dark:bg-[#1c2936] p-3 pl-11 border-t border-gray-200 dark:border-[#324d67]">
+              <!-- Add Sub Category -->
+              <div class="flex gap-2 mb-3">
+                <input type="text" [(ngModel)]="newSubCategoryName" placeholder="New sub-category..."
+                  (keydown.enter)="addSubCategory(cat.id)"
+                  class="flex-1 bg-gray-50 dark:bg-[#253545] border border-gray-200 dark:border-[#324d67] rounded-lg px-3 py-2 text-sm text-[#111418] dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#6366f1] transition-all">
                 <button (click)="addSubCategory(cat.id)"
-                  class="px-3 py-1.5 bg-gray-200 dark:bg-[#253545] text-xs font-bold rounded hover:text-primary">Add</button>
-              </div>
-              }
-
-              @if(cat.subCategories.length === 0) {
-              <div class="text-xs text-gray-400 italic">No subcategories</div>
-              }
-
-              @for(sub of cat.subCategories; track sub.id) {
-              <div
-                class="flex items-center justify-between text-xs text-gray-600 dark:text-gray-300 pl-4 border-l-2 border-gray-200 dark:border-[#324d67] hover:border-primary transition-colors">
-                <span>{{ sub.name }}</span>
-                <button (click)="deleteSubCategory(sub.id)" class="text-gray-300 hover:text-red-500">
-                  <span class="material-symbols-outlined text-[14px]">close</span>
+                  class="bg-[#6366f1] hover:bg-[#4f46e5] text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors">
+                  Add
                 </button>
               </div>
-              }
+
+              <!-- Sub Categories List -->
+              <div class="space-y-1">
+                @for(sub of cat.subCategories; track sub.id) {
+                <div
+                  class="flex items-center justify-between py-1 px-2 hover:bg-gray-50 dark:hover:bg-[#253545] rounded group">
+                  @if (editingSubCategoryId() === sub.id) {
+                  <div class="flex items-center gap-2 flex-1">
+                    <input [(ngModel)]="editingSubCategoryName"
+                      class="flex-1 bg-white dark:bg-[#111418] border border-gray-300 dark:border-[#324d67] rounded px-2 py-1 text-sm text-[#111418] dark:text-white" />
+                    <button (click)="saveEditSubCategory()"
+                      class="text-green-500 hover:bg-green-50 dark:hover:bg-green-900/20 p-1 rounded">
+                      <span class="material-symbols-outlined text-[16px]">check</span>
+                    </button>
+                    <button (click)="cancelEditSubCategory()"
+                      class="text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 p-1 rounded">
+                      <span class="material-symbols-outlined text-[16px]">close</span>
+                    </button>
+                  </div>
+                  } @else {
+                  <span class="text-sm text-gray-600 dark:text-gray-300">{{sub.name}}</span>
+                  <div class="flex items-center gap-1 transition-opacity">
+                    <button (click)="startEditSubCategory(sub)" class="text-blue-400 hover:text-blue-600 p-1"
+                      title="Edit">
+                      <span class="material-symbols-outlined text-[16px]">edit</span>
+                    </button>
+                    <button (click)="deleteSubCategory(sub.id)" class="text-red-400 hover:text-red-600 p-1"
+                      title="Delete">
+                      <span class="material-symbols-outlined text-[16px]">delete</span>
+                    </button>
+                  </div>
+                  }
+                </div>
+                }
+              </div>
             </div>
+            }
           </div>
           }
         </div>
-
       </div>
     </div>
   </div>

@@ -42,4 +42,14 @@ export class TransactionsController {
     deleteSubCategory(@TenantId() tenantId: string, @Body() body: any, @Param('id') id?: string) {
         return this.transactionsService.deleteSubCategory(tenantId, id || body.id);
     }
+
+    @Post('categories/:id/update')
+    updateCategory(@TenantId() tenantId: string, @Param('id') id: string, @Body() body: { name: string; type: string }) {
+        return this.transactionsService.updateCategory(tenantId, id, body.name, body.type);
+    }
+
+    @Post('subcategories/:id/update')
+    updateSubCategory(@TenantId() tenantId: string, @Param('id') id: string, @Body() body: { name: string }) {
+        return this.transactionsService.updateSubCategory(tenantId, id, body.name);
+    }
 }

@@ -181,15 +181,14 @@ export class ApiService {
     });
   }
 
-  updateInventory(inventory: InventoryCategory[]): Observable<boolean> {
-    return this.http.put<InventoryCategory[]>(`${this.apiUrl}/api/inventory`, inventory).pipe(
-      map((data) => {
-        this.portfolio.inventory.set(data);
-        return true;
-      }),
-      catchError(() => of(false))
-    );
+  updateInventory(inventory: InventoryCategory[]): Observable<InventoryCategory[]> {
+    return this.http.put<InventoryCategory[]>(`${this.apiUrl}/api/inventory`, inventory);
   }
+
+  refillInventoryItem(categoryId: string, itemId: string, quantity: number, price: number): Observable<InventoryCategory[]> {
+    return this.http.post<InventoryCategory[]>(`${this.apiUrl}/api/inventory/refill`, { categoryId, itemId, quantity, price });
+  }
+
 
   updateSettings(settings: Partial<AppSettings>): void {
     this.http.put<AppSettings>(`${this.apiUrl}/api/settings`, settings).subscribe((data) => {
@@ -315,5 +314,13 @@ export class ApiService {
 
   deleteSubCategory(id: string): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/api/transactions/subcategories/${id}/delete`, {});
+  }
+
+  updateCategory(id: string, name: string, type: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/api/transactions/categories/${id}/update`, { name, type });
+  }
+
+  updateSubCategory(id: string, name: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/api/transactions/subcategories/${id}/update`, { name });
   }
 }

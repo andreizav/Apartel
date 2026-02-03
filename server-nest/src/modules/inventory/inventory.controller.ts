@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put, UseGuards } from '@nestjs/common';
 import { InventoryService } from './inventory.service';
 import { AuthGuard } from '../auth/auth.guard';
 import { TenantId } from '../auth/user.decorator';
@@ -16,5 +16,10 @@ export class InventoryController {
     @Put()
     update(@TenantId() tenantId: string, @Body() inventory: any[]) {
         return this.inventoryService.update(tenantId, inventory);
+    }
+
+    @Post('refill')
+    refill(@TenantId() tenantId: string, @Body() body: { categoryId: string, itemId: string, quantity: number, price: number }) {
+        return this.inventoryService.refillItem(tenantId, body.categoryId, body.itemId, body.quantity, body.price);
     }
 }

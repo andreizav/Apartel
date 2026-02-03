@@ -463,6 +463,13 @@ export class PnLComponent {
   newSubCategoryName = signal('');
   selectedCategoryForSub = signal<string | null>(null);
 
+  editingCategoryId = signal<string | null>(null);
+  editingCategoryName = signal('');
+  editingCategoryType = signal<'income' | 'expense'>('expense');
+
+  editingSubCategoryId = signal<string | null>(null);
+  editingSubCategoryName = signal('');
+
   openManageCategories() {
     this.isManageCategoriesOpen.set(true);
   }
@@ -497,5 +504,46 @@ export class PnLComponent {
   deleteSubCategory(id: string) {
     if (!confirm('Delete subcategory?')) return;
     this.apiService.deleteSubCategory(id).subscribe(() => this.loadCategories());
+  }
+
+  startEditCategory(cat: Category) {
+    this.editingCategoryId.set(cat.id);
+    this.editingCategoryName.set(cat.name);
+    this.editingCategoryType.set(cat.type);
+  }
+
+  cancelEditCategory() {
+    this.editingCategoryId.set(null);
+  }
+
+  saveEditCategory() {
+    const id = this.editingCategoryId();
+    const name = this.editingCategoryName().trim();
+    if (!id || !name) return;
+
+    this.apiService.updateCategory(id, name, this.editingCategoryType()).subscribe(() => {
+      this.editingCategoryId.set(null);
+      this.loadCategories();
+    });
+  }
+
+  startEditSubCategory(sub: { id: string; name: string }) {
+    this.editingSubCategoryId.set(sub.id);
+    this.editingSubCategoryName.set(sub.name);
+  }
+
+  cancelEditSubCategory() {
+    this.editingSubCategoryId.set(null);
+  }
+
+  saveEditSubCategory() {
+    const id = this.editingSubCategoryId();
+    const name = this.editingSubCategoryName().trim();
+    if (!id || !name) return;
+
+    this.apiService.updateSubCategory(id, name).subscribe(() => {
+      this.editingSubCategoryId.set(null);
+      this.loadCategories();
+    });
   }
 }

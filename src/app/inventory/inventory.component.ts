@@ -46,25 +46,11 @@ export class InventoryComponent {
 
     if (!catId || !itemId) return;
 
-    this.categories.update(cats =>
-      cats.map(c => {
-        if (c.id === catId) {
-          return {
-            ...c,
-            items: c.items.map(i => {
-              if (i.id === itemId) {
-                const newQty = Math.max(0, i.quantity + qty);
-                return { ...i, quantity: newQty, price: price };
-              }
-              return i;
-            })
-          };
-        }
-        return c;
-      })
-    );
-    this.apiService.updateInventory(this.portfolioService.inventory()).subscribe();
-    this.isModalOpen.set(false);
+    this.apiService.refillInventoryItem(catId, itemId, qty, price).subscribe((updatedInventory) => {
+      // Optimistic update isn't strictly necessary if backend returns fresh data
+      this.portfolioService.inventory.set(updatedInventory);
+      this.isModalOpen.set(false);
+    });
   }
 
   deleteItem(categoryId: string, itemId: string) {
