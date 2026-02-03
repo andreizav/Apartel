@@ -8,28 +8,18 @@
         operations.</p>
     </div>
 
-    <div class="flex gap-3 w-full sm:w-auto">
-      <div class="relative flex-1 sm:flex-none">
-        <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-          <span class="material-symbols-outlined text-[20px] text-gray-400">search</span>
-        </span>
-        <input type="text" [ngModel]="searchQuery()" (ngModelChange)="searchQuery.set($event)"
-          class="block w-full sm:w-64 pl-10 pr-3 py-2 rounded-lg border-gray-200 dark:border-[#324d67] bg-white dark:bg-[#1c2936] text-sm text-[#111418] dark:text-white placeholder-gray-500 focus:ring-primary focus:border-primary transition-colors"
-          placeholder="Search items...">
-      </div>
-      <button (click)="openAddCategory()"
-        class="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-blue-600 transition-colors shadow-lg shadow-primary/20">
-        <span class="material-symbols-outlined text-[18px]">add</span>
-        <span class="hidden sm:inline">Add Category</span>
-      </button>
-    </div>
+    <button (click)="openAddCategory()"
+      class="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-blue-600 transition-colors shadow-lg shadow-primary/20">
+      <span class="material-symbols-outlined text-[18px]">add</span>
+      <span class="hidden sm:inline">Add Category</span>
+    </button>
   </div>
 
   <!-- Content Grid -->
   <div class="flex-1 overflow-y-auto pb-10">
     <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
 
-      @for (category of filteredCategories(); track category.id) {
+      @for (category of categories(); track category.id) {
       <div
         class="bg-white dark:bg-[#1c2936] rounded-xl border border-gray-200 dark:border-[#324d67] overflow-hidden flex flex-col shadow-sm">
         <!-- Category Header -->
@@ -62,19 +52,19 @@
             </div>
 
             <div class="flex items-center gap-4">
-              <!-- Quantity Control -->
-              <div
-                class="flex items-center bg-gray-100 dark:bg-[#111a22] rounded-lg p-1 border border-gray-200 dark:border-[#324d67]">
-                <button (click)="updateQuantity(category.id, item.id, -1)"
-                  class="w-7 h-7 flex items-center justify-center rounded bg-white dark:bg-[#253545] text-gray-600 dark:text-gray-300 hover:text-red-500 shadow-sm disabled:opacity-50"
-                  [disabled]="item.quantity <= 0">
-                  <span class="material-symbols-outlined text-[16px]">remove</span>
-                </button>
-                <span class="w-10 text-center text-sm font-bold font-mono text-[#111418] dark:text-white">{{
-                  item.quantity }}</span>
-                <button (click)="updateQuantity(category.id, item.id, 1)"
-                  class="w-7 h-7 flex items-center justify-center rounded bg-white dark:bg-[#253545] text-gray-600 dark:text-gray-300 hover:text-green-500 shadow-sm">
-                  <span class="material-symbols-outlined text-[16px]">add</span>
+              <div class="flex items-center gap-4">
+                <span class="text-sm font-bold text-gray-700 dark:text-gray-300">
+                  {{ item.price | currency:'USD':'symbol':'1.2-2' }}
+                </span>
+                <span
+                  class="px-3 py-1 bg-gray-100 dark:bg-[#111a22] rounded-lg text-sm font-mono font-bold text-[#111418] dark:text-white border border-gray-200 dark:border-[#324d67]">
+                  {{ item.quantity }}
+                </span>
+                <button (click)="openRefillModal(category.id, item)"
+                  class="flex items-center gap-1 px-3 py-1.5 bg-blue-50 dark:bg-blue-900/10 text-primary rounded-lg hover:bg-primary hover:text-white transition-colors text-xs font-bold"
+                  title="Refill & Update Price">
+                  <span class="material-symbols-outlined text-[16px]">autorenew</span>
+                  Refill
                 </button>
               </div>
 
@@ -103,7 +93,7 @@
       </div>
       }
 
-      @if (filteredCategories().length === 0) {
+      @if (categories().length === 0) {
       <div class="col-span-full flex flex-col items-center justify-center py-20 text-gray-400">
         <span class="material-symbols-outlined text-6xl mb-4 text-gray-200 dark:text-gray-700">inventory_2</span>
         <p class="text-lg font-medium">No inventory items found</p>
@@ -120,26 +110,71 @@
       class="bg-white dark:bg-[#1c2936] w-full max-w-sm rounded-xl shadow-2xl border border-gray-200 dark:border-[#324d67] overflow-hidden">
       <div class="px-6 py-4 border-b border-gray-200 dark:border-[#324d67] flex items-center justify-between">
         <h3 class="text-lg font-bold text-[#111418] dark:text-white">
-          {{ modalType() === 'category' ? 'New Category' : 'New Item' }}
+          @switch (modalType()) {
+          @case ('category') { New Category }
+          @case ('item') { New Item }
+          @case ('refill') { Refill Item }
+          }
         </h3>
         <button (click)="isModalOpen.set(false)" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
           <span class="material-symbols-outlined">close</span>
         </button>
       </div>
 
-      <div class="p-6">
-        <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Name</label>
-        <input type="text" [ngModel]="newItemName()" (ngModelChange)="newItemName.set($event)"
-          class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
-          placeholder="e.g., Office Supplies" autofocus (keyup.enter)="submitModal()">
+      <div class="p-6 space-y-4">
+        @if (modalType() === 'refill') {
+        <!-- Refill Mode -->
+        <div class="space-y-1.5">
+          <label class="text-xs font-bold text-gray-500 uppercase">Add Quantity</label>
+          <input type="number" [ngModel]="refillQuantity()" (ngModelChange)="refillQuantity.set($event)"
+            class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
+            min="0" autofocus>
+          <p class="text-xs text-gray-400">Enter amount to ADD to current stock.</p>
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="text-xs font-bold text-gray-500 uppercase">Update Price</label>
+          <input type="number" [ngModel]="newItemPrice()" (ngModelChange)="newItemPrice.set($event)"
+            class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
+            min="0" step="0.01">
+        </div>
+        } @else {
+        <!-- Standard Add Mode -->
+        <div class="space-y-1.5">
+          <label class="text-xs font-bold text-gray-500 uppercase">Name</label>
+          <input type="text" [ngModel]="newItemName()" (ngModelChange)="newItemName.set($event)"
+            class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
+            placeholder="e.g., Office Supplies" autofocus
+            (keyup.enter)="modalType() === 'category' ? submitModal() : null">
+        </div>
+
+        @if (modalType() === 'item') {
+        <div class="space-y-1.5">
+          <label class="text-xs font-bold text-gray-500 uppercase">Unit Price ($)</label>
+          <input type="number" [ngModel]="newItemPrice()" (ngModelChange)="newItemPrice.set($event)"
+            class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
+            min="0" step="0.01" (keyup.enter)="submitModal()">
+        </div>
+        }
+        }
       </div>
 
       <div
         class="px-6 py-4 bg-gray-50 dark:bg-[#111a22] border-t border-gray-200 dark:border-[#324d67] flex justify-end gap-3">
         <button (click)="isModalOpen.set(false)"
           class="px-4 py-2 text-sm font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#253545] rounded-lg">Cancel</button>
+
+        @if (modalType() === 'refill') {
+        <button (click)="submitRefill()"
+          class="px-4 py-2 text-sm font-bold text-white bg-primary hover:bg-blue-600 rounded-lg shadow-lg shadow-primary/20">
+          Confirm Refill
+        </button>
+        } @else {
         <button (click)="submitModal()" [disabled]="!newItemName()"
-          class="px-4 py-2 text-sm font-bold text-white bg-primary hover:bg-blue-600 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed">Create</button>
+          class="px-4 py-2 text-sm font-bold text-white bg-primary hover:bg-blue-600 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed">
+          Create
+        </button>
+        }
       </div>
     </div>
   </div>

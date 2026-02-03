@@ -38,13 +38,17 @@ export class InventoryService {
                         update: {
                             categoryId: category.id,
                             name: item.name,
-                            quantity: item.quantity ?? 0
+                            quantity: item.quantity ?? 0,
+                            price: item.price ?? 0,
+                            unitId: item.unitId
                         },
                         create: {
                             id: item.id,
                             categoryId: category.id,
                             name: item.name,
-                            quantity: item.quantity ?? 0
+                            quantity: item.quantity ?? 0,
+                            price: item.price ?? 0,
+                            unitId: item.unitId
                         }
                     });
                 }

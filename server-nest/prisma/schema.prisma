@@ -89,6 +89,7 @@ model Unit {
   bookings         Booking[]
   channelMappings  ChannelMapping[]
   icalConnections  IcalConnection[]
+  inventory        InventoryItem[]
 }
 
 model Booking {
@@ -180,6 +181,10 @@ model InventoryItem {
   
   name       String
   quantity   Int
+  price      Float             @default(0)
+  
+  unitId     String?
+  unit       Unit?             @relation(fields: [unitId], references: [id])
 }
 
 model ChannelMapping {

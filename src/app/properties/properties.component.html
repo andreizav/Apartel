@@ -86,21 +86,6 @@
     class="flex-1 flex flex-col bg-white dark:bg-[#1c2936] rounded-xl border border-gray-200 dark:border-[#324d67] overflow-hidden">
 
     <!-- Top Header -->
-    <!-- Cover Image Section -->
-    @if (editForm()?.photos && editForm()!.photos.length > 0) {
-    <div class="relative w-full h-48 overflow-hidden group/cover-parent">
-      <img [src]="editForm()!.photos[0]"
-        class="w-full h-full object-cover transition-transform duration-700 group-hover/cover-parent:scale-110">
-      <div class="absolute inset-0 bg-gradient-to-t from-[#1c2936] via-transparent to-transparent opacity-60"></div>
-      <div class="absolute bottom-4 left-6 flex items-center gap-2">
-        <span class="material-symbols-outlined text-white text-sm">photo_library</span>
-        <span class="text-white text-xs font-bold uppercase tracking-widest shadow-sm">{{ editForm()!.photos.length }}
-          Photos</span>
-      </div>
-    </div>
-    }
-
-    <!-- Top Header -->
     <div class="px-6 pt-6 pb-0">
       <div class="flex items-start justify-between mb-2">
         <div class="flex flex-col gap-1">
@@ -109,6 +94,44 @@
             <span
               class="px-2 py-0.5 bg-[#253545] border border-[#324d67] text-[#92adc9] text-[10px] font-bold uppercase tracking-wider rounded">Rentable
               Unit</span>
+
+            <!-- Compact Stats Indicators -->
+            <div
+              class="flex items-center gap-4 ml-4 px-4 py-1.5 bg-gray-50/50 dark:bg-[#111a22]/50 rounded-full border border-gray-100 dark:border-[#324d67]/50">
+              <!-- Next Departure/Arrival -->
+              <div class="flex items-center gap-1.5" title="Next Arrival">
+                <span class="material-symbols-outlined text-[16px] text-primary">event_upcoming</span>
+                <span class="text-xs font-bold text-[#111418] dark:text-white">{{ nextCheckIn() !== null ? nextCheckIn()
+                  : '--' }}d</span>
+              </div>
+
+              <!-- Occupancy -->
+              <div class="flex items-center gap-1.5" title="Occupancy (30d)">
+                <span class="material-symbols-outlined text-[16px] text-green-500">analytics</span>
+                <span class="text-xs font-bold text-[#111418] dark:text-white">{{ occupancyRate() | number:'1.0-0'
+                  }}%</span>
+              </div>
+
+              <!-- ADR -->
+              <div class="flex items-center gap-1.5" title="Average Daily Rate">
+                <span class="material-symbols-outlined text-[16px] text-indigo-500">payments</span>
+                <span class="text-xs font-bold text-[#111418] dark:text-white">${{ averageDailyRate() | number:'1.0-0'
+                  }}</span>
+              </div>
+
+              <!-- ALOS -->
+              <div class="flex items-center gap-1.5" title="Average Length of Stay">
+                <span class="material-symbols-outlined text-[16px] text-amber-500">nightlight</span>
+                <span class="text-xs font-bold text-[#111418] dark:text-white">{{ averageLengthOfStay() | number:'1.1-1'
+                  }}</span>
+              </div>
+
+              <!-- Monthly Revenue -->
+              <div class="flex items-center gap-1.5" title="Monthly Revenue">
+                <span class="material-symbols-outlined text-[16px] text-primary">trending_up</span>
+                <span class="text-xs font-bold text-primary">${{ monthlyRevenue() | number:'1.0-0' }}</span>
+              </div>
+            </div>
           </div>
           <div class="text-xs text-gray-400 font-mono italic">ID: {{ unit.id }}</div>
         </div>
@@ -140,79 +163,6 @@
             Save
           </button>
           }
-        </div>
-      </div>
-
-      <!-- Stats Bar -->
-      <div
-        class="flex items-center gap-8 py-4 border-t border-gray-100 dark:border-[#324d67]/50 mt-4 overflow-x-auto no-scrollbar scroll-smooth">
-        <!-- Next Check-in -->
-        <div class="flex flex-col min-w-[100px] group/stat">
-          <span
-            class="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-tight group-hover/stat:text-primary transition-colors">Next
-            Arrival</span>
-          <div class="flex items-baseline gap-1">
-            <span class="text-lg font-bold text-[#111418] dark:text-white">
-              {{ nextCheckIn() !== null ? nextCheckIn() : '--' }}
-            </span>
-            <span class="text-xs text-gray-400 font-medium">{{ nextCheckIn() === 1 ? 'day' : 'days' }}</span>
-          </div>
-        </div>
-
-        <!-- Occupancy -->
-        <div class="flex flex-col border-l border-gray-200 dark:border-[#324d67] pl-8 min-w-[120px] group/stat">
-          <span
-            class="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-tight group-hover/stat:text-green-500 transition-colors">Occupancy
-            (30d)</span>
-          <div class="flex items-baseline gap-1">
-            <span class="text-lg font-bold text-[#111418] dark:text-white">{{ occupancyRate() | number:'1.0-0'
-              }}%</span>
-            <span class="text-xs text-gray-400 font-medium">booked</span>
-          </div>
-        </div>
-
-        <!-- ADR -->
-        <div class="flex flex-col border-l border-gray-200 dark:border-[#324d67] pl-8 min-w-[100px] group/stat">
-          <span
-            class="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-tight group-hover/stat:text-indigo-500 transition-colors">ADR</span>
-          <div class="flex items-baseline gap-1">
-            <span class="text-lg font-bold text-[#111418] dark:text-white">${{ averageDailyRate() | number:'1.0-0'
-              }}</span>
-            <span class="text-xs text-gray-400 font-medium">/night</span>
-          </div>
-        </div>
-
-        <!-- ALOS -->
-        <div class="flex flex-col border-l border-gray-200 dark:border-[#324d67] pl-8 min-w-[100px] group/stat">
-          <span
-            class="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-tight group-hover/stat:text-amber-500 transition-colors">ALOS</span>
-          <div class="flex items-baseline gap-1">
-            <span class="text-lg font-bold text-[#111418] dark:text-white">{{ averageLengthOfStay() | number:'1.1-1'
-              }}</span>
-            <span class="text-xs text-gray-400 font-medium">nights</span>
-          </div>
-        </div>
-
-        <!-- Revenue -->
-        <div class="flex flex-col border-l border-gray-200 dark:border-[#324d67] pl-8 min-w-[140px] group/stat">
-          <span
-            class="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-tight group-hover/stat:text-primary transition-colors">Monthly
-            Revenue</span>
-          <div class="flex items-baseline gap-1">
-            <span class="text-lg font-bold text-primary">${{ monthlyRevenue() | number:'1.0-0' }}</span>
-            <span class="text-[10px] text-gray-400 font-medium uppercase">{{ (now) | date:'MMM' }}</span>
-          </div>
-        </div>
-
-        <!-- Total Revenue -->
-        <div class="flex flex-col border-l border-gray-200 dark:border-[#324d67] pl-8 min-w-[140px] group/stat">
-          <span
-            class="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-tight group-hover/stat:text-primary transition-colors">All-time
-            Rev</span>
-          <div class="flex items-baseline gap-1">
-            <span class="text-lg font-bold text-[#111418] dark:text-white">${{ totalUnitRevenue() | number:'1.0-0'
-              }}</span>
-          </div>
         </div>
       </div>
 
@@ -254,13 +204,15 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div class="space-y-1.5">
                 <label class="text-[10px] font-extrabold text-gray-500 uppercase tracking-widest">Internal Name</label>
-                <input type="text" [(ngModel)]="form.internalName" (ngModelChange)="onFormChange()"
+                <input type="text" id="internalName" name="internalName" [(ngModel)]="form.internalName"
+                  (ngModelChange)="onFormChange()"
                   class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-lg px-4 py-2.5 text-sm text-[#111418] dark:text-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all">
               </div>
               <div class="space-y-1.5">
                 <label class="text-[10px] font-extrabold text-gray-500 uppercase tracking-widest">Public Display
                   Name</label>
-                <input type="text" [(ngModel)]="form.name" (ngModelChange)="onFormChange()"
+                <input type="text" id="publicName" name="publicName" [(ngModel)]="form.name"
+                  (ngModelChange)="onFormChange()"
                   class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-lg px-4 py-2.5 text-sm text-[#111418] dark:text-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all">
               </div>
               <div class="sm:col-span-2 space-y-1.5">
@@ -268,7 +220,8 @@
                   Address</label>
                 <div class="relative flex items-center gap-2">
                   <div class="relative flex-1">
-                    <input type="text" [(ngModel)]="form.officialAddress" (ngModelChange)="onFormChange()"
+                    <input type="text" id="officialAddress" name="officialAddress" [(ngModel)]="form.officialAddress"
+                      (ngModelChange)="onFormChange()"
                       class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-lg pl-10 pr-4 py-2.5 text-sm text-[#111418] dark:text-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all">
                     <span
                       class="material-symbols-outlined absolute left-3 top-2.5 text-[20px] text-gray-400">explore</span>
@@ -302,7 +255,8 @@
                 <label class="text-[10px] font-extrabold text-gray-500 uppercase tracking-widest">Nightly Rate</label>
                 <div class="relative">
                   <span class="absolute left-4 top-2.5 text-gray-400 text-sm font-bold">$</span>
-                  <input type="number" [(ngModel)]="form.basePrice" (ngModelChange)="onFormChange()"
+                  <input type="number" id="basePrice" name="basePrice" [(ngModel)]="form.basePrice"
+                    (ngModelChange)="onFormChange()"
                     class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-lg pl-8 pr-4 py-2.5 text-sm font-bold text-[#111418] dark:text-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all">
                 </div>
               </div>
@@ -310,7 +264,8 @@
                 <label class="text-[10px] font-extrabold text-gray-500 uppercase tracking-widest">Cleaning Fee</label>
                 <div class="relative">
                   <span class="absolute left-4 top-2.5 text-gray-400 text-sm font-bold">$</span>
-                  <input type="number" [(ngModel)]="form.cleaningFee" (ngModelChange)="onFormChange()"
+                  <input type="number" id="cleaningFee" name="cleaningFee" [(ngModel)]="form.cleaningFee"
+                    (ngModelChange)="onFormChange()"
                     class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-lg pl-8 pr-4 py-2.5 text-sm font-bold text-[#111418] dark:text-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all">
                 </div>
               </div>
@@ -337,13 +292,15 @@
               <div class="space-y-1.5">
                 <label class="text-[10px] font-extrabold text-gray-500 uppercase tracking-widest">WiFi SSID
                   (Name)</label>
-                <input type="text" [(ngModel)]="form.wifiSsid" (ngModelChange)="onFormChange()"
+                <input type="text" id="wifiSsid" name="wifiSsid" [(ngModel)]="form.wifiSsid"
+                  (ngModelChange)="onFormChange()"
                   class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-lg px-4 py-2.5 text-sm text-[#111418] dark:text-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
                   placeholder="e.g. MyProp_WiFi">
               </div>
               <div class="space-y-1.5">
                 <label class="text-[10px] font-extrabold text-gray-500 uppercase tracking-widest">WiFi Password</label>
-                <input type="text" [(ngModel)]="form.wifiPassword" (ngModelChange)="onFormChange()"
+                <input type="text" id="wifiPassword" name="wifiPassword" [(ngModel)]="form.wifiPassword"
+                  (ngModelChange)="onFormChange()"
                   class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-lg px-4 py-2.5 text-sm font-mono text-[#111418] dark:text-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
                   placeholder="********">
               </div>
@@ -506,23 +463,9 @@
           <div class="group relative aspect-[4/3] rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all">
             <img [src]="photo" class="w-full h-full object-cover">
 
-            <!-- Cover Badge -->
-            @if (i === 0) {
-            <div class="absolute top-2 left-2 bg-primary text-white text-[10px] font-bold px-2 py-1 rounded shadow-sm">
-              MAIN COVER
-            </div>
-            }
-
             <!-- Overlay Actions -->
             <div
               class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-              @if (i !== 0) {
-              <button (click)="setCoverPhoto(i)"
-                class="p-2 bg-white/20 hover:bg-white text-white hover:text-[#111418] rounded-full backdrop-blur-sm transition-colors"
-                title="Set as Cover">
-                <span class="material-symbols-outlined text-[20px]">star</span>
-              </button>
-              }
               <button (click)="removePhoto(i)"
                 class="p-2 bg-red-500/80 hover:bg-red-500 text-white rounded-full backdrop-blur-sm transition-colors"
                 title="Delete Photo">
@@ -541,14 +484,66 @@
       </div>
       }
       @else if (activeTab() === 'Inventory') {
-      <div class="animate-fade-in flex flex-col items-center justify-center py-20 text-gray-400">
-        <span class="material-symbols-outlined text-5xl mb-4 opacity-50">inventory_2</span>
-        <h3 class="text-lg font-bold text-[#111418] dark:text-white mb-1">Inventory Management</h3>
-        <p>This feature is currently being integrated for this unit.</p>
-        <button
-          class="mt-6 px-4 py-2 bg-primary/10 text-primary rounded-lg text-sm font-bold hover:bg-primary/20 transition-colors">
-          Configure Items
-        </button>
+      <div class="animate-fade-in space-y-6">
+        <div class="flex items-center justify-between">
+          <h3 class="font-bold text-[#111418] dark:text-white">Unit Inventory</h3>
+          <button (click)="openInventoryModal()"
+            class="flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-bold rounded-lg hover:bg-blue-600 transition-colors shadow-lg shadow-primary/25">
+            <span class="material-symbols-outlined text-[18px]">add</span>
+            Add Item
+          </button>
+        </div>
+
+        @if (unitInventory().length > 0) {
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          @for (cat of unitInventory(); track cat.id) {
+          <div
+            class="bg-white dark:bg-[#1c2936] rounded-xl border border-gray-200 dark:border-[#324d67] overflow-hidden">
+            <div
+              class="px-4 py-3 bg-gray-50 dark:bg-[#111a22] border-b border-gray-200 dark:border-[#324d67] flex items-center justify-between">
+              <span class="font-bold text-gray-700 dark:text-gray-200 text-sm">{{ cat.name }}</span>
+              <span
+                class="text-xs bg-gray-200 dark:bg-[#253545] text-gray-500 dark:text-gray-400 px-2 py-0.5 rounded-full font-bold">{{
+                cat.items.length }}</span>
+            </div>
+            <div class="divide-y divide-gray-100 dark:divide-[#324d67]">
+              @for (item of cat.items; track item.id) {
+              <div
+                class="px-4 py-3 flex items-center justify-between group/inv-item hover:bg-gray-50 dark:hover:bg-[#253545] transition-colors">
+                <div class="flex items-center gap-3">
+                  <div
+                    class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-900/10 flex items-center justify-center text-primary font-bold text-xs shadow-sm">
+                    {{ item.quantity }}
+                  </div>
+                  <span class="text-sm font-medium text-[#111418] dark:text-white">{{ item.name }}</span>
+                </div>
+                <div class="flex items-center opacity-0 group-hover/inv-item:opacity-100 transition-opacity gap-1">
+                  <button (click)="openInventoryModal(item)"
+                    class="p-1.5 text-gray-400 hover:text-primary hover:bg-primary/10 rounded transition-colors"
+                    title="Edit">
+                    <span class="material-symbols-outlined text-[18px]">edit</span>
+                  </button>
+                  <button (click)="deleteInventoryItem(item.id)"
+                    class="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-500/10 rounded transition-colors"
+                    title="Delete">
+                    <span class="material-symbols-outlined text-[18px]">delete</span>
+                  </button>
+                </div>
+              </div>
+              }
+            </div>
+          </div>
+          }
+        </div>
+        } @else {
+        <div
+          class="text-center py-12 bg-white dark:bg-[#1c2936] rounded-xl border border-dashed border-gray-300 dark:border-[#324d67]">
+          <span class="material-symbols-outlined text-4xl mb-2 opacity-50 text-gray-400">inventory_2</span>
+          <p class="text-gray-500 dark:text-gray-400">No inventory items assigned to this unit yet.</p>
+          <button (click)="openInventoryModal()" class="mt-4 text-primary font-bold text-sm hover:underline">Add First
+            Item</button>
+        </div>
+        }
       </div>
       }
       @else if (activeTab() === 'Settings') {
@@ -741,6 +736,92 @@
         <button (click)="createEntry()" [disabled]="!newEntryName()"
           class="px-4 py-2 text-sm font-bold text-white bg-primary hover:bg-blue-600 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed">Create</button>
       </div>
+    </div>
+  </div>
+  }
+
+  @if (isInventoryModalOpen()) {
+  <div class="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
+    <div
+      class="bg-white dark:bg-[#1c2936] w-full max-w-md rounded-xl shadow-2xl border border-gray-200 dark:border-[#324d67] overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-200 dark:border-[#324d67] flex items-center justify-between">
+        <h3 class="text-lg font-bold text-[#111418] dark:text-white">{{ editingItemId() ? 'Edit Item' : 'Add Inventory
+          Item' }}</h3>
+        <button (click)="isInventoryModalOpen.set(false)"
+          class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <form (submit)="saveInventoryItem(); $event.preventDefault()" class="contents">
+        <div class="p-6 space-y-4">
+          <!-- Category Select -->
+          <div class="space-y-1.5">
+            <label for="inventory-item-cat" class="text-xs font-bold text-gray-500 uppercase">Category</label>
+            <select id="inventory-item-cat" name="inventory-item-cat" [ngModel]="inventoryItemCategory()"
+              (ngModelChange)="inventoryItemCategory.set($event)"
+              class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary transition-colors">
+              @for(cat of availableCategories(); track cat.id) {
+              <option [value]="cat.id">{{ cat.name }}</option>
+              }
+            </select>
+          </div>
+
+          <!-- Name Selection Dropdown -->
+          <div class="space-y-1.5">
+            <label for="inventory-item-name-select" class="text-xs font-bold text-gray-500 uppercase">Item Name</label>
+
+            @if (!showCustomNameInput()) {
+            <div class="flex gap-2">
+              <select id="inventory-item-name-select" name="inventory-item-name-select" [ngModel]="inventoryItemName()"
+                (ngModelChange)="inventoryItemName.set($event)"
+                class="flex-1 bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary transition-colors">
+                <option value="" disabled>Select an item...</option>
+                @for (name of categoryItemNames(); track name) {
+                <option [value]="name">{{ name }}</option>
+                }
+              </select>
+              <button type="button" (click)="showCustomNameInput.set(true); inventoryItemName.set('')"
+                class="p-2 transition-colors rounded-md bg-gray-100 dark:bg-[#253545] border border-gray-200 dark:border-[#324d67] text-gray-500 hover:text-primary"
+                title="Enter Custom Name">
+                <span class="material-symbols-outlined text-[20px]">add</span>
+              </button>
+            </div>
+            } @else {
+            <div class="flex gap-2">
+              <input type="text" id="inventory-item-name" name="inventory-item-name" [ngModel]="inventoryItemName()"
+                (ngModelChange)="inventoryItemName.set($event)"
+                class="flex-1 bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
+                placeholder="Enter custom item name..." autocomplete="off">
+              <button type="button" (click)="showCustomNameInput.set(false); inventoryItemName.set('')"
+                class="p-2 transition-colors rounded-md bg-gray-100 dark:bg-[#253545] border border-gray-200 dark:border-[#324d67] text-gray-500 hover:text-red-500"
+                title="Back to List">
+                <span class="material-symbols-outlined text-[20px]">close</span>
+              </button>
+            </div>
+            }
+          </div>
+
+          <!-- Quantity Input -->
+          <div class="space-y-1.5">
+            <label for="inventory-item-quantity" class="text-xs font-bold text-gray-500 uppercase">Quantity</label>
+            <input type="number" id="inventory-item-quantity" name="inventory-item-quantity"
+              [ngModel]="inventoryItemQuantity()" (ngModelChange)="inventoryItemQuantity.set($event)"
+              class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
+              min="0" step="1" aria-label="Inventory Item Quantity" autocomplete="off">
+          </div>
+        </div>
+
+        <div
+          class="px-6 py-4 bg-gray-50 dark:bg-[#111a22] border-t border-gray-200 dark:border-[#324d67] flex justify-end gap-3">
+          <button type="button" (click)="isInventoryModalOpen.set(false)"
+            class="px-4 py-2 text-sm font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#253545] rounded-lg">Cancel</button>
+          <button type="submit" [disabled]="!inventoryItemName()"
+            class="px-4 py-2 text-sm font-bold text-white bg-primary hover:bg-blue-600 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed">
+            {{ editingItemId() ? 'Save Changes' : 'Add Item' }}
+          </button>
+        </div>
+      </form>
     </div>
   </div>
   }

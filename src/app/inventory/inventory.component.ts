@@ -20,34 +20,41 @@ export class InventoryComponent {
 
   // Modal State
   isModalOpen = signal(false);
-  modalType = signal<'category' | 'item'>('item');
+  modalType = signal<'category' | 'item' | 'refill'>('item');
   targetCategoryId = signal<string | null>(null);
+  targetItemId = signal<string | null>(null);
   newItemName = signal('');
+  newItemPrice = signal<number>(0);
+  refillQuantity = signal<number>(0);
 
-  // Search
-  searchQuery = signal('');
-
-  filteredCategories = computed(() => {
-    const query = this.searchQuery().toLowerCase();
-    if (!query) return this.categories();
-
-    return this.categories().map(cat => ({
-      ...cat,
-      items: cat.items.filter(item => item.name.toLowerCase().includes(query))
-    })).filter(cat => cat.items.length > 0 || cat.name.toLowerCase().includes(query));
-  });
 
   // Actions
-  updateQuantity(categoryId: string, itemId: string, change: number) {
+  openRefillModal(categoryId: string, item: InventoryItem) {
+    this.modalType.set('refill');
+    this.targetCategoryId.set(categoryId);
+    this.targetItemId.set(item.id);
+    this.newItemPrice.set(item.price ?? 0);
+    this.refillQuantity.set(0);
+    this.isModalOpen.set(true);
+  }
+
+  submitRefill() {
+    const catId = this.targetCategoryId();
+    const itemId = this.targetItemId();
+    const qty = this.refillQuantity();
+    const price = this.newItemPrice();
+
+    if (!catId || !itemId) return;
+
     this.categories.update(cats =>
       cats.map(c => {
-        if (c.id === categoryId) {
+        if (c.id === catId) {
           return {
             ...c,
             items: c.items.map(i => {
               if (i.id === itemId) {
-                const newQty = Math.max(0, i.quantity + change);
-                return { ...i, quantity: newQty };
+                const newQty = Math.max(0, i.quantity + qty);
+                return { ...i, quantity: newQty, price: price };
               }
               return i;
             })
@@ -57,6 +64,7 @@ export class InventoryComponent {
       })
     );
     this.apiService.updateInventory(this.portfolioService.inventory()).subscribe();
+    this.isModalOpen.set(false);
   }
 
   deleteItem(categoryId: string, itemId: string) {
@@ -89,6 +97,7 @@ export class InventoryComponent {
     this.modalType.set('item');
     this.targetCategoryId.set(categoryId);
     this.newItemName.set('');
+    this.newItemPrice.set(0);
     this.isModalOpen.set(true);
   }
 
@@ -109,7 +118,8 @@ export class InventoryComponent {
         const newItem: InventoryItem = {
           id: `i-${Date.now()}`,
           name: name,
-          quantity: 0
+          quantity: 0,
+          price: this.newItemPrice()
         };
         this.categories.update(cats =>
           cats.map(c => {

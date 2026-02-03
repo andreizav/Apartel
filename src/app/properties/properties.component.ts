@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import * as XLSX from 'xlsx';
 import { ApiService } from '../shared/api.service';
-import { PortfolioService, PropertyGroup, PropertyUnit, Booking } from '../shared/portfolio.service';
+import { PortfolioService, PropertyGroup, PropertyUnit, Booking, InventoryCategory, InventoryItem } from '../shared/portfolio.service';
 
 @Component({
   selector: 'app-properties',
@@ -82,21 +82,17 @@ export class PropertiesComponent implements OnInit {
     });
   }
 
-  setCoverPhoto(index: number) {
-    this.editForm.update(u => {
-      if (!u) return null;
-      const photos = [...(u.photos || [])];
-      if (index > 0 && index < photos.length) {
-        const cover = photos[index];
-        photos.splice(index, 1);
-        photos.unshift(cover);
-      }
-      return { ...u, photos };
-    });
-  }
-
   arrivalMessageModalOpen = signal(false);
   generatedMessage = signal('');
+
+  // Inventory State
+  isInventoryModalOpen = signal(false);
+  inventoryItemName = signal('');
+  inventoryMsg = signal('');
+  inventoryItemQuantity = signal<number>(0);
+  inventoryItemCategory = signal<string>('');
+  showCustomNameInput = signal<boolean>(false);
+  editingItemId = signal<string | null>(null);
 
   tabs = ['Basic Info', 'Guest History', 'Photos', 'Inventory', 'Settings'];
 
@@ -228,6 +224,135 @@ export class PropertiesComponent implements OnInit {
       .filter(b => b.status === 'confirmed' && b.startDate >= firstDay && b.startDate <= lastDay)
       .reduce((sum, b) => sum + (b.price || 0), 0);
   });
+
+  unitInventory = computed(() => {
+    const unitId = this.selectedUnitId();
+    if (!unitId) return [];
+
+    // Filter global inventory to show only items for this unit
+    // We need to return a structure of Categories -> Items
+    const allCategories = this.portfolioService.inventory();
+
+    return allCategories.map(cat => ({
+      ...cat,
+      items: cat.items.filter(item => item.unitId === unitId)
+    })).filter(cat => cat.items.length > 0);
+  });
+
+  availableCategories = computed(() => {
+    return this.portfolioService.inventory();
+  });
+
+  categoryItemNames = computed(() => {
+    const catId = this.inventoryItemCategory();
+    if (!catId) return [];
+
+    const names = new Set<string>();
+    const inventory = this.portfolioService.inventory();
+    if (!inventory) return [];
+
+    const category = inventory.find(c => c.id === catId);
+    if (category && category.items) {
+      category.items.forEach(item => {
+        if (item && item.name) {
+          names.add(item.name);
+        }
+      });
+    }
+    return Array.from(names).filter(n => typeof n === 'string').sort();
+  });
+
+  openInventoryModal(item?: InventoryItem) {
+    if (item) {
+      this.editingItemId.set(item.id);
+      this.inventoryItemName.set(item.name);
+      this.inventoryItemQuantity.set(item.quantity);
+      // Find category
+      const cat = this.portfolioService.inventory().find(c => c.items.some(i => i.id === item.id));
+      this.inventoryItemCategory.set(cat?.id || '');
+      this.showCustomNameInput.set(false);
+    } else {
+      this.editingItemId.set(null);
+      this.inventoryItemName.set('');
+      this.inventoryItemQuantity.set(1);
+      this.inventoryItemCategory.set(this.availableCategories()[0]?.id || '');
+      this.showCustomNameInput.set(false);
+    }
+    this.isInventoryModalOpen.set(true);
+  }
+
+  saveInventoryItem() {
+    const unitId = this.selectedUnitId();
+    if (!unitId) return;
+
+    const name = this.inventoryItemName().trim();
+    const qty = this.inventoryItemQuantity();
+    const catId = this.inventoryItemCategory();
+
+    if (!name || qty < 0 || !catId) return;
+
+    const currentInventory = JSON.parse(JSON.stringify(this.portfolioService.inventory())) as InventoryCategory[];
+    const category = currentInventory.find(c => c.id === catId);
+
+    if (!category) return;
+
+    if (this.editingItemId()) {
+      // Update existing
+      // First, we need to find where the item is currently (it might be in a different category if we allowed cat change, but for now assuming valid catId logic)
+      // Actually, since we might simply be updating, let's find the original item location
+      let found = false;
+      for (const cat of currentInventory) {
+        const itemIndex = cat.items.findIndex(i => i.id === this.editingItemId());
+        if (itemIndex !== -1) {
+          if (cat.id === catId) {
+            // Same category update
+            cat.items[itemIndex].name = name;
+            cat.items[itemIndex].quantity = qty;
+          } else {
+            // Moved category
+            cat.items.splice(itemIndex, 1);
+            category.items.push({
+              id: this.editingItemId()!,
+              name,
+              quantity: qty,
+              unitId
+            });
+          }
+          found = true;
+          break;
+        }
+      }
+    } else {
+      // Create new
+      category.items.push({
+        id: `i-${Date.now()}`,
+        name,
+        quantity: qty,
+        unitId
+      });
+    }
+
+    this.portfolioService.inventory.set(currentInventory);
+    this.apiService.updateInventory(currentInventory).subscribe();
+    this.isInventoryModalOpen.set(false);
+  }
+
+  deleteInventoryItem(itemId: string) {
+    if (!confirm('Delete this item?')) return;
+
+    const currentInventory = JSON.parse(JSON.stringify(this.portfolioService.inventory())) as InventoryCategory[];
+
+    for (const cat of currentInventory) {
+      const idx = cat.items.findIndex(i => i.id === itemId);
+      if (idx !== -1) {
+        cat.items.splice(idx, 1);
+        break;
+      }
+    }
+
+    this.portfolioService.inventory.set(currentInventory);
+    this.apiService.updateInventory(currentInventory).subscribe();
+  }
 
   navigateToClient(booking: Booking) {
     if (booking.guestPhone) {
