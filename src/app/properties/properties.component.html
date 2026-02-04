@@ -15,24 +15,21 @@
         <!-- Export Button -->
         <button (click)="exportPortfolio()"
           class="flex items-center justify-center w-8 h-8 bg-white dark:bg-[#253545] border border-gray-200 dark:border-[#324d67] text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-50 dark:hover:bg-[#2f4356] transition-colors"
-          title="Export to Excel"
-          aria-label="Export to Excel">
+          title="Export to Excel" aria-label="Export to Excel">
           <span class="material-symbols-outlined text-[20px]">download</span>
         </button>
 
         <!-- Import Button -->
         <button (click)="fileInput.click()"
           class="flex items-center justify-center w-8 h-8 bg-white dark:bg-[#253545] border border-gray-200 dark:border-[#324d67] text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-50 dark:hover:bg-[#2f4356] transition-colors"
-          title="Import Excel (.xlsx)"
-          aria-label="Import Excel">
+          title="Import Excel (.xlsx)" aria-label="Import Excel">
           <span class="material-symbols-outlined text-[20px]">upload_file</span>
         </button>
 
         <!-- New Button -->
         <button (click)="openNewModal()"
           class="flex items-center justify-center w-8 h-8 bg-primary text-white rounded-lg hover:bg-blue-600 transition-colors"
-          title="Add New Group or Unit"
-          aria-label="Add New Group or Unit">
+          title="Add New Group or Unit" aria-label="Add New Group or Unit">
           <span class="material-symbols-outlined text-[20px]">add</span>
         </button>
       </div>
@@ -231,8 +228,7 @@
                   </div>
                   <button (click)="openMap(form.officialAddress)"
                     class="p-2.5 bg-gray-100 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-lg text-gray-500 hover:text-primary transition-colors flex-shrink-0"
-                    title="Open on Map"
-                    aria-label="Open on Map">
+                    title="Open on Map" aria-label="Open on Map">
                     <span class="material-symbols-outlined text-[20px]">map</span>
                   </button>
                 </div>
@@ -472,8 +468,7 @@
               class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
               <button (click)="removePhoto(i)"
                 class="p-2 bg-red-500/80 hover:bg-red-500 text-white rounded-full backdrop-blur-sm transition-colors"
-                title="Delete Photo"
-                aria-label="Delete Photo">
+                title="Delete Photo" aria-label="Delete Photo">
                 <span class="material-symbols-outlined text-[20px]">delete</span>
               </button>
             </div>
@@ -525,14 +520,12 @@
                 <div class="flex items-center opacity-0 group-hover/inv-item:opacity-100 transition-opacity gap-1">
                   <button (click)="openInventoryModal(item)"
                     class="p-1.5 text-gray-400 hover:text-primary hover:bg-primary/10 rounded transition-colors"
-                    title="Edit"
-                    aria-label="Edit item">
+                    title="Edit" aria-label="Edit item">
                     <span class="material-symbols-outlined text-[18px]">edit</span>
                   </button>
                   <button (click)="deleteInventoryItem(item.id)"
                     class="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-500/10 rounded transition-colors"
-                    title="Delete"
-                    aria-label="Delete item">
+                    title="Delete" aria-label="Delete item">
                     <span class="material-symbols-outlined text-[18px]">delete</span>
                   </button>
                 </div>
@@ -551,6 +544,129 @@
             Item</button>
         </div>
         }
+      </div>
+      }
+      @else if (activeTab() === 'Finance / P&L') {
+      <div class="animate-fade-in space-y-6">
+        <!-- Actions & Summary -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="md:col-span-3 flex items-center justify-between">
+            <h3 class="font-bold text-[#111418] dark:text-white">Profit & Loss</h3>
+            <div class="flex items-center gap-4">
+              <!-- View Mode Switcher -->
+              <div class="flex p-1 bg-gray-100 dark:bg-[#111a22] rounded-lg">
+                <button (click)="setViewMode('all')" class="px-3 py-1.5 text-xs font-bold rounded-md transition-all"
+                  [class.bg-white]="pnlViewMode() === 'all'" [class.text-[#111418]]="pnlViewMode() === 'all'"
+                  [class.shadow-sm]="pnlViewMode() === 'all'"
+                  [class.text-gray-500]="pnlViewMode() !== 'all'">All</button>
+                <button (click)="setViewMode('year')" class="px-3 py-1.5 text-xs font-bold rounded-md transition-all"
+                  [class.bg-white]="pnlViewMode() === 'year'" [class.text-[#111418]]="pnlViewMode() === 'year'"
+                  [class.shadow-sm]="pnlViewMode() === 'year'"
+                  [class.text-gray-500]="pnlViewMode() !== 'year'">Year</button>
+                <button (click)="setViewMode('month')" class="px-3 py-1.5 text-xs font-bold rounded-md transition-all"
+                  [class.bg-white]="pnlViewMode() === 'month'" [class.text-[#111418]]="pnlViewMode() === 'month'"
+                  [class.shadow-sm]="pnlViewMode() === 'month'"
+                  [class.text-gray-500]="pnlViewMode() !== 'month'">Month</button>
+              </div>
+
+              <!-- Date Navigation -->
+              @if(pnlViewMode() !== 'all') {
+              <div
+                class="flex items-center gap-2 bg-white dark:bg-[#1c2936] border border-gray-200 dark:border-[#324d67] rounded-lg p-1">
+                <button (click)="prevPeriod()"
+                  class="p-1 hover:bg-gray-100 dark:hover:bg-[#253545] rounded text-gray-500">
+                  <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+                </button>
+                <span class="text-sm font-bold min-w-[100px] text-center text-[#111418] dark:text-white">{{
+                  pnlPeriodLabel() }}</span>
+                <button (click)="nextPeriod()"
+                  class="p-1 hover:bg-gray-100 dark:hover:bg-[#253545] rounded text-gray-500">
+                  <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+                </button>
+              </div>
+              }
+
+              <!-- Add Entry Button -->
+              <button (click)="openTransactionModal()"
+                class="flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-bold rounded-lg hover:bg-blue-600 transition-colors shadow-lg shadow-primary/25">
+                <span class="material-symbols-outlined text-[18px]">add</span>
+                Add Entry
+              </button>
+            </div>
+          </div>
+
+          <!-- Cards -->
+          <div class="bg-white dark:bg-[#1c2936] rounded-xl border border-gray-200 dark:border-[#324d67] p-6 shadow-sm">
+            <p class="text-gray-500 text-xs font-bold uppercase tracking-wider mb-2">Total Income</p>
+            <div class="text-2xl font-bold text-green-500 flex items-center gap-2">
+              <span class="material-symbols-outlined">trending_up</span>
+              ${{ unitPnLSummary().income | number:'1.2-2' }}
+            </div>
+          </div>
+          <div class="bg-white dark:bg-[#1c2936] rounded-xl border border-gray-200 dark:border-[#324d67] p-6 shadow-sm">
+            <p class="text-gray-500 text-xs font-bold uppercase tracking-wider mb-2">Total Expenses</p>
+            <div class="text-2xl font-bold text-red-500 flex items-center gap-2">
+              <span class="material-symbols-outlined">trending_down</span>
+              ${{ unitPnLSummary().expense | number:'1.2-2' }}
+            </div>
+          </div>
+          <div class="bg-white dark:bg-[#1c2936] rounded-xl border border-gray-200 dark:border-[#324d67] p-6 shadow-sm">
+            <p class="text-gray-500 text-xs font-bold uppercase tracking-wider mb-2">Net Profit</p>
+            <div class="text-2xl font-bold flex items-center gap-2" [class.text-green-600]="unitPnLSummary().net >= 0"
+              [class.text-red-600]="unitPnLSummary().net < 0">
+              <span class="material-symbols-outlined">account_balance_wallet</span>
+              ${{ unitPnLSummary().net | number:'1.2-2' }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Transactions List -->
+        <div class="bg-white dark:bg-[#1c2936] rounded-xl border border-gray-200 dark:border-[#324d67] overflow-hidden">
+          <div class="px-6 py-4 border-b border-gray-200 dark:border-[#324d67]">
+            <h4 class="font-bold text-[#111418] dark:text-white">Recent Transactions</h4>
+          </div>
+          @if (unitTransactions().length > 0) {
+          <table class="w-full text-sm text-left">
+            <thead class="text-xs text-gray-500 bg-gray-50 dark:bg-[#111a22] uppercase">
+              <tr>
+                <th class="px-6 py-3">Date</th>
+                <th class="px-6 py-3">Type</th>
+                <th class="px-6 py-3">Category</th>
+                <th class="px-6 py-3">Description</th>
+                <th class="px-6 py-3 text-right">Amount</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 dark:divide-[#324d67]">
+              @for(tx of unitTransactions(); track tx.id) {
+              <tr class="hover:bg-gray-50 dark:hover:bg-[#253545]">
+                <td class="px-6 py-4">{{ tx.date | date:'mediumDate' }}</td>
+                <td class="px-6 py-4">
+                  <span class="px-2 py-1 rounded text-xs font-bold uppercase"
+                    [class.bg-green-100]="tx.type === 'income'" [class.text-green-700]="tx.type === 'income'"
+                    [class.bg-red-100]="tx.type === 'expense'" [class.text-red-700]="tx.type === 'expense'">
+                    {{ tx.type }}
+                  </span>
+                </td>
+                <td class="px-6 py-4">
+                  <div class="font-bold text-[#111418] dark:text-white">{{ tx.category }}</div>
+                  <div class="text-xs text-gray-500">{{ tx.subCategory }}</div>
+                </td>
+                <td class="px-6 py-4 text-gray-600 dark:text-gray-300">{{ tx.description }}</td>
+                <td class="px-6 py-4 text-right font-bold" [class.text-green-600]="tx.type === 'income'"
+                  [class.text-red-600]="tx.type === 'expense'">
+                  {{ tx.type === 'income' ? '+' : '-' }}${{ tx.amount | number:'1.2-2' }}
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
+          } @else {
+          <div class="p-12 text-center text-gray-400">
+            <span class="material-symbols-outlined text-4xl mb-2 opacity-50">receipt_long</span>
+            <p>No transactions found for this unit.</p>
+          </div>
+          }
+        </div>
       </div>
       }
       @else if (activeTab() === 'Settings') {
@@ -675,8 +791,8 @@
           class="px-4 py-2 text-sm font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#253545] rounded-lg transition-colors">
           Cancel
         </button>
-        <button (click)="confirmImport()"
-          class="px-4 py-2 text-sm font-bold text-white bg-primary hover:bg-blue-600 shadow-lg shadow-primary/25 rounded-lg transition-colors flex items-center gap-2">
+        <button (click)="confirmImport()" [disabled]="importPreview().length === 0"
+          class="px-4 py-2 text-sm font-bold text-white bg-primary hover:bg-blue-600 shadow-lg shadow-primary/25 rounded-lg transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
           <span class="material-symbols-outlined text-[18px]">check</span>
           Confirm Import
         </button>
@@ -765,6 +881,7 @@
           <!-- Category Select -->
           <div class="space-y-1.5">
             <label for="inventory-item-cat" class="text-xs font-bold text-gray-500 uppercase">Category</label>
+            @if (!editingItemId()) {
             <select id="inventory-item-cat" name="inventory-item-cat" [ngModel]="inventoryItemCategory()"
               (ngModelChange)="inventoryItemCategory.set($event)"
               class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary transition-colors">
@@ -772,6 +889,12 @@
               <option [value]="cat.id">{{ cat.name }}</option>
               }
             </select>
+            } @else {
+            <div
+              class="w-full bg-gray-100 dark:bg-[#1c2936] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-gray-500 dark:text-gray-400 cursor-not-allowed">
+              {{ selectedCategoryName() }}
+            </div>
+            }
           </div>
 
           <!-- Name Selection Dropdown -->
@@ -799,11 +922,11 @@
               <input type="text" id="inventory-item-name" name="inventory-item-name" [ngModel]="inventoryItemName()"
                 (ngModelChange)="inventoryItemName.set($event)"
                 class="flex-1 bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
-                placeholder="Enter custom item name..." autocomplete="off">
+                placeholder="Item Name" autofocus>
               <button type="button" (click)="showCustomNameInput.set(false); inventoryItemName.set('')"
                 class="p-2 transition-colors rounded-md bg-gray-100 dark:bg-[#253545] border border-gray-200 dark:border-[#324d67] text-gray-500 hover:text-red-500"
-                title="Back to List">
-                <span class="material-symbols-outlined text-[20px]">close</span>
+                title="Pick from list">
+                <span class="material-symbols-outlined text-[20px]">list</span>
               </button>
             </div>
             }
@@ -811,9 +934,9 @@
 
           <!-- Quantity Input -->
           <div class="space-y-1.5">
-            <label for="inventory-item-quantity" class="text-xs font-bold text-gray-500 uppercase">Quantity</label>
-            <input type="number" id="inventory-item-quantity" name="inventory-item-quantity"
-              [ngModel]="inventoryItemQuantity()" (ngModelChange)="inventoryItemQuantity.set($event)"
+            <label for="inventory-item-qty" class="text-xs font-bold text-gray-500 uppercase">Quantity</label>
+            <input type="number" id="inventory-item-qty" name="inventory-item-qty" [ngModel]="inventoryItemQuantity()"
+              (ngModelChange)="inventoryItemQuantity.set($event)"
               class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
               min="0" step="1" aria-label="Inventory Item Quantity" autocomplete="off">
           </div>
@@ -824,8 +947,8 @@
           <button type="button" (click)="isInventoryModalOpen.set(false)"
             class="px-4 py-2 text-sm font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#253545] rounded-lg">Cancel</button>
           <button type="submit" [disabled]="!inventoryItemName()"
-            class="px-4 py-2 text-sm font-bold text-white bg-primary hover:bg-blue-600 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed">
-            {{ editingItemId() ? 'Save Changes' : 'Add Item' }}
+            class="px-4 py-2 text-sm font-bold text-white bg-primary hover:bg-blue-600 rounded-lg disabled:opacity-50">
+            Save
           </button>
         </div>
       </form>
@@ -869,6 +992,100 @@
           <span class="material-symbols-outlined text-[18px]">content_copy</span>
           Copy Message
         </button>
+      </div>
+    </div>
+  </div>
+  }
+
+  <!-- Transaction Modal -->
+  @if (isTransactionModalOpen()) {
+  <div class="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
+    <div
+      class="bg-white dark:bg-[#1c2936] w-full max-w-md rounded-xl shadow-2xl border border-gray-200 dark:border-[#324d67] overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-200 dark:border-[#324d67] flex items-center justify-between">
+        <h3 class="text-lg font-bold text-[#111418] dark:text-white">Add Transaction</h3>
+        <button (click)="isTransactionModalOpen.set(false)"
+          class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <div class="p-6 space-y-4">
+        <!-- Type -->
+        <div class="flex p-1 bg-gray-100 dark:bg-[#111a22] rounded-lg">
+          <button class="flex-1 py-1.5 text-sm font-bold rounded-md transition-all"
+            [class.bg-white]="txType() === 'income'" [class.text-green-600]="txType() === 'income'"
+            [class.shadow-sm]="txType() === 'income'" (click)="updateTxType('income')">Income</button>
+          <button class="flex-1 py-1.5 text-sm font-bold rounded-md transition-all"
+            [class.bg-white]="txType() === 'expense'" [class.text-red-600]="txType() === 'expense'"
+            [class.shadow-sm]="txType() === 'expense'" (click)="updateTxType('expense')">Expense</button>
+        </div>
+
+        <!-- Date & Amount & Quantity -->
+        <div class="grid gap-4" [class.grid-cols-2]="!isInventoryCategorySelected()"
+          [class.grid-cols-3]="isInventoryCategorySelected()">
+          <div class="space-y-1.5">
+            <label class="text-xs font-bold text-gray-500 uppercase">Date</label>
+            <input type="date" [ngModel]="txDate()" (ngModelChange)="txDate.set($event)"
+              class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white">
+          </div>
+          <div class="space-y-1.5">
+            <label class="text-xs font-bold text-gray-500 uppercase">Amount ($)</label>
+            <input type="number" [ngModel]="txAmount()" (ngModelChange)="txAmount.set($event)" min="0" step="0.01"
+              class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white">
+          </div>
+
+          @if(isInventoryCategorySelected()) {
+          <div class="space-y-1.5 animate-fade-in">
+            <label class="text-xs font-bold text-gray-500 uppercase">Quantity *</label>
+            <input type="number" [ngModel]="txQuantity()" (ngModelChange)="txQuantity.set($event)" min="1" step="1"
+              class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white"
+              placeholder="Qty">
+          </div>
+          }
+        </div>
+
+        <!-- Category -->
+        <div class="space-y-1.5">
+          <label class="text-xs font-bold text-gray-500 uppercase">Category</label>
+          <select [ngModel]="txCategory()" (ngModelChange)="txCategory.set($event); txSubCategory.set('')"
+            class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white">
+            <option value="" disabled>Select Category</option>
+            @for(cat of filteredCategories(); track cat.id) {
+            <option [value]="cat.name">{{ cat.name }}</option>
+            }
+          </select>
+        </div>
+
+
+        <!-- SubCategory -->
+        @if(availableSubCategories().length > 0) {
+        <div class="space-y-1.5 animate-fade-in">
+          <label class="text-xs font-bold text-gray-500 uppercase">Sub-Category</label>
+          <select [ngModel]="txSubCategory()" (ngModelChange)="txSubCategory.set($event)"
+            class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white">
+            <option value="" disabled selected>Select Sub-Category</option>
+            @for(sub of availableSubCategories(); track sub.id) {
+            <option [value]="sub.name">{{ sub.name }}</option>
+            }
+          </select>
+        </div>
+        }
+
+        <!-- Description -->
+        <div class="space-y-1.5">
+          <label class="text-xs font-bold text-gray-500 uppercase">Description</label>
+          <textarea [ngModel]="txDescription()" (ngModelChange)="txDescription.set($event)" rows="3"
+            class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white resize-none"></textarea>
+        </div>
+      </div>
+
+      <div
+        class="px-6 py-4 bg-gray-50 dark:bg-[#111a22] border-t border-gray-200 dark:border-[#324d67] flex justify-end gap-3">
+        <button (click)="isTransactionModalOpen.set(false)"
+          class="px-4 py-2 text-sm font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#253545] rounded-lg">Cancel</button>
+        <button (click)="saveTransaction()" [disabled]="!canSaveTransaction()"
+          class="px-4 py-2 text-sm font-bold text-white bg-primary hover:bg-blue-600 rounded-lg shadow-lg shadow-primary/25 disabled:opacity-50 disabled:cursor-not-allowed">Save</button>
       </div>
     </div>
   </div>

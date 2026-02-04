@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { map, switchMap, catchError } from 'rxjs/operators';
+import { map, switchMap, catchError, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { PortfolioService } from './portfolio.service';
@@ -96,6 +96,12 @@ export class ApiService {
     return this.portfolio.inventory;
   }
 
+  fetchInventory(): Observable<InventoryCategory[]> {
+    return this.http.get<InventoryCategory[]>(`${this.apiUrl}/api/inventory`).pipe(
+      tap(inv => this.portfolio.inventory.set(inv))
+    );
+  }
+
   getChannelMappings() {
     return this.portfolio.channelMappings;
   }
@@ -187,6 +193,10 @@ export class ApiService {
 
   refillInventoryItem(categoryId: string, itemId: string, quantity: number, price: number): Observable<InventoryCategory[]> {
     return this.http.post<InventoryCategory[]>(`${this.apiUrl}/api/inventory/refill`, { categoryId, itemId, quantity, price });
+  }
+
+  updateInventoryStock(itemId: string, quantityDelta: number): Observable<{ success: boolean, newQuantity: number }> {
+    return this.http.post<{ success: boolean, newQuantity: number }>(`${this.apiUrl}/api/inventory/stock`, { itemId, quantityDelta });
   }
 
 
@@ -322,5 +332,9 @@ export class ApiService {
 
   updateSubCategory(id: string, name: string): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/api/transactions/subcategories/${id}/update`, { name });
+  }
+
+  syncUnitIncome(unitId: string): Observable<{ synced: number; transactions: Transaction[] }> {
+    return this.http.post<{ synced: number; transactions: Transaction[] }>(`${this.apiUrl}/api/transactions/sync-unit-income/${unitId}`, {});
   }
 }

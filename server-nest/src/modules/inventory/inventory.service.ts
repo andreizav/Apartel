@@ -103,10 +103,32 @@ export class InventoryService {
                 description: `Inventory Refill: ${quantity}x ${item.name}`,
                 amount: amount,
                 currency: 'USD', // Defaulting to USD as per current simplified implementation
-                property: item.unitId ? 'Unit Specific' : 'General' // Simple logic for property
+                property: item.unitId ? 'Unit Specific' : 'General', // Simple logic for property
+                unitId: item.unitId // Pass unitId if available
             });
         }
 
         return this.findAll(tenantId);
+    }
+
+    async updateStock(tenantId: string, itemId: string, quantityDelta: number) {
+        // 1. Verify item existence and ownership
+        const item = await this.prisma.inventoryItem.findFirst({
+            where: { id: itemId, category: { tenantId } }
+        });
+
+        if (!item) {
+            throw new BadRequestException('Item not found');
+        }
+
+        // 2. Update quantity
+        const newQuantity = (item.quantity || 0) + quantityDelta;
+
+        await this.prisma.inventoryItem.update({
+            where: { id: itemId },
+            data: { quantity: newQuantity }
+        });
+
+        return { success: true, newQuantity };
     }
 }

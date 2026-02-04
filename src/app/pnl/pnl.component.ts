@@ -57,12 +57,19 @@ export class PnLComponent {
   newTransaction = signal<Partial<Transaction>>({
     date: new Date().toISOString().split('T')[0],
     currency: 'USD',
-    property: 'Art Apartments',
+    property: 'General',
     type: 'expense',
-    category: 'Transport'
+    category: '',
+    subCategory: ''
   });
 
   isDownloadMenuOpen = signal(false);
+
+  canSaveTransaction = computed(() => {
+    const t = this.newTransaction();
+    const hasSubs = this.availableSubCategories().length > 0;
+    return !!t.category && (hasSubs ? !!t.subCategory : true) && !!t.amount && t.amount > 0;
+  });
 
   constructor() {
     this.fetchLiveRates();
@@ -220,13 +227,14 @@ export class PnLComponent {
   }
 
   openAddModal() {
-    this.newTransaction.set({ date: new Date().toISOString().split('T')[0], currency: this.selectedCurrency(), property: this.properties[0], type: 'expense', category: 'Transport', subCategory: 'Taxi', amount: 0, description: '' });
+    this.newTransaction.set({ date: new Date().toISOString().split('T')[0], currency: this.selectedCurrency(), property: 'General', type: 'expense', category: '', subCategory: '', amount: 0, description: '' });
     this.isModalOpen.set(true);
   }
 
   saveTransaction() {
+    if (!this.canSaveTransaction()) return;
+
     const t = this.newTransaction();
-    if (!t.amount || !t.category) return;
     const newTx: Transaction = {
       id: `t-${Date.now()}`, date: t.date!, property: t.property!, category: t.category!, subCategory: t.subCategory || 'General', description: t.description || '', amount: t.amount!, currency: t.currency as any, type: t.type as any
     };
@@ -237,13 +245,11 @@ export class PnLComponent {
   updateNewTx(field: keyof Transaction, value: any) {
     this.newTransaction.update(prev => ({ ...prev, [field]: value }));
     if (field === 'type') {
-      const firstCat = this.categories().find(c => c.type === value);
-      if (firstCat) this.updateNewTx('category', firstCat.name);
+      this.updateNewTx('category', '');
+      this.updateNewTx('subCategory', '');
     }
     if (field === 'category') {
-      const cat = this.categories().find(c => c.name === value);
-      if (cat && cat.subCategories.length > 0) this.updateNewTx('subCategory', cat.subCategories[0].name);
-      else this.updateNewTx('subCategory', '');
+      this.updateNewTx('subCategory', '');
     }
   }
 

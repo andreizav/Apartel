@@ -22,4 +22,9 @@ export class InventoryController {
     refill(@TenantId() tenantId: string, @Body() body: { categoryId: string, itemId: string, quantity: number, price: number }) {
         return this.inventoryService.refillItem(tenantId, body.categoryId, body.itemId, body.quantity, body.price);
     }
+
+    @Post('stock')
+    updateStock(@TenantId() tenantId: string, @Body() body: { itemId: string, quantityDelta: number }) {
+        return this.inventoryService.updateStock(tenantId, body.itemId, body.quantityDelta);
+    }
 }

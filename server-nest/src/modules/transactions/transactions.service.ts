@@ -25,6 +25,8 @@ export class TransactionsService {
                 amount: tx.amount ?? 0,
                 currency: tx.currency ?? 'USD',
                 type: tx.type ?? 'expense',
+                unitId: tx.unitId ?? null,
+                bookingId: tx.bookingId ?? null
             }
         });
     }
@@ -113,5 +115,51 @@ export class TransactionsService {
             where: { id },
             data: { name }
         });
+    }
+
+    async syncUnitIncome(tenantId: string, unitId: string) {
+        // 1. Get all confirmed bookings for the unit
+        const bookings = await this.prisma.booking.findMany({
+            where: {
+                tenantId,
+                unitId,
+                status: 'confirmed'
+            }
+        });
+
+        // 2. Get all transactions for the unit that are linked to a booking
+        const transactions = await this.prisma.transaction.findMany({
+            where: {
+                tenantId,
+                unitId,
+                bookingId: { not: null }
+            }
+        });
+
+        const createdTransactions: any[] = [];
+        const existingBookingIds = new Set(transactions.map(t => t.bookingId));
+
+        // 3. Create transactions for missing bookings
+        for (const booking of bookings) {
+            if (!existingBookingIds.has(booking.id)) {
+                // Determine category - ideally should be dynamic, but defaulting to 'Rental Income' or creating it
+                // For simplicity, we'll use a string literal 'Rental Income' as category
+                const tx = await this.create(tenantId, {
+                    date: booking.startDate.toISOString(),
+                    type: 'income',
+                    category: 'Rental Income',
+                    subCategory: booking.source, // e.g. Airbnb, Booking.com
+                    description: `Booking Income: ${booking.guestName} (${booking.source})`,
+                    amount: booking.price,
+                    currency: 'USD', // Default
+                    property: 'Unit Specific',
+                    unitId: unitId,
+                    bookingId: booking.id
+                });
+                createdTransactions.push(tx);
+            }
+        }
+
+        return { synced: createdTransactions.length, transactions: createdTransactions };
     }
 }

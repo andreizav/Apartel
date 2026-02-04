@@ -1,10 +1,10 @@
-import { Component, signal, computed, inject, OnInit } from '@angular/core';
+import { Component, signal, computed, inject, OnInit, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import * as XLSX from 'xlsx';
 import { ApiService } from '../shared/api.service';
-import { PortfolioService, PropertyGroup, PropertyUnit, Booking, InventoryCategory, InventoryItem } from '../shared/portfolio.service';
+import { PortfolioService, PropertyGroup, PropertyUnit, Booking, InventoryCategory, InventoryItem, Transaction } from '../shared/portfolio.service';
 
 @Component({
   selector: 'app-properties',
@@ -21,10 +21,23 @@ export class PropertiesComponent implements OnInit {
   portfolio = this.portfolioService.portfolio;
   allBookings = this.portfolioService.bookings;
   tenant = this.portfolioService.tenant;
+  transactions = this.portfolioService.transactions;
 
   importPreview = signal<PropertyGroup[] | null>(null);
   selectedUnitId = signal<string | null>('u1');
   activeTab = signal<string>('Basic Info');
+
+  constructor() {
+    effect(() => {
+      const tab = this.activeTab();
+      const uid = this.selectedUnitId();
+      if (tab === 'Finance / P&L' && uid) {
+        // Debounce slightly or just call
+        // Using untracked if we wanted to avoid dependencies but here we want to react to them
+        this.syncBookingIncome(true);
+      }
+    });
+  }
 
   isNewModalOpen = signal(false);
   newEntryType = signal<'group' | 'unit'>('unit');
@@ -34,6 +47,155 @@ export class PropertiesComponent implements OnInit {
   editForm = signal<PropertyUnit | null>(null);
   snapshot = signal<PropertyUnit | null>(null);
   isSaving = signal(false);
+
+  // Finance State
+  isTransactionModalOpen = signal(false);
+  transactionCategories = signal<any[]>([]); // {id, name, type, subCategories: []}
+  txType = signal<'income' | 'expense'>('expense');
+  txAmount = signal<number>(0);
+  txDate = signal<string>(new Date().toISOString().split('T')[0]);
+  txCategory = signal<string>('');
+  txSubCategory = signal<string>('');
+  txDescription = signal<string>('');
+  txQuantity = signal<number | null>(null);
+
+  canSaveTransaction = computed(() => {
+    const amount = this.txAmount();
+    const category = this.txCategory();
+    const subCategory = this.txSubCategory();
+    const isInventory = this.isInventoryCategorySelected();
+    const qty = this.txQuantity();
+    const hasSubs = this.availableSubCategories().length > 0;
+
+    // Basic validation: Amount > 0 and Category set. SubCategory set ONLY if has options.
+    if (!amount || amount <= 0 || !category || (hasSubs && !subCategory)) return false;
+
+    // If inventory item, quantity is mandatory
+    if (isInventory && (!qty || qty <= 0)) return false;
+
+    return true;
+  });
+  // New quantity signal
+
+  // P&L Date Navigation
+  pnlViewMode = signal<'month' | 'year' | 'all'>('month');
+  pnlDate = signal<Date>(new Date());
+
+  // Finance Computed
+  unitTransactions = computed(() => {
+    const uid = this.selectedUnitId();
+    if (!uid) return [];
+
+    let txs = this.transactions()
+      .filter(t => t.unitId === uid)
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+    const mode = this.pnlViewMode();
+    const refDate = this.pnlDate();
+
+    if (mode === 'all') return txs;
+
+    return txs.filter(t => {
+      const tDate = new Date(t.date);
+      if (mode === 'year') {
+        return tDate.getFullYear() === refDate.getFullYear();
+      } else { // month
+        return tDate.getFullYear() === refDate.getFullYear() && tDate.getMonth() === refDate.getMonth();
+      }
+    });
+  });
+
+  pnlPeriodLabel = computed(() => {
+    const mode = this.pnlViewMode();
+    const date = this.pnlDate();
+    if (mode === 'all') return 'All Time';
+    if (mode === 'year') return date.getFullYear().toString();
+    return date.toLocaleString('default', { month: 'long', year: 'numeric' });
+  });
+
+  unitPnLSummary = computed(() => {
+    const txs = this.unitTransactions();
+    const income = txs.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
+    const expense = txs.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
+    return { income, expense, net: income - expense };
+  });
+
+  filteredCategories = computed(() => {
+    const baseCats = this.transactionCategories().filter(c => c.type === this.txType());
+
+    // If expense, append Inventory categories
+    if (this.txType() === 'expense') {
+      const invCats = this.portfolioService.inventory().map(c => ({
+        id: c.id,
+        name: c.name,
+        type: 'expense',
+        isInventory: true, // Marker
+        subCategories: c.items.map(i => ({ id: i.id, name: i.name }))
+      }));
+      return [...baseCats, ...invCats];
+    }
+
+    return baseCats;
+  });
+
+  availableSubCategories = computed(() => {
+    const catName = this.txCategory();
+    const cats = this.filteredCategories();
+    const cat = cats.find(c => c.name === catName);
+
+    if (!cat) return [];
+
+    // Check if subCategories are strings or objects and normalize
+    return cat.subCategories.map((s: any) => {
+      if (typeof s === 'string') {
+        return { id: s, name: s };
+      }
+      return s; // Assume it has id and name
+    });
+  });
+
+  // Helper to check if current category is inventory
+  isInventoryCategorySelected = computed(() => {
+    const catName = this.txCategory();
+    const cat = this.filteredCategories().find(c => c.name === catName);
+    return (cat as any)?.isInventory === true;
+  });
+
+  // P&L Navigation Helpers
+  setViewMode(mode: 'month' | 'year' | 'all') {
+    this.pnlViewMode.set(mode);
+    // When switching to month/year, maybe reset to current date or keep context?
+    // Keeping context is usually better.
+  }
+
+  prevPeriod() {
+    const mode = this.pnlViewMode();
+    if (mode === 'all') return;
+
+    const date = new Date(this.pnlDate());
+    if (mode === 'year') {
+      date.setFullYear(date.getFullYear() - 1);
+    } else {
+      date.setMonth(date.getMonth() - 1);
+    }
+    this.pnlDate.set(date);
+    // Trigger sync for the new period? The current sync is "all bookings", so we might need to be careful.
+    // Actually syncBookingIncome checks all bookings. Filtering happens on view. That's fine.
+  }
+
+  nextPeriod() {
+    const mode = this.pnlViewMode();
+    if (mode === 'all') return;
+
+    const date = new Date(this.pnlDate());
+    if (mode === 'year') {
+      date.setFullYear(date.getFullYear() + 1);
+    } else {
+      date.setMonth(date.getMonth() + 1);
+    }
+    this.pnlDate.set(date);
+  }
+
 
   isDirty = computed(() => {
     const form = this.editForm();
@@ -94,7 +256,7 @@ export class PropertiesComponent implements OnInit {
   showCustomNameInput = signal<boolean>(false);
   editingItemId = signal<string | null>(null);
 
-  tabs = ['Basic Info', 'Guest History', 'Photos', 'Inventory', 'Settings'];
+  tabs = ['Basic Info', 'Guest History', 'Photos', 'Inventory', 'Finance / P&L', 'Settings'];
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
@@ -260,6 +422,12 @@ export class PropertiesComponent implements OnInit {
       });
     }
     return Array.from(names).filter(n => typeof n === 'string').sort();
+  });
+
+  // Helper for edit modal
+  selectedCategoryName = computed(() => {
+    const catId = this.inventoryItemCategory();
+    return this.availableCategories().find(c => c.id === catId)?.name || 'Unknown';
   });
 
   openInventoryModal(item?: InventoryItem) {
@@ -545,6 +713,88 @@ export class PropertiesComponent implements OnInit {
 
   setActiveTab(tab: string) {
     this.activeTab.set(tab);
+    if (tab === 'Finance / P&L' && this.transactionCategories().length === 0) {
+      this.apiService.getCategories().subscribe(cats => this.transactionCategories.set(cats));
+    }
+  }
+
+  openTransactionModal() {
+    this.txType.set('expense');
+    this.txAmount.set(0);
+    this.txCategory.set('');
+    this.txSubCategory.set('');
+    this.txDescription.set('');
+    this.txQuantity.set(null); // Reset
+    this.txDate.set(new Date().toISOString().split('T')[0]);
+    this.isTransactionModalOpen.set(true);
+
+    if (this.transactionCategories().length === 0) {
+      this.apiService.getCategories().subscribe(cats => this.transactionCategories.set(cats));
+    }
+  }
+
+  updateTxType(type: 'income' | 'expense') {
+    this.txType.set(type);
+    this.txCategory.set('');
+    this.txSubCategory.set('');
+  }
+
+  saveTransaction() {
+    if (!this.canSaveTransaction()) return;
+
+    const unitId = this.selectedUnitId();
+    if (!unitId) return;
+
+    let desc = this.txDescription();
+    const qty = this.txQuantity();
+    const subCategoryName = this.txSubCategory();
+
+    // Check if it's an inventory item
+    // We need to find the ID of the selected subCategory 
+    // availableSubCategories() returns [{id, name}, ...]
+    const selectedItem = this.availableSubCategories().find(s => s.name === subCategoryName);
+
+    if (qty && qty! > 0) {
+      desc = `${desc} (Qty: ${qty})`.trim();
+
+      // If inventory, update stock first
+      if (this.isInventoryCategorySelected() && selectedItem) {
+        this.apiService.updateInventoryStock(selectedItem.id, qty).subscribe(() => {
+          // Reload inventory to reflect changes in UI
+          this.apiService.fetchInventory().subscribe();
+        });
+      }
+    }
+
+    const tx: Transaction = {
+      id: '', // Generated by backend
+      date: this.txDate(),
+      amount: this.txAmount(),
+      currency: 'USD',
+      type: this.txType(),
+      category: this.txCategory(),
+      subCategory: subCategoryName,
+      description: desc,
+      property: 'Unit Specific',
+      unitId: unitId
+    };
+
+    this.apiService.addTransaction(tx);
+    this.isTransactionModalOpen.set(false);
+  }
+
+  syncBookingIncome(silent = false) {
+    const unitId = this.selectedUnitId();
+    if (!unitId) return;
+
+    this.apiService.syncUnitIncome(unitId).subscribe(res => {
+      if (res.synced > 0) {
+        if (!silent) alert(`Successfully synchronized ${res.synced} income transactions.`);
+        res.transactions.forEach(t => this.portfolioService.addTransaction(t));
+      } else {
+        if (!silent) alert('No new booking income to synchronize.');
+      }
+    });
   }
 
   openNewModal() {

@@ -316,24 +316,12 @@
             [class.dark:bg-[#253545]]="newTransaction().type === 'expense'">Expense</button>
         </div>
 
-        <!-- Date & Property -->
-        <div class="grid grid-cols-2 gap-4">
-          <div class="space-y-1.5">
-            <label class="text-xs font-bold text-gray-500 uppercase">Date</label>
-            <input type="date" id="pnlTxDate" name="pnlTxDate" [ngModel]="newTransaction().date"
-              (ngModelChange)="updateNewTx('date', $event)"
-              class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary">
-          </div>
-          <div class="space-y-1.5">
-            <label class="text-xs font-bold text-gray-500 uppercase">Property</label>
-            <select id="pnlTxProperty" name="pnlTxProperty" [ngModel]="newTransaction().property"
-              (ngModelChange)="updateNewTx('property', $event)"
-              class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary">
-              @for(p of properties; track p) {
-              <option [value]="p">{{ p }}</option>
-              }
-            </select>
-          </div>
+        <!-- Date -->
+        <div class="space-y-1.5">
+          <label class="text-xs font-bold text-gray-500 uppercase">Date</label>
+          <input type="date" id="pnlTxDate" name="pnlTxDate" [ngModel]="newTransaction().date"
+            (ngModelChange)="updateNewTx('date', $event)"
+            class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary">
         </div>
 
         <!-- Category & Sub -->
@@ -343,6 +331,7 @@
             <select id="pnlTxCategory" name="pnlTxCategory" [ngModel]="newTransaction().category"
               (ngModelChange)="updateNewTx('category', $event)"
               class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary">
+              <option value="" disabled selected>Select Category</option>
               @for(c of availableCategories(); track c.name) {
               <option [value]="c.name">{{ c.name }}</option>
               }
@@ -353,6 +342,7 @@
             <select id="pnlTxSubCategory" name="pnlTxSubCategory" [ngModel]="newTransaction().subCategory"
               (ngModelChange)="updateNewTx('subCategory', $event)"
               class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary">
+              <option value="" disabled selected>Select Sub-Category</option>
               @for(sub of availableSubCategories(); track sub) {
               <option [value]="sub">{{ sub }}</option>
               }
@@ -395,8 +385,8 @@
         class="px-6 py-4 bg-gray-50 dark:bg-[#111a22] border-t border-gray-200 dark:border-[#324d67] flex justify-end gap-3">
         <button (click)="isModalOpen.set(false)"
           class="px-4 py-2 text-sm font-bold text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#253545] rounded-lg">Cancel</button>
-        <button (click)="saveTransaction()"
-          class="px-4 py-2 text-sm font-bold text-white bg-primary hover:bg-blue-600 rounded-lg shadow-lg shadow-primary/25">Save
+        <button (click)="saveTransaction()" [disabled]="!canSaveTransaction()"
+          class="px-4 py-2 text-sm font-bold text-white bg-primary hover:bg-blue-600 rounded-lg shadow-lg shadow-primary/25 disabled:opacity-50 disabled:cursor-not-allowed">Save
           Transaction</button>
       </div>
     </div>

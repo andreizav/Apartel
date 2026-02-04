@@ -96,6 +96,7 @@ model Unit {
   channelMappings  ChannelMapping[]
   icalConnections  IcalConnection[]
   inventory        InventoryItem[]
+  transactions     Transaction[]
 
   @@index([groupId])
 }
@@ -178,8 +179,13 @@ model Transaction {
   amount      Float
   currency    String
   type        String
+  
+  unitId      String?
+  unit        Unit?    @relation(fields: [unitId], references: [id])
+  bookingId   String?  // Reference to Booking ID without foreign key constraint for simplicity, or we can add it if Booking is deleted carefully
 
   @@index([tenantId])
+  @@index([unitId])
 }
 
 model TransactionCategory {

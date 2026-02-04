@@ -5,23 +5,32 @@ const adapter = new PrismaBetterSqlite3({ url: "file:./prisma/dev.db" });
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
-    console.log('--- Table Info (Staff) ---');
-    const tableInfo: any = await prisma.$queryRawUnsafe(`PRAGMA table_info(Staff)`);
-    console.log(tableInfo);
+    try {
+        console.log('--- Table Info ("Transaction") ---');
+        const tableInfo: any = await prisma.$queryRawUnsafe(`PRAGMA table_info("Transaction")`);
 
-    const staff = await prisma.staff.findMany();
-    console.log('--- Staff Records ---');
-    staff.forEach((s: any) => {
-        console.log(`ID: ${s.id}, Email: ${s.email}, HasPassword: ${!!s.password}`);
-    });
-    console.log('--- End ---');
+        // Custom replacer for BigInt
+        const output = JSON.stringify(tableInfo, (key, value) =>
+            typeof value === 'bigint' ? value.toString() : value,
+            2
+        );
+        console.log(output);
+
+        console.log('--- Testing query WITHOUT unitId first ---');
+        const txsRaw = await prisma.$queryRawUnsafe(`SELECT * FROM "Transaction" LIMIT 1`);
+        console.log('Raw Query Results:', txsRaw);
+
+    } catch (err) {
+        console.error('--- Error occurred ---');
+        console.error(err);
+    } finally {
+        console.log('--- End ---');
+        await prisma.$disconnect();
+    }
 }
 
 main()
-    .catch(e => {
+    .catch((e) => {
         console.error(e);
         process.exit(1);
-    })
-    .finally(async () => {
-        await prisma.$disconnect();
     });

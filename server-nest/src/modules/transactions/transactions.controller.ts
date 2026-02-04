@@ -52,4 +52,9 @@ export class TransactionsController {
     updateSubCategory(@TenantId() tenantId: string, @Param('id') id: string, @Body() body: { name: string }) {
         return this.transactionsService.updateSubCategory(tenantId, id, body.name);
     }
+
+    @Post('sync-unit-income/:unitId')
+    syncUnitIncome(@TenantId() tenantId: string, @Param('unitId') unitId: string) {
+        return this.transactionsService.syncUnitIncome(tenantId, unitId);
+    }
 }

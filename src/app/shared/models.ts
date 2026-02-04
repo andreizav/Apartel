@@ -117,6 +117,8 @@ export interface Transaction {
   amount: number;
   currency: 'UAH' | 'USD' | 'EUR';
   type: 'income' | 'expense';
+  unitId?: string;
+  bookingId?: string;
 }
 
 export interface InventoryItem {
