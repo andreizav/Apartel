@@ -18,7 +18,13 @@ export class InventoryComponent {
   // Consume shared state directly
   categories = this.portfolioService.inventory;
 
-  // Modal State
+  // Filter out unit-specific items for the Master Inventory display
+  displayCategories = computed(() => {
+    return this.categories().map(cat => ({
+      ...cat,
+      items: cat.items.filter(item => !item.unitId)
+    })).filter(cat => cat.items.length > 0 || !cat.id.startsWith('c-new'));
+  });
   isModalOpen = signal(false);
   modalType = signal<'category' | 'item'>('item');
   targetCategoryId = signal<string | null>(null);

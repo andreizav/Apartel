@@ -895,36 +895,14 @@
           <!-- Name Selection Dropdown -->
           <div class="space-y-1.5">
             <label for="inventory-item-name-select" class="text-xs font-bold text-gray-500 uppercase">Item Name</label>
-
-            @if (!showCustomNameInput()) {
-            <div class="flex gap-2">
-              <select id="inventory-item-name-select" name="inventory-item-name-select" [ngModel]="inventoryItemName()"
-                (ngModelChange)="inventoryItemName.set($event)"
-                class="flex-1 bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary transition-colors">
-                <option value="" disabled>Select an item...</option>
-                @for (name of categoryItemNames(); track name) {
-                <option [value]="name">{{ name }}</option>
-                }
-              </select>
-              <button type="button" (click)="showCustomNameInput.set(true); inventoryItemName.set('')"
-                class="p-2 transition-colors rounded-md bg-gray-100 dark:bg-[#253545] border border-gray-200 dark:border-[#324d67] text-gray-500 hover:text-primary"
-                title="Enter Custom Name">
-                <span class="material-symbols-outlined text-[20px]">add</span>
-              </button>
-            </div>
-            } @else {
-            <div class="flex gap-2">
-              <input type="text" id="inventory-item-name" name="inventory-item-name" [ngModel]="inventoryItemName()"
-                (ngModelChange)="inventoryItemName.set($event)"
-                class="flex-1 bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
-                placeholder="Item Name" autofocus>
-              <button type="button" (click)="showCustomNameInput.set(false); inventoryItemName.set('')"
-                class="p-2 transition-colors rounded-md bg-gray-100 dark:bg-[#253545] border border-gray-200 dark:border-[#324d67] text-gray-500 hover:text-red-500"
-                title="Pick from list">
-                <span class="material-symbols-outlined text-[20px]">list</span>
-              </button>
-            </div>
-            }
+            <select id="inventory-item-name-select" name="inventory-item-name-select" [ngModel]="inventoryItemName()"
+              (ngModelChange)="inventoryItemName.set($event)"
+              class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-md px-3 py-2 text-sm text-[#111418] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary transition-colors">
+              <option value="" disabled>Select an item from Master Inventory...</option>
+              @for (name of categoryItemNames(); track name) {
+              <option [value]="name">{{ name }}</option>
+              }
+            </select>
           </div>
 
           <!-- Quantity Input -->

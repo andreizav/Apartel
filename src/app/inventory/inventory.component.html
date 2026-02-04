@@ -19,7 +19,7 @@
   <div class="flex-1 overflow-y-auto pb-10">
     <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
 
-      @for (category of categories(); track category.id) {
+      @for (category of displayCategories(); track category.id) {
       <div
         class="bg-white dark:bg-[#1c2936] rounded-xl border border-gray-200 dark:border-[#324d67] overflow-hidden flex flex-col shadow-sm">
         <!-- Category Header -->
@@ -87,11 +87,11 @@
       </div>
       }
 
-      @if (categories().length === 0) {
+      @if (displayCategories().length === 0) {
       <div class="col-span-full flex flex-col items-center justify-center py-20 text-gray-400">
         <span class="material-symbols-outlined text-6xl mb-4 text-gray-200 dark:text-gray-700">inventory_2</span>
         <p class="text-lg font-medium">No inventory items found</p>
-        <p class="text-sm">Try adjusting your search or add a new category.</p>
+        <p class="text-sm">Master stock is currently empty. Add categories and items to get started.</p>
       </div>
       }
     </div>

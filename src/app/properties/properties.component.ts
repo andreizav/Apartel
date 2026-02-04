@@ -429,7 +429,8 @@ export class PropertiesComponent implements OnInit {
 
     const category = inventory.find(c => c.id === catId);
     if (category && category.items) {
-      category.items.forEach(item => {
+      // Only show items that exist in "Master" stock (no unitId)
+      category.items.filter(item => !item.unitId).forEach(item => {
         if (item && item.name) {
           names.add(item.name);
         }
@@ -478,40 +479,48 @@ export class PropertiesComponent implements OnInit {
 
     if (!category) return;
 
+    // Find Master Item to take stock from
+    const masterItem = category.items.find(i => i.name === name && !i.unitId);
+    if (!masterItem) {
+      alert(`The item "${name}" was not found in Master Inventory stock.`);
+      return;
+    }
+
     if (this.editingItemId()) {
-      // Update existing
-      // First, we need to find where the item is currently (it might be in a different category if we allowed cat change, but for now assuming valid catId logic)
-      // Actually, since we might simply be updating, let's find the original item location
-      let found = false;
-      for (const cat of currentInventory) {
-        const itemIndex = cat.items.findIndex(i => i.id === this.editingItemId());
-        if (itemIndex !== -1) {
-          if (cat.id === catId) {
-            // Same category update
-            cat.items[itemIndex].name = name;
-            cat.items[itemIndex].quantity = qty;
-          } else {
-            // Moved category
-            cat.items.splice(itemIndex, 1);
-            category.items.push({
-              id: this.editingItemId()!,
-              name,
-              quantity: qty,
-              unitId
-            });
-          }
-          found = true;
-          break;
+      // Handle Edit: Update stock and allocation
+      const item = category.items.find(i => i.id === this.editingItemId());
+      if (item) {
+        const delta = qty - item.quantity;
+        if (masterItem.quantity < delta) {
+          alert(`Insufficient Master stock. Only ${masterItem.quantity} units available.`);
+          return;
         }
+        masterItem.quantity -= delta;
+        item.quantity = qty;
+        // Optimization: Ensure name is synced if it somehow changed (though UI restricts it)
+        item.name = name;
       }
     } else {
-      // Create new
-      category.items.push({
-        id: `i-${Date.now()}`,
-        name,
-        quantity: qty,
-        unitId
-      });
+      // Handle New Allocation: Take from Master, Add to Unit
+      if (masterItem.quantity < qty) {
+        alert(`Insufficient Master stock. Only ${masterItem.quantity} units available.`);
+        return;
+      }
+
+      masterItem.quantity -= qty;
+
+      // Find if unit already has an item with this name
+      const existingUnitItem = category.items.find(i => i.name === name && i.unitId === unitId);
+      if (existingUnitItem) {
+        existingUnitItem.quantity += qty;
+      } else {
+        category.items.push({
+          id: `i-${Date.now()}`,
+          name,
+          quantity: qty,
+          unitId
+        });
+      }
     }
 
     this.portfolioService.inventory.set(currentInventory);
@@ -520,13 +529,21 @@ export class PropertiesComponent implements OnInit {
   }
 
   deleteInventoryItem(itemId: string) {
-    if (!confirm('Delete this item?')) return;
+    if (!confirm('Return this item to stock?')) return;
 
     const currentInventory = JSON.parse(JSON.stringify(this.portfolioService.inventory())) as InventoryCategory[];
 
     for (const cat of currentInventory) {
       const idx = cat.items.findIndex(i => i.id === itemId);
       if (idx !== -1) {
+        const item = cat.items[idx];
+        // Return quantity to Master Item if applicable
+        if (item.unitId) {
+          const masterItem = cat.items.find(i => i.name === item.name && !i.unitId);
+          if (masterItem) {
+            masterItem.quantity += item.quantity;
+          }
+        }
         cat.items.splice(idx, 1);
         break;
       }
