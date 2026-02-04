@@ -56,6 +56,8 @@ model Staff {
 
   // Messages are transient in the current JSON, mostly empty. 
   // If we need to store them, we'd add a relation, but for Staff it seems unused in sample data.
+
+  @@index([tenantId])
 }
 
 model PortfolioGroup {
@@ -67,6 +69,8 @@ model PortfolioGroup {
   isMerge   Boolean @default(false)
   
   units     Unit[]
+
+  @@index([tenantId])
 }
 
 model Unit {
@@ -91,6 +95,8 @@ model Unit {
   channelMappings  ChannelMapping[]
   icalConnections  IcalConnection[]
   inventory        InventoryItem[]
+
+  @@index([groupId])
 }
 
 model Booking {
@@ -171,6 +177,8 @@ model Transaction {
   amount      Float
   currency    String
   type        String
+
+  @@index([tenantId])
 }
 
 model TransactionCategory {
@@ -201,6 +209,8 @@ model InventoryCategory {
   name     String
   
   items    InventoryItem[]
+
+  @@index([tenantId])
 }
 
 model InventoryItem {
@@ -214,6 +224,9 @@ model InventoryItem {
   
   unitId     String?
   unit       Unit?             @relation(fields: [unitId], references: [id])
+
+  @@index([categoryId])
+  @@index([unitId])
 }
 
 model ChannelMapping {
@@ -228,6 +241,8 @@ model ChannelMapping {
   markup      Float @default(0)
   isMapped    Boolean @default(false)
   status      String
+
+  @@index([unitId])
 }
 
 model IcalConnection {
@@ -239,4 +254,6 @@ model IcalConnection {
   importUrl String?
   exportUrl String?
   lastSync  String? // Storing as string "Never" or Date ISO
+
+  @@index([unitId])
 }
