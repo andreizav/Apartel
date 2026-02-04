@@ -61,7 +61,7 @@
             [disabled]="isLoading()"
             class="flex w-full items-center justify-center gap-3 rounded-lg border border-gray-200 dark:border-[#324d67] bg-white dark:bg-[#253545] py-2.5 text-sm font-bold text-[#111418] dark:text-white hover:bg-gray-50 dark:hover:bg-[#2f4356] transition-colors active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
           >
-            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <svg aria-hidden="true" class="h-5 w-5" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path d="M23.766 12.2764C23.766 11.4607 23.6999 10.6406 23.5588 9.83807H12.24V14.4591H18.7217C18.4528 15.9494 17.5885 17.2678 16.323 18.1056V21.1039H20.19C22.4608 19.0139 23.766 15.9274 23.766 12.2764Z" fill="#4285F4"></path>
               <path d="M12.24 24.0008C15.4766 24.0008 18.2059 22.9382 20.19 21.1039L16.323 18.1055C15.2517 18.8375 13.8627 19.252 12.2445 19.252C9.11388 19.252 6.45946 17.1399 5.50705 14.3003H1.5166V17.3912C3.55371 21.4434 7.7029 24.0008 12.24 24.0008Z" fill="#34A853"></path>
               <path d="M5.50253 14.3003C5.00236 12.8099 5.00236 11.1961 5.50253 9.70575V6.61481H1.51649C-0.18551 10.0056 -0.18551 14.0004 1.51649 17.3912L5.50253 14.3003Z" fill="#FBBC05"></path>
@@ -76,7 +76,7 @@
             [disabled]="isLoading()"
             class="flex w-full items-center justify-center gap-3 rounded-lg bg-[#54A9EB] hover:bg-[#4a97d1] py-2.5 text-sm font-bold text-white shadow-sm transition-colors active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
           >
-            <svg class="h-5 w-5 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <svg aria-hidden="true" class="h-5 w-5 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 11.944 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
             </svg>
             Continue with Telegram
@@ -85,8 +85,8 @@
 
         <!-- Error Message -->
         @if (errorMessage()) {
-          <div class="mb-6 p-3 bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-900/30 rounded-lg flex items-center gap-3 animate-fade-in">
-            <span class="material-symbols-outlined text-red-600 dark:text-red-400">error</span>
+          <div role="alert" class="mb-6 p-3 bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-900/30 rounded-lg flex items-center gap-3 animate-fade-in">
+            <span aria-hidden="true" class="material-symbols-outlined text-red-600 dark:text-red-400">error</span>
             <p class="text-sm font-medium text-red-700 dark:text-red-400">{{ errorMessage() }}</p>
           </div>
         }
@@ -105,8 +105,9 @@
         @if (authMode() === 'login') {
           <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="flex flex-col gap-4">
             <div class="space-y-1.5">
-              <label class="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase">Email</label>
+              <label for="login-email" class="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase">Email</label>
               <input 
+                id="login-email"
                 formControlName="email"
                 class="form-input w-full rounded-lg border bg-gray-50 dark:bg-[#111a22] text-[#111418] dark:text-white focus:border-primary focus:ring-1 focus:ring-primary h-11 px-4 text-sm transition-all"
                 [class.border-red-500]="loginEmailError"
@@ -120,11 +121,12 @@
 
             <div class="space-y-1.5">
               <div class="flex justify-between items-center">
-                <label class="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase">Password</label>
+                <label for="login-password" class="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase">Password</label>
                 <button type="button" class="text-xs font-semibold text-primary hover:text-primary/80 cursor-pointer" aria-label="Forgot password?">Forgot?</button>
               </div>
               <div class="relative">
                 <input 
+                  id="login-password"
                   formControlName="password"
                   class="form-input w-full rounded-lg border bg-gray-50 dark:bg-[#111a22] text-[#111418] dark:text-white focus:border-primary focus:ring-1 focus:ring-primary h-11 px-4 text-sm transition-all pr-10"
                   [class.border-red-500]="loginPassError"
@@ -177,11 +179,12 @@
         @if (authMode() === 'register') {
           <form [formGroup]="registerForm" (ngSubmit)="onRegister()" class="flex flex-col gap-4 animate-fade-in">
             <div class="space-y-1.5">
-              <label class="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase flex items-center gap-1">
+              <label for="register-org" class="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase flex items-center gap-1">
                 Organization Name
                 <span class="text-red-500">*</span>
               </label>
               <input 
+                id="register-org"
                 formControlName="orgName"
                 class="form-input w-full rounded-lg border bg-gray-50 dark:bg-[#111a22] text-[#111418] dark:text-white focus:border-primary focus:ring-1 focus:ring-primary h-11 px-4 text-sm transition-all"
                 [class.border-red-500]="regOrgError"
@@ -195,8 +198,9 @@
             </div>
 
             <div class="space-y-1.5">
-              <label class="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase">Work Email</label>
+              <label for="register-email" class="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase">Work Email</label>
               <input 
+                id="register-email"
                 formControlName="email"
                 class="form-input w-full rounded-lg border bg-gray-50 dark:bg-[#111a22] text-[#111418] dark:text-white focus:border-primary focus:ring-1 focus:ring-primary h-11 px-4 text-sm transition-all"
                 [class.border-red-500]="regEmailError"
@@ -209,9 +213,10 @@
             </div>
 
             <div class="space-y-1.5">
-              <label class="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase">Password</label>
+              <label for="register-password" class="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase">Password</label>
               <div class="relative">
                 <input 
+                  id="register-password"
                   formControlName="password"
                   class="form-input w-full rounded-lg border bg-gray-50 dark:bg-[#111a22] text-[#111418] dark:text-white focus:border-primary focus:ring-1 focus:ring-primary h-11 px-4 text-sm transition-all pr-10"
                   [class.border-red-500]="regPassError"
