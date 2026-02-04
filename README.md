@@ -71,7 +71,7 @@ Then start the server:
 # From the project root
 npm run server
 ```
-*API runs at `http://localhost:3333`*
+*API runs at `http://localhost:4000`*
 
 #### 2. Start the Frontend Application
 In a new terminal window:
