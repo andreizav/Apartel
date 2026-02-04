@@ -7,22 +7,22 @@ datasource db {
 }
 
 model Tenant {
-  id          String   @id
-  name        String
-  plan        String
-  status      String
-  maxUnits    Int
-  
-  // Features stored as JSON since it's a small config object
-  features    String   // serializing { staffBot: boolean, ... }
+  id       String @id
+  name     String
+  plan     String
+  status   String
+  maxUnits Int
 
-  staff       Staff[]
-  bookings    Booking[]
+  // Features stored as JSON since it's a small config object
+  features String // serializing { staffBot: boolean, ... }
+
+  staff        Staff[]
+  bookings     Booking[]
   transactions Transaction[]
-  clients     Client[]
-  
+  clients      Client[]
+
   portfolioGroups PortfolioGroup[]
-  
+
   // AppSettings for this tenant
   waStatus       String?
   autoDraft      Boolean @default(false)
@@ -31,84 +31,90 @@ model Tenant {
   aiApiKey       String?
   aiSystemPrompt String?
   ragSensitivity Float?
-  tgLastUpdateId Int      @default(0)
-  
-  // OTA Configs stored as JSON
-  otaConfigs     String? // serializing { airbnb: {...}, ... }
+  tgLastUpdateId Int     @default(0)
 
-  inventoryCategories InventoryCategory[]
+  // OTA Configs stored as JSON
+  otaConfigs String? // serializing { airbnb: {...}, ... }
+
+  inventoryCategories   InventoryCategory[]
   transactionCategories TransactionCategory[]
 }
 
 model Staff {
-  id          String   @id
+  id          String    @id
   tenantId    String
-  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  tenant      Tenant    @relation(fields: [tenantId], references: [id])
   name        String
   role        String
   email       String
   phone       String?
   avatar      String?
   status      String
-  unreadCount Int      @default(0)
-  online      Boolean  @default(false)
+  unreadCount Int       @default(0)
+  online      Boolean   @default(false)
   lastActive  DateTime?
 
   // Messages are transient in the current JSON, mostly empty. 
   // If we need to store them, we'd add a relation, but for Staff it seems unused in sample data.
+
+  @@index([tenantId])
 }
 
 model PortfolioGroup {
-  id        String  @id
-  tenantId  String
-  tenant    Tenant  @relation(fields: [tenantId], references: [id])
-  name      String
-  expanded  Boolean @default(true)
-  isMerge   Boolean @default(false)
-  
-  units     Unit[]
+  id       String  @id
+  tenantId String
+  tenant   Tenant  @relation(fields: [tenantId], references: [id])
+  name     String
+  expanded Boolean @default(true)
+  isMerge  Boolean @default(false)
+
+  units Unit[]
+
+  @@index([tenantId])
 }
 
 model Unit {
-  id              String   @id
-  groupId         String
-  group           PortfolioGroup @relation(fields: [groupId], references: [id])
-  
+  id      String         @id
+  groupId String
+  group   PortfolioGroup @relation(fields: [groupId], references: [id])
+
   name            String
   internalName    String?
   officialAddress String?
-  basePrice       Float @default(0)
-  cleaningFee     Float @default(0)
+  basePrice       Float   @default(0)
+  cleaningFee     Float   @default(0)
   wifiSsid        String?
   wifiPassword    String?
   accessCodes     String?
   status          String
   photos          String? @default("[]")
-  
+
   assignedCleanerId String?
-  
-  bookings         Booking[]
-  channelMappings  ChannelMapping[]
-  icalConnections  IcalConnection[]
-  inventory        InventoryItem[]
+
+  bookings        Booking[]
+  channelMappings ChannelMapping[]
+  icalConnections IcalConnection[]
+  inventory       InventoryItem[]
+
+  @@index([groupId])
 }
 
 model Booking {
-  id                String   @id
-  tenantId          String
-  tenant            Tenant   @relation(fields: [tenantId], references: [id])
-  unitId            String
-  unit              Unit     @relation(fields: [unitId], references: [id])
-  
-  guestName         String
-  guestPhone        String?
-  startDate         DateTime
-  endDate           DateTime
-  source            String
-  status            String
-  price             Float
-  createdAt         DateTime @default(now())
-  
+  id       String @id
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id])
+  unitId   String
+  unit     Unit   @relation(fields: [unitId], references: [id])
+
+  guestName  String
+  guestPhone String?
+  startDate  DateTime
+  endDate    DateTime
+  source     String
+  status     String
+  price      Float
+  createdAt  DateTime @default(now())
+
   assignedCleanerId String?
   description       String?
 
@@ -117,10 +123,10 @@ model Booking {
 }
 
 model Client {
-  id               String   @id @default(uuid()) // specific ID wrapper since JSON uses phone as key sometimes but we want stable ID
-  tenantId         String
-  tenant           Tenant   @relation(fields: [tenantId], references: [id])
-  
+  id       String @id @default(uuid()) // specific ID wrapper since JSON uses phone as key sometimes but we want stable ID
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id])
+
   phoneNumber      String?
   name             String
   email            String?
@@ -131,27 +137,27 @@ model Client {
   platformId       String?
   status           String
   lastActive       DateTime?
-  createdAt        DateTime @default(now())
-  unreadCount      Int      @default(0)
-  online           Boolean  @default(false)
-  previousBookings Int      @default(0)
-  
-  messages         Message[]
+  createdAt        DateTime  @default(now())
+  unreadCount      Int       @default(0)
+  online           Boolean   @default(false)
+  previousBookings Int       @default(0)
+
+  messages Message[]
 
   @@index([tenantId])
 }
 
 model Message {
-  id        String   @id
-  clientId  String
-  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  
+  id       String @id
+  clientId String
+  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
   text      String
   sender    String
   timestamp DateTime @default(now())
   platform  String?
   status    String?
-  
+
   // JSON field for attachment { name, type, size }
   attachment String?
 
@@ -159,10 +165,10 @@ model Message {
 }
 
 model Transaction {
-  id          String   @id
-  tenantId    String
-  tenant      Tenant   @relation(fields: [tenantId], references: [id])
-  
+  id       String @id
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id])
+
   date        DateTime
   property    String?
   category    String?
@@ -171,72 +177,83 @@ model Transaction {
   amount      Float
   currency    String
   type        String
+
+  @@index([tenantId])
 }
 
 model TransactionCategory {
-  id          String   @id
-  tenantId    String
-  tenant      Tenant   @relation(fields: [tenantId], references: [id])
-  name        String
-  type        String   // 'income' | 'expense'
-  
+  id       String @id
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id])
+  name     String
+  type     String // 'income' | 'expense'
+
   subCategories TransactionSubCategory[]
 
   @@unique([tenantId, name, type])
 }
 
 model TransactionSubCategory {
-  id          String              @id
-  categoryId  String
-  category    TransactionCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  name        String
+  id         String              @id
+  categoryId String
+  category   TransactionCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  name       String
 
   @@unique([categoryId, name])
 }
 
 model InventoryCategory {
-  id       String   @id
+  id       String @id
   tenantId String
-  tenant   Tenant   @relation(fields: [tenantId], references: [id])
+  tenant   Tenant @relation(fields: [tenantId], references: [id])
   name     String
-  
-  items    InventoryItem[]
+
+  items InventoryItem[]
+
+  @@index([tenantId])
 }
 
 model InventoryItem {
   id         String            @id
   categoryId String
   category   InventoryCategory @relation(fields: [categoryId], references: [id])
-  
-  name       String
-  quantity   Int
-  price      Float             @default(0)
-  
-  unitId     String?
-  unit       Unit?             @relation(fields: [unitId], references: [id])
+
+  name     String
+  quantity Int
+  price    Float  @default(0)
+
+  unitId String?
+  unit   Unit?   @relation(fields: [unitId], references: [id])
+
+  @@index([categoryId])
+  @@index([unitId])
 }
 
 model ChannelMapping {
-  id          String  @id
-  unitId      String
-  unit        Unit    @relation(fields: [unitId], references: [id])
-  
-  unitName    String?
-  groupName   String?
-  airbnbId    String?
-  bookingId   String?
-  markup      Float @default(0)
-  isMapped    Boolean @default(false)
-  status      String
+  id     String @id
+  unitId String
+  unit   Unit   @relation(fields: [unitId], references: [id])
+
+  unitName  String?
+  groupName String?
+  airbnbId  String?
+  bookingId String?
+  markup    Float   @default(0)
+  isMapped  Boolean @default(false)
+  status    String
+
+  @@index([unitId])
 }
 
 model IcalConnection {
-  id        String   @id
-  unitId    String
-  unit      Unit     @relation(fields: [unitId], references: [id])
-  
+  id     String @id
+  unitId String
+  unit   Unit   @relation(fields: [unitId], references: [id])
+
   unitName  String?
   importUrl String?
   exportUrl String?
   lastSync  String? // Storing as string "Never" or Date ISO
+
+  @@index([unitId])
 }
