@@ -120,6 +120,64 @@ export class MultiCalendarComponent implements AfterViewInit, OnInit {
     return map;
   });
 
+  // Pre-compute visible bookings and their styles
+  visibleBookingsByUnit = computed(() => {
+    const bookingsMap = this.bookingsByUnit();
+    const viewDate = this.viewDate();
+    const viewYear = viewDate.getFullYear();
+    const viewMonth = viewDate.getMonth();
+    const cellWidth = this.cellWidth;
+
+    // View boundaries
+    const startOfMonth = new Date(viewYear, viewMonth, 1);
+    const endOfMonth = new Date(viewYear, viewMonth + 1, 0);
+
+    const result = new Map<string, RenderableBooking[]>();
+
+    for (const [unitId, bookings] of bookingsMap.entries()) {
+      const renderable: RenderableBooking[] = [];
+
+      for (const booking of bookings) {
+         const bStart = new Date(booking.startDate);
+         const bEnd = new Date(booking.endDate);
+
+         // Visibility Check
+         if (bEnd < startOfMonth || bStart > endOfMonth) {
+           continue;
+         }
+
+         // Style Calculation
+         const effectiveStart = bStart < startOfMonth ? startOfMonth : bStart;
+         const effectiveEnd = bEnd > endOfMonth ? endOfMonth : bEnd;
+         const startDay = effectiveStart.getDate();
+
+         const diffTime = Math.abs(effectiveEnd.getTime() - effectiveStart.getTime());
+         const durationDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+         const left = (startDay - 1) * cellWidth;
+         const width = durationDays * cellWidth;
+
+         // Color Calculation
+         let colorClass = 'bg-gray-500 text-white';
+         switch (booking.source) {
+            case 'airbnb': colorClass = 'bg-[#ff385c] text-white'; break;
+            case 'booking': colorClass = 'bg-[#003580] text-white'; break;
+            case 'expedia': colorClass = 'bg-[#FFC400] text-black'; break;
+            case 'direct': colorClass = 'bg-[#10b981] text-white'; break;
+            case 'blocked': colorClass = 'bg-gray-400 text-white repeating-linear-gradient(45deg,transparent,transparent_10px,#00000010_10px,#00000010_20px)'; break;
+         }
+
+         renderable.push({
+           booking,
+           style: { left: `${left}px`, width: `${width}px` },
+           colorClass
+         });
+      }
+      result.set(unitId, renderable);
+    }
+    return result;
+  });
+
   // --- Methods ---
 
   // --- Booking Modal State ---
@@ -375,62 +433,19 @@ export class MultiCalendarComponent implements AfterViewInit, OnInit {
     this.openBookingModal(undefined, undefined, booking);
   }
 
-  // Calculate position for a booking bar
-  getBookingStyle(booking: Booking) {
-    const viewYear = this.viewDate().getFullYear();
-    const viewMonth = this.viewDate().getMonth();
-
-    // Simple clipping to current month view
-    const startOfMonth = new Date(viewYear, viewMonth, 1);
-    const endOfMonth = new Date(viewYear, viewMonth + 1, 0);
-
-    // Ensure we have Date objects
-    const bStart = new Date(booking.startDate);
-    const bEnd = new Date(booking.endDate);
-
-    // If booking is completely outside current month, hide it
-    if (bEnd < startOfMonth || bStart > endOfMonth) {
-      return { display: 'none' };
-    }
-
-    // Calculate effective start and end for the bar within this month
-    const effectiveStart = bStart < startOfMonth ? startOfMonth : bStart;
-    const effectiveEnd = bEnd > endOfMonth ? endOfMonth : bEnd;
-
-    const startDay = effectiveStart.getDate();
-
-    const diffTime = Math.abs(effectiveEnd.getTime() - effectiveStart.getTime());
-    const durationDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-    const left = (startDay - 1) * this.cellWidth;
-    const width = durationDays * this.cellWidth;
-
-    return {
-      left: `${left}px`,
-      width: `${width}px`
-    };
-  }
-
-  getBookingColor(source: string): string {
-    switch (source) {
-      case 'airbnb': return 'bg-[#ff385c] text-white';
-      case 'booking': return 'bg-[#003580] text-white';
-      case 'expedia': return 'bg-[#FFC400] text-black';
-      case 'direct': return 'bg-[#10b981] text-white'; // Green
-      case 'blocked': return 'bg-gray-400 text-white repeating-linear-gradient(45deg,transparent,transparent_10px,#00000010_10px,#00000010_20px)';
-      default: return 'bg-gray-500 text-white';
-    }
-  }
-
   private isSameDay(d1: Date, d2: Date) {
     return d1.getFullYear() === d2.getFullYear() &&
       d1.getMonth() === d2.getMonth() &&
       d1.getDate() === d2.getDate();
   }
 
-  // Helper to filter bookings for a specific unit
-  getBookingsForUnit(unitId: string): Booking[] {
-    // Optimization: Use the pre-computed map instead of filtering on every call
-    return this.bookingsByUnit().get(unitId) || [];
+  getVisibleBookings(unitId: string): RenderableBooking[] {
+    return this.visibleBookingsByUnit().get(unitId) || [];
   }
+}
+
+interface RenderableBooking {
+  booking: Booking;
+  style: any;
+  colorClass: string;
 }

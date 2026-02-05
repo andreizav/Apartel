@@ -145,13 +145,13 @@
 
             <!-- Booking Bars Layer -->
             <div class="absolute inset-0 top-2 bottom-2 pointer-events-none">
-              @for (booking of getBookingsForUnit(unit.id); track booking.id) {
+              @for (item of getVisibleBookings(unit.id); track item.booking.id) {
               <div
                 class="absolute top-1 bottom-1 rounded-md shadow-sm border border-white/10 flex items-center px-2 overflow-hidden pointer-events-auto cursor-pointer hover:brightness-110 transition-all z-0"
-                [ngClass]="getBookingColor(booking.source)" [ngStyle]="getBookingStyle(booking)"
-                title="{{ booking.guestName }} ({{ booking.source }})" (click)="navigateToClient(booking)">
-                @if (booking.source !== 'blocked') {
-                <span class="text-[10px] font-bold truncate">{{ booking.guestName }}</span>
+                [ngClass]="item.colorClass" [ngStyle]="item.style"
+                title="{{ item.booking.guestName }} ({{ item.booking.source }})" (click)="navigateToClient(item.booking)">
+                @if (item.booking.source !== 'blocked') {
+                <span class="text-[10px] font-bold truncate">{{ item.booking.guestName }}</span>
                 } @else {
                 <span class="material-symbols-outlined text-[14px]">block</span>
                 }
