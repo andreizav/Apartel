@@ -137,9 +137,9 @@ export class BootstrapService {
         });
 
         const units = [
-            { id: `u-101-${Date.now()}`, name: 'Loft 101', basePrice: 150, cleaningFee: 50 },
-            { id: `u-102-${Date.now()}`, name: 'Loft 102', basePrice: 165, cleaningFee: 50 },
-            { id: `u-201-${Date.now()}`, name: 'Penthouse Suite', basePrice: 350, cleaningFee: 100 }
+            { id: `u-101-${Date.now()}`, name: 'Loft 101', basePrice: 150, cleaningFee: 50, photos: JSON.stringify([{ url: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?q=80&w=800&auto=format&fit=crop', caption: 'Living Room' }]) },
+            { id: `u-102-${Date.now()}`, name: 'Loft 102', basePrice: 165, cleaningFee: 50, photos: JSON.stringify([{ url: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=800&auto=format&fit=crop', caption: 'Bedroom' }]) },
+            { id: `u-201-${Date.now()}`, name: 'Penthouse Suite', basePrice: 350, cleaningFee: 100, photos: JSON.stringify([{ url: 'https://images.unsplash.com/photo-1502005229762-cf1b2da7c5d6?q=80&w=800&auto=format&fit=crop', caption: 'View' }]) }
         ];
 
         for (const u of units) {
@@ -155,14 +155,14 @@ export class BootstrapService {
                     officialAddress: '123 Main St, Central City',
                     wifiSsid: 'ApartEL_Guest',
                     wifiPassword: 'welcome-home',
-                    photos: '[]'
+                    photos: u.photos
                 }
             });
         }
 
         // --- 2. Staff ---
         const staff = [
-            { id: `s1-${Date.now()}`, name: 'Alice Thompson', role: 'Manager', email: 'alice@apartel.com' },
+            { id: `s1-${Date.now()}`, name: 'Alice Thompson', role: 'Details Manager', email: 'alice@apartel.com' },
             { id: `s2-${Date.now()}`, name: 'Bob Wilson', role: 'Cleaner', email: 'bob@apartel.com' }
         ];
 
@@ -175,15 +175,57 @@ export class BootstrapService {
                     role: s.role,
                     email: s.email,
                     status: 'Active',
-                    avatar: `https://picsum.photos/seed/${s.name}/100/100`,
+                    avatar: `https://ui-avatars.com/api/?name=${s.name}&background=random`,
                     online: Math.random() > 0.5,
                     lastActive: new Date()
                 }
             });
         }
 
-        // --- 3. Clients & Messages ---
+        // --- 3. Transaction Categories (P&L) ---
+        // Income
+        const incCatId = `tc-inc-${Date.now()}`;
+        await this.prisma.transactionCategory.create({
+            data: {
+                id: incCatId,
+                tenantId,
+                name: 'Accommodation',
+                type: 'income',
+                subCategories: {
+                    create: [
+                        { id: `tsc-book-${Date.now()}`, name: 'Booking Revenue' },
+                        { id: `tsc-clean-${Date.now()}`, name: 'Cleaning Fee' }
+                    ]
+                }
+            }
+        });
+
+        // Expenses
+        const expCat1 = `tc-exp1-${Date.now()}`;
+        await this.prisma.transactionCategory.create({
+            data: {
+                id: expCat1,
+                tenantId,
+                name: 'Operations',
+                type: 'expense',
+                subCategories: { create: [{ id: `tsc-ut-${Date.now()}`, name: 'Utilities' }, { id: `tsc-int-${Date.now()}`, name: 'Internet' }] }
+            }
+        });
+        const expCat2 = `tc-exp2-${Date.now()}`;
+        await this.prisma.transactionCategory.create({
+            data: {
+                id: expCat2,
+                tenantId,
+                name: 'Maintenance',
+                type: 'expense',
+                subCategories: { create: [{ id: `tsc-rep-${Date.now()}`, name: 'Repairs' }, { id: `tsc-sup-${Date.now()}`, name: 'Supplies' }] }
+            }
+        });
+
+        // --- 4. Clients & Messages ---
         const client1Id = `c1-${Date.now()}`;
+        const client2Id = `c2-${Date.now()}`;
+
         await this.prisma.client.create({
             data: {
                 id: client1Id,
@@ -194,87 +236,122 @@ export class BootstrapService {
                 status: 'Replied',
                 platform: 'whatsapp',
                 lastActive: new Date(),
-                avatar: 'https://picsum.photos/seed/john/100/100',
+                avatar: 'https://ui-avatars.com/api/?name=John+Smith&background=0D8ABC&color=fff',
                 unreadCount: 0,
-                previousBookings: 1
+                previousBookings: 2
+            }
+        });
+
+        await this.prisma.client.create({
+            data: {
+                id: client2Id,
+                tenantId,
+                name: 'Sarah Connor',
+                phoneNumber: '+15550998877',
+                email: 'sarah@example.com',
+                status: 'Confirmed',
+                platform: 'telegram',
+                lastActive: new Date(),
+                avatar: 'https://ui-avatars.com/api/?name=Sarah+Connor&background=random',
+                unreadCount: 1,
+                previousBookings: 0
             }
         });
 
         await this.prisma.message.createMany({
             data: [
-                {
-                    id: `m1-${Date.now()}`,
-                    clientId: client1Id,
-                    text: 'Hi, I would like to check the availability for next weekend.',
-                    sender: 'client',
-                    timestamp: new Date(Date.now() - 3600000),
-                    platform: 'whatsapp',
-                    status: 'read'
-                },
-                {
-                    id: `m2-${Date.now()}`,
-                    clientId: client1Id,
-                    text: 'Hello John! Yes, we still have Loft 101 available. Would you like me to reserve it?',
-                    sender: 'bot',
-                    timestamp: new Date(Date.now() - 3000000),
-                    platform: 'whatsapp',
-                    status: 'read'
-                }
+                { id: `m1-${Date.now()}`, clientId: client1Id, text: 'Hi, checking availability for next weekend.', sender: 'client', timestamp: new Date(Date.now() - 86400000), platform: 'whatsapp', status: 'read' },
+                { id: `m2-${Date.now()}`, clientId: client1Id, text: 'We have Loft 101 available!', sender: 'bot', timestamp: new Date(Date.now() - 86000000), platform: 'whatsapp', status: 'read' },
+                { id: `m3-${Date.now()}`, clientId: client2Id, text: 'Is the wifi fast?', sender: 'client', timestamp: new Date(), platform: 'telegram', status: 'delivered' }
             ]
         });
 
-        // --- 4. Bookings ---
-        const nextWeek = new Date();
-        nextWeek.setDate(nextWeek.getDate() + 7);
-        const endWeek = new Date(nextWeek);
-        endWeek.setDate(endWeek.getDate() + 3);
+        // --- 5. Bookings & Transactions ---
+        const now = new Date();
+        const pastStart = new Date(now); pastStart.setDate(now.getDate() - 10);
+        const pastEnd = new Date(now); pastEnd.setDate(now.getDate() - 5);
 
+        const currentStart = new Date(now); currentStart.setDate(now.getDate() - 1);
+        const currentEnd = new Date(now); currentEnd.setDate(now.getDate() + 3);
+
+        const futureStart = new Date(now); futureStart.setDate(now.getDate() + 10);
+        const futureEnd = new Date(now); futureEnd.setDate(now.getDate() + 15);
+
+        // Past Booking
         await this.prisma.booking.create({
             data: {
-                id: `b1-${Date.now()}`,
-                tenantId,
-                unitId: units[0].id,
-                guestName: 'John Smith',
-                guestPhone: '+1555010022',
-                startDate: nextWeek,
-                endDate: endWeek,
-                source: 'direct',
-                status: 'confirmed',
-                price: units[0].basePrice * 3 + units[0].cleaningFee,
-                createdAt: new Date()
+                id: `b-past-${Date.now()}`, tenantId, unitId: units[0].id,
+                guestName: 'Past Guest', guestPhone: '+1000001',
+                startDate: pastStart, endDate: pastEnd,
+                source: 'airbnb', status: 'checked_out',
+                price: 500, createdAt: pastStart
+            }
+        });
+        // Income for past booking
+        await this.prisma.transaction.create({
+            data: {
+                id: `t-inc-1-${Date.now()}`, tenantId, date: pastStart.toISOString(),
+                property: units[0].name, category: 'Accommodation', subCategory: 'Booking Revenue',
+                description: 'Airbnb Payout #123', amount: 500, currency: 'USD', type: 'income',
+                unitId: units[0].id
             }
         });
 
-        // --- 5. Inventory ---
-        const cat1Id = `cat1-${Date.now()}`;
-        await this.prisma.inventoryCategory.create({
+        // Current Booking
+        await this.prisma.booking.create({
             data: {
-                id: cat1Id,
-                tenantId,
-                name: 'Bedding & Linen'
+                id: `b-curr-${Date.now()}`, tenantId, unitId: units[1].id,
+                guestName: 'John Smith', guestPhone: '+1555010022',
+                startDate: currentStart, endDate: currentEnd,
+                source: 'direct', status: 'checked_in',
+                price: 600, createdAt: currentStart
             }
         });
+
+        // Future Booking
+        await this.prisma.booking.create({
+            data: {
+                id: `b-fut-${Date.now()}`, tenantId, unitId: units[2].id,
+                guestName: 'Future Guest', guestPhone: '+1000002',
+                startDate: futureStart, endDate: futureEnd,
+                source: 'booking', status: 'confirmed',
+                price: 1500, createdAt: now
+            }
+        });
+
+        // Random Expenses
+        await this.prisma.transaction.create({
+            data: {
+                id: `t-exp-1-${Date.now()}`, tenantId, date: new Date().toISOString(),
+                property: units[1].name, category: 'Operations', subCategory: 'Internet',
+                description: 'Monthly Fiber Bill', amount: 65, currency: 'USD', type: 'expense',
+                unitId: units[1].id
+            }
+        });
+
+        // --- 6. Inventory ---
+        const bedCat = `cat-bed-${Date.now()}`;
+        const bathCat = `cat-bath-${Date.now()}`;
+
+        await this.prisma.inventoryCategory.create({ data: { id: bedCat, tenantId, name: 'Bedding' } });
+        await this.prisma.inventoryCategory.create({ data: { id: bathCat, tenantId, name: 'Bathroom' } });
 
         await this.prisma.inventoryItem.createMany({
             data: [
-                { id: `i1-${Date.now()}`, categoryId: cat1Id, name: 'Pillow Cases', quantity: 24 },
-                { id: `i2-${Date.now()}`, categoryId: cat1Id, name: 'White Bed Sheets (King)', quantity: 12 }
+                { id: `i1-${Date.now()}`, categoryId: bedCat, name: 'King Sheets', quantity: 15, price: 45 },
+                { id: `i2-${Date.now()}`, categoryId: bedCat, name: 'Pillows', quantity: 20, price: 15 },
+                { id: `i3-${Date.now()}`, categoryId: bathCat, name: 'Shampoo (Bottle)', quantity: 5, price: 8 }, // Low stock
+                { id: `i4-${Date.now()}`, categoryId: bathCat, name: 'Towels', quantity: 30, price: 12 }
             ]
         });
 
-        // --- 6. Transactions ---
-        await this.prisma.transaction.create({
+        // --- 7. Channel Mappings ---
+        await this.prisma.channelMapping.create({
             data: {
-                id: `t1-${Date.now()}`,
-                tenantId,
-                date: new Date().toISOString(),
-                property: units[0].name,
-                category: 'Accommodation',
-                subCategory: 'Booking Revenue',
-                description: 'Direct booking #b1 payment',
-                amount: units[0].basePrice * 3,
-                currency: 'USD',
-                type: 'income'
+                id: `cm-${Date.now()}`, unitId: units[1].id,
+                unitName: units[1].name, groupName: 'City Center Lofts',
+                airbnbId: 'ab-123456', status: 'Mapped', isMapped: true,
+                markup: 15
             }
         });
     }

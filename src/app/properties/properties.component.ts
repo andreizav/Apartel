@@ -779,21 +779,45 @@ export class PropertiesComponent implements OnInit {
     let desc = this.txDescription();
     const qty = this.txQuantity();
     const subCategoryName = this.txSubCategory();
+    const categoryName = this.txCategory();
 
     // Check if it's an inventory item
-    // We need to find the ID of the selected subCategory 
-    // availableSubCategories() returns [{id, name}, ...]
     const selectedItem = this.availableSubCategories().find(s => s.name === subCategoryName);
-    if (qty && qty! > 0) {
+
+    if (qty && qty > 0 && this.isInventoryCategorySelected()) {
       desc = `${desc} (Qty: ${qty})`.trim();
 
-      // If inventory, update stock first
-      if (this.isInventoryCategorySelected() && selectedItem) {
-        this.apiService.updateInventoryStock(selectedItem.id, -qty).subscribe(() => {
-          // Reload inventory to reflect changes in UI
-          this.apiService.fetchInventory().subscribe();
-        });
+      // We need to update the unit's inventory
+      const currentInventory = JSON.parse(JSON.stringify(this.portfolioService.inventory())) as InventoryCategory[];
+      const category = currentInventory.find(c => c.name === categoryName);
+
+      if (category) {
+        let unitItem = category.items.find(i => i.name === subCategoryName && i.unitId === unitId);
+
+        if (unitItem) {
+          // Increase existing unit stock
+          unitItem.quantity = (unitItem.quantity || 0) + qty;
+          // Optionally update price with latest purchase
+          const masterItem = category.items.find(i => i.name === subCategoryName && !i.unitId);
+          if (masterItem) unitItem.price = masterItem.price;
+        } else {
+          // Create new allocation for this unit
+          const masterItem = category.items.find(i => i.name === subCategoryName && !i.unitId);
+          category.items.push({
+            id: `i-exp-${Date.now()}`,
+            name: subCategoryName,
+            quantity: qty,
+            price: masterItem?.price || 0,
+            unitId: unitId
+          });
+        }
+
+        // Save updated inventory
+        this.portfolioService.inventory.set(currentInventory);
+        this.apiService.updateInventory(currentInventory).subscribe();
       }
+    } else if (qty && qty > 0) {
+      desc = `${desc} (Qty: ${qty})`.trim();
     }
 
     const tx: Transaction = {
@@ -802,7 +826,7 @@ export class PropertiesComponent implements OnInit {
       amount: this.isInventoryCategorySelected() ? (this.calculatedAmount() || 0) : this.txAmount(),
       currency: 'USD',
       type: this.txType(),
-      category: this.txCategory(),
+      category: categoryName,
       subCategory: subCategoryName,
       description: desc,
       property: 'Unit Specific',
