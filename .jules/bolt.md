@@ -15,3 +15,7 @@
 ## 2026-02-04 - [Prisma Foreign Key Indexes]
 **Learning:** Prisma (and most relational DBs) does not automatically index foreign keys, leading to O(N) lookups for simple relations.
 **Action:** Explicitly add `@@index([foreignKeyId])` in `schema.prisma` for all relation fields used in filters or joins.
+
+## 2026-02-05 - [Virtualization & Render Models]
+**Learning:** Calling methods like `getBookingStyle()` inside template loops (`@for`) re-executes on every change detection cycle and often creates throwaway objects (`new Date`), increasing GC pressure.
+**Action:** Use computed signals to pre-calculate a "Render Model" (including styles and classes) and filter out off-screen items ("virtualization") before the template iterates.
