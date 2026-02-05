@@ -5,8 +5,8 @@ import { SharedModule } from '../../shared/shared.module';
 import { TransactionsModule } from '../transactions/transactions.module';
 
 @Module({
-    imports: [SharedModule, TransactionsModule],
-    controllers: [InventoryController],
-    providers: [InventoryService],
+  imports: [SharedModule, TransactionsModule],
+  controllers: [InventoryController],
+  providers: [InventoryService],
 })
-export class InventoryModule { }
+export class InventoryModule {}

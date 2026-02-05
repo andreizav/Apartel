@@ -4,7 +4,7 @@ import { TelegramService } from './telegram.service';
 
 @Global()
 @Module({
-    providers: [PrismaService, TelegramService],
-    exports: [PrismaService, TelegramService],
+  providers: [PrismaService, TelegramService],
+  exports: [PrismaService, TelegramService],
 })
-export class SharedModule { }
+export class SharedModule {}

@@ -6,25 +6,47 @@ import { TenantId } from '../auth/user.decorator';
 @Controller('inventory')
 @UseGuards(AuthGuard)
 export class InventoryController {
-    constructor(private readonly inventoryService: InventoryService) { }
+  constructor(private readonly inventoryService: InventoryService) {}
 
-    @Get()
-    findAll(@TenantId() tenantId: string) {
-        return this.inventoryService.findAll(tenantId);
-    }
+  @Get()
+  findAll(@TenantId() tenantId: string) {
+    return this.inventoryService.findAll(tenantId);
+  }
 
-    @Put()
-    update(@TenantId() tenantId: string, @Body() inventory: any[]) {
-        return this.inventoryService.update(tenantId, inventory);
-    }
+  @Put()
+  update(@TenantId() tenantId: string, @Body() inventory: any[]) {
+    return this.inventoryService.update(tenantId, inventory);
+  }
 
-    @Post('refill')
-    refill(@TenantId() tenantId: string, @Body() body: { categoryId: string, itemId: string, quantity: number, price: number }) {
-        return this.inventoryService.refillItem(tenantId, body.categoryId, body.itemId, body.quantity, body.price);
-    }
+  @Post('refill')
+  refill(
+    @TenantId() tenantId: string,
+    @Body()
+    body: {
+      categoryId: string;
+      itemId: string;
+      quantity: number;
+      price: number;
+    },
+  ) {
+    return this.inventoryService.refillItem(
+      tenantId,
+      body.categoryId,
+      body.itemId,
+      body.quantity,
+      body.price,
+    );
+  }
 
-    @Post('stock')
-    updateStock(@TenantId() tenantId: string, @Body() body: { itemId: string, quantityDelta: number }) {
-        return this.inventoryService.updateStock(tenantId, body.itemId, body.quantityDelta);
-    }
+  @Post('stock')
+  updateStock(
+    @TenantId() tenantId: string,
+    @Body() body: { itemId: string; quantityDelta: number },
+  ) {
+    return this.inventoryService.updateStock(
+      tenantId,
+      body.itemId,
+      body.quantityDelta,
+    );
+  }
 }

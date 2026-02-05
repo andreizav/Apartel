@@ -4,8 +4,8 @@ import { TenantsController } from './tenants.controller';
 import { SharedModule } from '../../shared/shared.module';
 
 @Module({
-    imports: [SharedModule],
-    controllers: [TenantsController],
-    providers: [TenantsService],
+  imports: [SharedModule],
+  controllers: [TenantsController],
+  providers: [TenantsService],
 })
-export class TenantsModule { }
+export class TenantsModule {}

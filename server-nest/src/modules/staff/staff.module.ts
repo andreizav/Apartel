@@ -4,8 +4,8 @@ import { StaffController } from './staff.controller';
 import { SharedModule } from '../../shared/shared.module';
 
 @Module({
-    imports: [SharedModule],
-    controllers: [StaffController],
-    providers: [StaffService],
+  imports: [SharedModule],
+  controllers: [StaffController],
+  providers: [StaffService],
 })
-export class StaffModule { }
+export class StaffModule {}

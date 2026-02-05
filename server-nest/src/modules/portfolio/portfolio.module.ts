@@ -4,8 +4,8 @@ import { PortfolioController } from './portfolio.controller';
 import { SharedModule } from '../../shared/shared.module';
 
 @Module({
-    imports: [SharedModule],
-    controllers: [PortfolioController],
-    providers: [PortfolioService],
+  imports: [SharedModule],
+  controllers: [PortfolioController],
+  providers: [PortfolioService],
 })
-export class PortfolioModule { }
+export class PortfolioModule {}

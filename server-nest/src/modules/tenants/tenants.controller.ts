@@ -6,15 +6,15 @@ import { TenantId } from '../auth/user.decorator';
 @Controller('tenants')
 @UseGuards(AuthGuard)
 export class TenantsController {
-    constructor(private readonly tenantsService: TenantsService) { }
+  constructor(private readonly tenantsService: TenantsService) {}
 
-    @Get('me')
-    getTenant(@TenantId() tenantId: string) {
-        return this.tenantsService.getTenant(tenantId);
-    }
+  @Get('me')
+  getTenant(@TenantId() tenantId: string) {
+    return this.tenantsService.getTenant(tenantId);
+  }
 
-    @Patch('me')
-    updateTenant(@TenantId() tenantId: string, @Body() body: any) {
-        return this.tenantsService.updateTenant(tenantId, body);
-    }
+  @Patch('me')
+  updateTenant(@TenantId() tenantId: string, @Body() body: any) {
+    return this.tenantsService.updateTenant(tenantId, body);
+  }
 }

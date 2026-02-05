@@ -4,8 +4,8 @@ import { ClientsController } from './clients.controller';
 import { SharedModule } from '../../shared/shared.module';
 
 @Module({
-    imports: [SharedModule],
-    controllers: [ClientsController],
-    providers: [ClientsService],
+  imports: [SharedModule],
+  controllers: [ClientsController],
+  providers: [ClientsService],
 })
-export class ClientsModule { }
+export class ClientsModule {}

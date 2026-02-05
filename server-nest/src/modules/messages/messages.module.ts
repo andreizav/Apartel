@@ -4,8 +4,8 @@ import { MessagesController } from './messages.controller';
 import { SharedModule } from '../../shared/shared.module';
 
 @Module({
-    imports: [SharedModule],
-    controllers: [MessagesController],
-    providers: [MessagesService],
+  imports: [SharedModule],
+  controllers: [MessagesController],
+  providers: [MessagesService],
 })
-export class MessagesModule { }
+export class MessagesModule {}
