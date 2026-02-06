@@ -145,7 +145,7 @@
 
             <!-- Booking Bars Layer -->
             <div class="absolute inset-0 top-2 bottom-2 pointer-events-none">
-              @for (item of getVisibleBookings(unit.id); track item.booking.id) {
+              @for (item of unit.visibleBookings; track item.booking.id) {
               <div
                 class="absolute top-1 bottom-1 rounded-md shadow-sm border border-white/10 flex items-center px-2 overflow-hidden pointer-events-auto cursor-pointer hover:brightness-110 transition-all z-0"
                 [ngClass]="item.colorClass" [ngStyle]="item.style"

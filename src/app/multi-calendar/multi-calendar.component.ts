@@ -75,12 +75,17 @@ export class MultiCalendarComponent implements AfterViewInit, OnInit {
   calendarGroups = computed(() => {
     // Derive structure directly from Portfolio Service
     const portfolio = this.portfolioService.portfolio();
+    const visibleBookingsMap = this.visibleBookingsByUnit();
+    const expanded = this.expandedGroups();
 
     return portfolio.map(group => ({
       name: group.name,
-      units: group.units,
       // Default to expanded if not tracked in local state
-      expanded: this.expandedGroups()[group.name] ?? true
+      expanded: expanded[group.name] ?? true,
+      units: group.units.map(unit => ({
+        ...unit,
+        visibleBookings: visibleBookingsMap.get(unit.id) || []
+      }))
     })).filter(g => g.units.length > 0); // Optionally hide empty groups
   });
 
@@ -437,10 +442,6 @@ export class MultiCalendarComponent implements AfterViewInit, OnInit {
     return d1.getFullYear() === d2.getFullYear() &&
       d1.getMonth() === d2.getMonth() &&
       d1.getDate() === d2.getDate();
-  }
-
-  getVisibleBookings(unitId: string): RenderableBooking[] {
-    return this.visibleBookingsByUnit().get(unitId) || [];
   }
 }
 

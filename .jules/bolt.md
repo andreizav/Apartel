@@ -19,3 +19,7 @@
 ## 2026-02-05 - [Virtualization & Render Models]
 **Learning:** Calling methods like `getBookingStyle()` inside template loops (`@for`) re-executes on every change detection cycle and often creates throwaway objects (`new Date`), increasing GC pressure.
 **Action:** Use computed signals to pre-calculate a "Render Model" (including styles and classes) and filter out off-screen items ("virtualization") before the template iterates.
+
+## 2026-02-06 - [Avoid Method Calls in Template Loops]
+**Learning:** Calling methods like `getVisibleBookings()` inside `@for` loops triggers execution on every change detection cycle, even with signals.
+**Action:** Move per-item logic into the computed ViewModel (e.g., extend the unit object with `visibleBookings`) so the template only iterates over static properties.
