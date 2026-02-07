@@ -59,6 +59,7 @@ model Staff {
   // If we need to store them, we'd add a relation, but for Staff it seems unused in sample data.
 
   @@index([tenantId])
+  @@index([email])
 }
 
 model PortfolioGroup {
