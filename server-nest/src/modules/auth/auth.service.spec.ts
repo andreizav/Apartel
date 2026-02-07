@@ -23,6 +23,7 @@ describe('AuthService', () => {
             create: jest.fn(),
             findUnique: jest.fn(),
         },
+        $queryRaw: jest.fn(),
     };
 
     const mockConfigService = {
@@ -55,7 +56,7 @@ describe('AuthService', () => {
             return null;
         });
 
-        mockPrismaService.staff.findMany.mockResolvedValue([
+        mockPrismaService.$queryRaw.mockResolvedValue([
              { id: 'u1', email: 'test@test.com', tenantId: 't1', password: 'hashedpassword' }
         ]);
         (bcrypt.compare as jest.Mock).mockResolvedValue(true);
@@ -75,7 +76,7 @@ describe('AuthService', () => {
             return null;
         });
 
-        mockPrismaService.staff.findMany.mockResolvedValue([
+        mockPrismaService.$queryRaw.mockResolvedValue([
              { id: 'u1', email: 'test@test.com', tenantId: 't1', password: 'hashedpassword' }
         ]);
         (bcrypt.compare as jest.Mock).mockResolvedValue(true);
@@ -92,7 +93,7 @@ describe('AuthService', () => {
             return null;
         });
 
-        mockPrismaService.staff.findMany.mockResolvedValue([
+        mockPrismaService.$queryRaw.mockResolvedValue([
              { id: 'u1', email: 'test@test.com', tenantId: 't1', password: 'hashedpassword' }
         ]);
         (bcrypt.compare as jest.Mock).mockResolvedValue(true);
@@ -104,7 +105,7 @@ describe('AuthService', () => {
     });
 
     it('should fail login if password does not match', async () => {
-        mockPrismaService.staff.findMany.mockResolvedValue([
+        mockPrismaService.$queryRaw.mockResolvedValue([
              { id: 'u1', email: 'test@test.com', tenantId: 't1', password: 'hashedpassword' }
         ]);
         (bcrypt.compare as jest.Mock).mockResolvedValue(false);
@@ -115,7 +116,7 @@ describe('AuthService', () => {
     });
 
     it('should fail login if user has no password setup', async () => {
-        mockPrismaService.staff.findMany.mockResolvedValue([
+        mockPrismaService.$queryRaw.mockResolvedValue([
              { id: 'u1', email: 'test@test.com', tenantId: 't1', password: null }
         ]);
 
@@ -125,7 +126,7 @@ describe('AuthService', () => {
     });
 
     it('should hash password on register', async () => {
-        mockPrismaService.staff.findMany.mockResolvedValue([]);
+        mockPrismaService.$queryRaw.mockResolvedValue([]);
         mockPrismaService.tenant.create.mockResolvedValue({ features: '{}' });
         mockPrismaService.staff.create.mockResolvedValue({ id: 'u1', email: 'new@test.com' });
         (bcrypt.hash as jest.Mock).mockResolvedValue('newhashedpassword');
