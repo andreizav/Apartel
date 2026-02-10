@@ -121,7 +121,7 @@ model Booking {
   description       String?
 
   @@index([tenantId])
-  @@index([unitId])
+  @@index([unitId, startDate, endDate])
 }
 
 model Client {
@@ -184,7 +184,7 @@ model Transaction {
   unit        Unit?    @relation(fields: [unitId], references: [id])
   bookingId   String?  // Reference to Booking ID without foreign key constraint for simplicity, or we can add it if Booking is deleted carefully
 
-  @@index([tenantId])
+  @@index([tenantId, date])
   @@index([unitId])
 }
 

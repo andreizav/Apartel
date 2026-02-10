@@ -19,3 +19,7 @@
 ## 2026-02-05 - [Virtualization & Render Models]
 **Learning:** Calling methods like `getBookingStyle()` inside template loops (`@for`) re-executes on every change detection cycle and often creates throwaway objects (`new Date`), increasing GC pressure.
 **Action:** Use computed signals to pre-calculate a "Render Model" (including styles and classes) and filter out off-screen items ("virtualization") before the template iterates.
+
+## 2026-02-10 - [Database Indexing]
+**Learning:** Found that filtering by a foreign key (e.g., `unitId`) followed by a range query (e.g., `startDate`) on a large table (`Booking`) can still be slow if only the foreign key is indexed.
+**Action:** Use composite indexes like `@@index([unitId, startDate, endDate])` to allow the database to both filter by the relation and perform range scans efficiently in a single step.
