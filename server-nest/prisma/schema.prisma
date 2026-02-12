@@ -122,6 +122,10 @@ model Booking {
 
   @@index([tenantId])
   @@index([unitId])
+  // Optimization: Speed up overlap checks for new bookings
+  @@index([unitId, startDate, endDate])
+  // Optimization: Speed up sorted booking lists for tenants
+  @@index([tenantId, startDate])
 }
 
 model Client {
