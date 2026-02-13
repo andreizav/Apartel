@@ -1,30 +1,27 @@
 <div class="flex flex-col animate-fade-in-up pb-8">
 
   <!-- Header & Controls -->
-  <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
-    <div>
-      <h1 class="text-3xl font-extrabold text-[#111418] dark:text-white tracking-tight">Financial Performance</h1>
-      <p class="text-gray-500 dark:text-gray-400 mt-1">Profit & Loss Statement (Values in {{ selectedCurrency() }})</p>
-    </div>
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
+    <h1 class="text-lg font-bold text-[#111418] dark:text-white">Financial Performance</h1>
 
-    <div class="flex flex-wrap items-center gap-4">
+    <div class="flex flex-wrap items-center gap-2">
 
       <!-- Date Filter & Nav -->
       <div
-        class="flex items-center bg-white dark:bg-[#1c2936] rounded-lg border border-gray-200 dark:border-[#324d67] p-1 shadow-sm">
+        class="flex items-center bg-white dark:bg-[#1c2936] rounded-lg border border-gray-200 dark:border-[#324d67] p-0.5 shadow-sm">
         <!-- View Toggle -->
-        <div class="flex bg-gray-100 dark:bg-[#111a22] rounded-md p-0.5 mr-2">
-          <button (click)="setFilterMode('month')" class="px-3 py-1 text-xs font-bold rounded transition-colors"
+        <div class="flex bg-gray-100 dark:bg-[#111a22] rounded-md p-0.5 mr-1.5">
+          <button (click)="setFilterMode('month')" class="px-2.5 py-1 text-xs font-bold rounded transition-colors"
             [class.bg-white]="filterMode() === 'month'" [class.shadow-sm]="filterMode() === 'month'"
             [class.text-[#111418]]="filterMode() === 'month'" [class.dark:bg-[#253545]]="filterMode() === 'month'"
             [class.dark:text-white]="filterMode() === 'month'"
             [class.text-gray-500]="filterMode() !== 'month'">Month</button>
-          <button (click)="setFilterMode('year')" class="px-3 py-1 text-xs font-bold rounded transition-colors"
+          <button (click)="setFilterMode('year')" class="px-2.5 py-1 text-xs font-bold rounded transition-colors"
             [class.bg-white]="filterMode() === 'year'" [class.shadow-sm]="filterMode() === 'year'"
             [class.text-[#111418]]="filterMode() === 'year'" [class.dark:bg-[#253545]]="filterMode() === 'year'"
             [class.dark:text-white]="filterMode() === 'year'"
             [class.text-gray-500]="filterMode() !== 'year'">Year</button>
-          <button (click)="setFilterMode('all')" class="px-3 py-1 text-xs font-bold rounded transition-colors"
+          <button (click)="setFilterMode('all')" class="px-2.5 py-1 text-xs font-bold rounded transition-colors"
             [class.bg-white]="filterMode() === 'all'" [class.shadow-sm]="filterMode() === 'all'"
             [class.text-[#111418]]="filterMode() === 'all'" [class.dark:bg-[#253545]]="filterMode() === 'all'"
             [class.dark:text-white]="filterMode() === 'all'" [class.text-gray-500]="filterMode() !== 'all'">All</button>
@@ -33,27 +30,27 @@
         <!-- Navigation (Hidden if All) -->
         @if (filterMode() !== 'all') {
         <button (click)="prevPeriod()"
-          class="p-1.5 hover:bg-gray-100 dark:hover:bg-[#253545] rounded text-gray-500 dark:text-gray-400">
-          <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+          class="p-1 hover:bg-gray-100 dark:hover:bg-[#253545] rounded text-gray-500 dark:text-gray-400">
+          <span class="material-symbols-outlined text-[16px]">chevron_left</span>
         </button>
-        <div class="px-3 font-bold text-sm text-[#111418] dark:text-white min-w-[100px] text-center select-none">
+        <div class="px-2 font-bold text-xs text-[#111418] dark:text-white min-w-[80px] text-center select-none">
           {{ dateLabel() }}
         </div>
         <button (click)="nextPeriod()"
-          class="p-1.5 hover:bg-gray-100 dark:hover:bg-[#253545] rounded text-gray-500 dark:text-gray-400">
-          <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+          class="p-1 hover:bg-gray-100 dark:hover:bg-[#253545] rounded text-gray-500 dark:text-gray-400">
+          <span class="material-symbols-outlined text-[16px]">chevron_right</span>
         </button>
         } @else {
-        <div class="px-3 font-bold text-sm text-[#111418] dark:text-white min-w-[100px] text-center select-none">
+        <div class="px-2 font-bold text-xs text-[#111418] dark:text-white min-w-[80px] text-center select-none">
           All History
         </div>
         }
       </div>
 
       <!-- Currency Switcher -->
-      <div class="flex bg-gray-100 dark:bg-[#1c2936] p-1 rounded-lg border border-gray-200 dark:border-[#324d67]">
+      <div class="flex bg-gray-100 dark:bg-[#1c2936] p-0.5 rounded-lg border border-gray-200 dark:border-[#324d67]">
         @for (cur of ['USD', 'UAH', 'EUR']; track cur) {
-        <button (click)="setCurrency(cur)" class="px-3 py-1.5 text-xs font-bold rounded-md transition-all"
+        <button (click)="setCurrency(cur)" class="px-2.5 py-1 text-xs font-bold rounded-md transition-all"
           [class.bg-primary]="selectedCurrency() === cur" [class.text-white]="selectedCurrency() === cur"
           [class.text-gray-500]="selectedCurrency() !== cur" [class.dark:text-gray-400]="selectedCurrency() !== cur">
           {{ cur }}
@@ -67,75 +64,75 @@
 
       <!-- Import Button -->
       <button (click)="fileInput.click()"
-        class="flex items-center gap-2 bg-white dark:bg-[#253545] border border-gray-200 dark:border-[#324d67] hover:bg-gray-50 dark:hover:bg-[#2f4356] text-[#111418] dark:text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">
-        <span class="material-symbols-outlined text-[18px]">upload_file</span>
+        class="flex items-center gap-1.5 bg-white dark:bg-[#253545] border border-gray-200 dark:border-[#324d67] hover:bg-gray-50 dark:hover:bg-[#2f4356] text-[#111418] dark:text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-colors">
+        <span class="material-symbols-outlined text-[16px]">upload_file</span>
         Import
       </button>
 
       <button (click)="openManageCategories()"
-        class="flex items-center gap-2 bg-white dark:bg-[#253545] border border-gray-200 dark:border-[#324d67] hover:bg-gray-50 dark:hover:bg-[#2f4356] text-[#111418] dark:text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors">
-        <span class="material-symbols-outlined text-[18px]">category</span>
+        class="flex items-center gap-1.5 bg-white dark:bg-[#253545] border border-gray-200 dark:border-[#324d67] hover:bg-gray-50 dark:hover:bg-[#2f4356] text-[#111418] dark:text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-colors">
+        <span class="material-symbols-outlined text-[16px]">category</span>
         Categories
       </button>
 
       <button (click)="openAddModal()"
-        class="flex items-center gap-2 bg-primary hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold transition-all shadow-lg shadow-primary/25 active:scale-[0.98]">
-        <span class="material-symbols-outlined text-[18px]">add</span>
+        class="flex items-center gap-1.5 bg-primary hover:bg-blue-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm shadow-primary/25 active:scale-[0.98]">
+        <span class="material-symbols-outlined text-[16px]">add</span>
         Add
       </button>
     </div>
   </div>
 
   <!-- Stats Grid -->
-  <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+  <div class="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-4">
 
     <!-- Total Revenue -->
     <div
-      class="bg-white dark:bg-[#1c2936] p-6 rounded-2xl border border-gray-200 dark:border-[#324d67] shadow-sm relative overflow-hidden group">
-      <div class="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
-        <span class="material-symbols-outlined text-6xl text-primary">payments</span>
+      class="bg-white dark:bg-[#1c2936] p-4 rounded-xl border border-gray-200 dark:border-[#324d67] shadow-sm relative overflow-hidden group">
+      <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+        <span class="material-symbols-outlined text-4xl text-primary">payments</span>
       </div>
-      <p class="text-sm font-bold text-gray-500 mb-2">Total Revenue</p>
-      <h3 class="text-3xl font-extrabold text-[#111418] dark:text-white mb-2">
-        {{ getCurrencySymbol(selectedCurrency()) }}{{ totalRevenue() | number:'1.2-2' }}
+      <p class="text-xs font-bold text-gray-500 mb-1">Revenue</p>
+      <h3 class="text-xl font-extrabold text-[#111418] dark:text-white">
+        {{ getCurrencySymbol(selectedCurrency()) }}{{ totalRevenue() | number:'1.0-0' }}
       </h3>
-      <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-green-500/10 text-green-500">
-        {{ transactionCount() }} transactions
+      <span class="inline-flex items-center mt-1 text-[10px] font-bold text-green-500">
+        {{ transactionCount() }} txns
       </span>
     </div>
 
     <!-- Total Expenses -->
     <div
-      class="bg-white dark:bg-[#1c2936] p-6 rounded-2xl border border-gray-200 dark:border-[#324d67] shadow-sm relative overflow-hidden group">
-      <div class="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
-        <span class="material-symbols-outlined text-6xl text-red-500">trending_down</span>
+      class="bg-white dark:bg-[#1c2936] p-4 rounded-xl border border-gray-200 dark:border-[#324d67] shadow-sm relative overflow-hidden group">
+      <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+        <span class="material-symbols-outlined text-4xl text-red-500">trending_down</span>
       </div>
-      <p class="text-sm font-bold text-gray-500 mb-2">Total Expenses</p>
-      <h3 class="text-3xl font-extrabold text-[#111418] dark:text-white mb-2">
-        {{ getCurrencySymbol(selectedCurrency()) }}{{ totalExpenses() | number:'1.2-2' }}
+      <p class="text-xs font-bold text-gray-500 mb-1">Expenses</p>
+      <h3 class="text-xl font-extrabold text-[#111418] dark:text-white">
+        {{ getCurrencySymbol(selectedCurrency()) }}{{ totalExpenses() | number:'1.0-0' }}
       </h3>
     </div>
 
     <!-- Net Profit -->
     <div
-      class="bg-white dark:bg-[#1c2936] p-6 rounded-2xl border border-gray-200 dark:border-[#324d67] shadow-sm relative overflow-hidden group">
-      <div class="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
-        <span class="material-symbols-outlined text-6xl text-blue-400">savings</span>
+      class="bg-white dark:bg-[#1c2936] p-4 rounded-xl border border-gray-200 dark:border-[#324d67] shadow-sm relative overflow-hidden group">
+      <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+        <span class="material-symbols-outlined text-4xl text-blue-400">savings</span>
       </div>
-      <p class="text-sm font-bold text-gray-500 mb-2">Net Profit</p>
-      <h3 class="text-3xl font-extrabold text-[#111418] dark:text-white mb-2">
-        {{ getCurrencySymbol(selectedCurrency()) }}{{ netProfit() | number:'1.2-2' }}
+      <p class="text-xs font-bold text-gray-500 mb-1">Net Profit</p>
+      <h3 class="text-xl font-extrabold text-[#111418] dark:text-white">
+        {{ getCurrencySymbol(selectedCurrency()) }}{{ netProfit() | number:'1.0-0' }}
       </h3>
     </div>
 
     <!-- Margin -->
     <div
-      class="bg-white dark:bg-[#1c2936] p-6 rounded-2xl border border-gray-200 dark:border-[#324d67] shadow-sm relative overflow-hidden group">
-      <div class="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
-        <span class="material-symbols-outlined text-6xl text-purple-400">analytics</span>
+      class="bg-white dark:bg-[#1c2936] p-4 rounded-xl border border-gray-200 dark:border-[#324d67] shadow-sm relative overflow-hidden group">
+      <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+        <span class="material-symbols-outlined text-4xl text-purple-400">analytics</span>
       </div>
-      <p class="text-sm font-bold text-gray-500 mb-2">Margin</p>
-      <h3 class="text-3xl font-extrabold text-[#111418] dark:text-white mb-2">
+      <p class="text-xs font-bold text-gray-500 mb-1">Margin</p>
+      <h3 class="text-xl font-extrabold text-[#111418] dark:text-white">
         {{ margin() | number:'1.1-1' }}%
       </h3>
     </div>

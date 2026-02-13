@@ -1,29 +1,26 @@
 <div class="flex flex-col gap-6 animate-fade-in-up pb-10 h-full">
 
   <!-- Header -->
-  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-    <div>
-      <h1 class="text-3xl font-extrabold text-[#111418] dark:text-white tracking-tight">Dashboard</h1>
-      <p class="text-gray-500 dark:text-gray-400 mt-1">Overview of your property performance.</p>
-    </div>
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+    <h1 class="text-lg font-bold text-[#111418] dark:text-white">Dashboard</h1>
 
     <!-- Filter Controls -->
     <div
-      class="flex items-center bg-white dark:bg-[#1c2936] rounded-lg border border-gray-200 dark:border-[#324d67] p-1 shadow-sm">
+      class="flex items-center bg-white dark:bg-[#1c2936] rounded-lg border border-gray-200 dark:border-[#324d67] p-0.5 shadow-sm">
 
       <!-- View Toggle -->
-      <div class="flex bg-gray-100 dark:bg-[#111a22] rounded-md p-0.5 mr-2">
-        <button (click)="setFilterMode('month')" class="px-3 py-1 text-xs font-bold rounded transition-colors"
+      <div class="flex bg-gray-100 dark:bg-[#111a22] rounded-md p-0.5 mr-1.5">
+        <button (click)="setFilterMode('month')" class="px-2.5 py-1 text-xs font-bold rounded transition-colors"
           [class.bg-white]="filterMode() === 'month'" [class.shadow-sm]="filterMode() === 'month'"
           [class.text-[#111418]]="filterMode() === 'month'" [class.dark:bg-[#253545]]="filterMode() === 'month'"
           [class.dark:text-white]="filterMode() === 'month'"
           [class.text-gray-500]="filterMode() !== 'month'">Month</button>
-        <button (click)="setFilterMode('year')" class="px-3 py-1 text-xs font-bold rounded transition-colors"
+        <button (click)="setFilterMode('year')" class="px-2.5 py-1 text-xs font-bold rounded transition-colors"
           [class.bg-white]="filterMode() === 'year'" [class.shadow-sm]="filterMode() === 'year'"
           [class.text-[#111418]]="filterMode() === 'year'" [class.dark:bg-[#253545]]="filterMode() === 'year'"
           [class.dark:text-white]="filterMode() === 'year'"
           [class.text-gray-500]="filterMode() !== 'year'">Year</button>
-        <button (click)="setFilterMode('all')" class="px-3 py-1 text-xs font-bold rounded transition-colors"
+        <button (click)="setFilterMode('all')" class="px-2.5 py-1 text-xs font-bold rounded transition-colors"
           [class.bg-white]="filterMode() === 'all'" [class.shadow-sm]="filterMode() === 'all'"
           [class.text-[#111418]]="filterMode() === 'all'" [class.dark:bg-[#253545]]="filterMode() === 'all'"
           [class.dark:text-white]="filterMode() === 'all'" [class.text-gray-500]="filterMode() !== 'all'">All</button>
@@ -32,18 +29,18 @@
       <!-- Navigation (Hidden if All) -->
       @if (filterMode() !== 'all') {
       <button (click)="prevPeriod()"
-        class="p-1.5 hover:bg-gray-100 dark:hover:bg-[#253545] rounded text-gray-500 dark:text-gray-400 transition-colors">
-        <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+        class="p-1 hover:bg-gray-100 dark:hover:bg-[#253545] rounded text-gray-500 dark:text-gray-400 transition-colors">
+        <span class="material-symbols-outlined text-[16px]">chevron_left</span>
       </button>
-      <div class="px-3 font-bold text-sm text-[#111418] dark:text-white min-w-[100px] text-center select-none">
+      <div class="px-2 font-bold text-xs text-[#111418] dark:text-white min-w-[80px] text-center select-none">
         {{ dateLabel() }}
       </div>
       <button (click)="nextPeriod()"
-        class="p-1.5 hover:bg-gray-100 dark:hover:bg-[#253545] rounded text-gray-500 dark:text-gray-400 transition-colors">
-        <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+        class="p-1 hover:bg-gray-100 dark:hover:bg-[#253545] rounded text-gray-500 dark:text-gray-400 transition-colors">
+        <span class="material-symbols-outlined text-[16px]">chevron_right</span>
       </button>
       } @else {
-      <div class="px-3 font-bold text-sm text-[#111418] dark:text-white min-w-[100px] text-center select-none">
+      <div class="px-2 font-bold text-xs text-[#111418] dark:text-white min-w-[80px] text-center select-none">
         All History
       </div>
       }

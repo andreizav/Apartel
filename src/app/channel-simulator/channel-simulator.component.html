@@ -1,34 +1,30 @@
 <div class="flex flex-col h-full animate-fade-in-up">
 
    <!-- Header -->
-   <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-6">
-      <div>
-         <h1 class="text-3xl font-extrabold text-[#111418] dark:text-white tracking-tight">Channel Simulator</h1>
-         <p class="text-gray-500 dark:text-gray-400 mt-1">Simulate booking events from external OTAs (Extranet View).
-         </p>
-      </div>
+   <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
+      <h1 class="text-lg font-bold text-[#111418] dark:text-white">Channel Simulator</h1>
 
       <!-- Channel Toggle -->
-      <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2">
 
          <!-- iCal Button -->
          <button (click)="openIcalModal()"
-            class="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-bold bg-white dark:bg-[#253545] border border-gray-200 dark:border-[#324d67] text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-[#2f4356] transition-all shadow-sm">
-            <span class="material-symbols-outlined text-[18px]">calendar_month</span>
+            class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-white dark:bg-[#253545] border border-gray-200 dark:border-[#324d67] text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-[#2f4356] transition-all shadow-sm">
+            <span class="material-symbols-outlined text-[16px]">calendar_month</span>
             Simulate iCal
          </button>
 
          <div
-            class="flex bg-gray-100 dark:bg-[#1c2936] p-1 rounded-xl border border-gray-200 dark:border-[#324d67] shadow-sm">
+            class="flex bg-gray-100 dark:bg-[#1c2936] p-0.5 rounded-lg border border-gray-200 dark:border-[#324d67] shadow-sm">
             <button (click)="switchChannel('airbnb')"
-               class="flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-bold transition-all"
+               class="flex items-center gap-1.5 px-4 py-1.5 rounded-md text-xs font-bold transition-all"
                [class.bg-[#ff385c]]="activeChannel() === 'airbnb'" [class.text-white]="activeChannel() === 'airbnb'"
                [class.text-gray-500]="activeChannel() !== 'airbnb'"
                [class.dark:text-gray-400]="activeChannel() !== 'airbnb'">
                <i class="fa fa-airbnb"></i> Airbnb
             </button>
             <button (click)="switchChannel('booking')"
-               class="flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-bold transition-all"
+               class="flex items-center gap-1.5 px-4 py-1.5 rounded-md text-xs font-bold transition-all"
                [class.bg-[#003580]]="activeChannel() === 'booking'" [class.text-white]="activeChannel() === 'booking'"
                [class.text-gray-500]="activeChannel() !== 'booking'"
                [class.dark:text-gray-400]="activeChannel() !== 'booking'">

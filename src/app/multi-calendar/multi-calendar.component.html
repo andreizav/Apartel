@@ -1,48 +1,65 @@
-<div class="flex flex-col h-full animate-fade-in-up">
+<div class="flex flex-col animate-fade-in-up" [class.h-full]="!isFullscreen()" [class.fixed]="isFullscreen()"
+  [class.inset-0]="isFullscreen()" [class.z-50]="isFullscreen()" [class.bg-background-light]="isFullscreen()"
+  [class.dark:bg-background-dark]="isFullscreen()" [class.p-4]="isFullscreen()">
 
   <!-- Header -->
-  <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-6">
-    <div>
-      <h1 class="text-3xl font-extrabold text-[#111418] dark:text-white tracking-tight">Multi-Calendar</h1>
-      <p class="text-gray-500 dark:text-gray-400 mt-1">Availability and bookings across all channels.</p>
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
+    <div class="flex items-center gap-3">
+      <h1 class="text-lg font-bold text-[#111418] dark:text-white">Multi-Calendar</h1>
+
+      <!-- Legend -->
+      <div class="hidden xl:flex items-center gap-2.5 text-[10px] font-bold text-gray-400 dark:text-gray-500">
+        <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-[#ff385c]"></span> Airbnb</div>
+        <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-[#003580]"></span> Booking</div>
+        <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-[#FFC400]"></span> Expedia</div>
+        <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-[#10b981]"></span> Direct</div>
+      </div>
     </div>
 
     <!-- Controls -->
-    <div class="flex items-center gap-4">
+    <div class="flex items-center gap-1.5">
 
-      <!-- Legend -->
-      <div class="hidden xl:flex items-center gap-3 text-xs font-bold text-gray-500 mr-4">
-        <div class="flex items-center gap-1"><span class="w-3 h-3 rounded-sm bg-[#ff385c]"></span> Airbnb</div>
-        <div class="flex items-center gap-1"><span class="w-3 h-3 rounded-sm bg-[#003580]"></span> Booking.com</div>
-        <div class="flex items-center gap-1"><span class="w-3 h-3 rounded-sm bg-[#FFC400]"></span> Expedia</div>
-        <div class="flex items-center gap-1"><span class="w-3 h-3 rounded-sm bg-[#10b981]"></span> Direct</div>
-      </div>
-
+      <!-- Month Nav Group -->
       <div
-        class="flex items-center bg-white dark:bg-[#1c2936] rounded-lg border border-gray-200 dark:border-[#324d67] p-1 shadow-sm">
+        class="flex items-center bg-white dark:bg-[#1c2936] rounded-lg border border-gray-200 dark:border-[#324d67] p-0.5 shadow-sm">
         <button (click)="changeMonth(-1)"
-          class="p-2 hover:bg-gray-100 dark:hover:bg-[#253545] rounded-md transition-colors">
-          <span class="material-symbols-outlined text-[20px]">chevron_left</span>
+          class="w-7 h-7 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-[#253545] rounded-md transition-colors text-gray-500 dark:text-gray-400">
+          <span class="material-symbols-outlined text-[16px]">chevron_left</span>
         </button>
-        <div class="px-4 font-bold min-w-[140px] text-center text-[#111418] dark:text-white select-none">
+        <div class="px-2 font-bold text-xs min-w-[90px] text-center text-[#111418] dark:text-white select-none">
           {{ formattedMonth() }}
         </div>
         <button (click)="changeMonth(1)"
-          class="p-2 hover:bg-gray-100 dark:hover:bg-[#253545] rounded-md transition-colors">
-          <span class="material-symbols-outlined text-[20px]">chevron_right</span>
+          class="w-7 h-7 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-[#253545] rounded-md transition-colors text-gray-500 dark:text-gray-400">
+          <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+        </button>
+
+        <div class="w-px h-5 bg-gray-200 dark:bg-[#324d67] mx-0.5"></div>
+
+        <button (click)="goToToday()"
+          class="h-7 px-2.5 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-[#253545] rounded-md transition-colors text-xs font-bold text-gray-600 dark:text-gray-300">
+          Today
         </button>
       </div>
 
-      <button (click)="goToToday()"
-        class="px-4 py-2 bg-primary text-white rounded-lg text-sm font-bold hover:bg-blue-600 transition-colors shadow-lg shadow-primary/20">
-        Today
-      </button>
-
+      <!-- New Booking -->
       <button (click)="openBookingModal()"
-        class="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-bold hover:bg-green-700 transition-colors shadow-lg shadow-green-600/20 flex items-center gap-2">
-        <span class="material-symbols-outlined text-[18px]">add</span>
+        class="h-8 px-3 bg-primary hover:bg-blue-600 text-white rounded-lg text-xs font-bold transition-all shadow-sm shadow-primary/25 active:scale-[0.97] flex items-center gap-1.5">
+        <span class="material-symbols-outlined text-[16px]">add</span>
         New Booking
       </button>
+
+      <!-- Fullscreen Toggle -->
+      <button (click)="toggleFullscreen()"
+        class="w-8 h-8 flex items-center justify-center bg-white dark:bg-[#1c2936] border border-gray-200 dark:border-[#324d67] rounded-lg hover:bg-gray-100 dark:hover:bg-[#253545] transition-colors text-gray-500 dark:text-gray-400"
+        [title]="isFullscreen() ? 'Exit Fullscreen (Esc)' : 'Enter Fullscreen'">
+        <span class="material-symbols-outlined text-[16px]">{{ isFullscreen() ? 'fullscreen_exit' : 'fullscreen'
+          }}</span>
+      </button>
+
+      @if (isFullscreen()) {
+      <span class="text-[10px] text-gray-400 font-medium hidden md:inline ml-0.5">Esc to exit</span>
+      }
     </div>
   </div>
 
@@ -149,7 +166,8 @@
               <div
                 class="absolute top-1 bottom-1 rounded-md shadow-sm border border-white/10 flex items-center px-2 overflow-hidden pointer-events-auto cursor-pointer hover:brightness-110 transition-all z-0"
                 [ngClass]="item.colorClass" [ngStyle]="item.style"
-                title="{{ item.booking.guestName }} ({{ item.booking.source }})" (click)="navigateToClient(item.booking)">
+                title="{{ item.booking.guestName }} ({{ item.booking.source }})"
+                (click)="navigateToClient(item.booking)">
                 @if (item.booking.source !== 'blocked') {
                 <span class="text-[10px] font-bold truncate">{{ item.booking.guestName }}</span>
                 } @else {

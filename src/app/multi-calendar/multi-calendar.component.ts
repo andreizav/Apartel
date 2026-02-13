@@ -1,4 +1,4 @@
-import { Component, signal, computed, inject, ViewChild, ElementRef, AfterViewInit, OnInit, ChangeDetectionStrategy, DestroyRef } from '@angular/core';
+import { Component, signal, computed, inject, ViewChild, ElementRef, AfterViewInit, OnInit, ChangeDetectionStrategy, DestroyRef, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -23,6 +23,7 @@ export class MultiCalendarComponent implements AfterViewInit, OnInit {
   @ViewChild('bodyScroll') bodyScroll!: ElementRef<HTMLDivElement>;
 
   viewDate = signal(new Date()); // Current month view
+  isFullscreen = signal(false);
 
   // Cell configuration
   cellWidth = 48; // px
@@ -138,40 +139,40 @@ export class MultiCalendarComponent implements AfterViewInit, OnInit {
       const renderable: RenderableBooking[] = [];
 
       for (const booking of bookings) {
-         const bStart = new Date(booking.startDate);
-         const bEnd = new Date(booking.endDate);
+        const bStart = new Date(booking.startDate);
+        const bEnd = new Date(booking.endDate);
 
-         // Visibility Check
-         if (bEnd < startOfMonth || bStart > endOfMonth) {
-           continue;
-         }
+        // Visibility Check
+        if (bEnd < startOfMonth || bStart > endOfMonth) {
+          continue;
+        }
 
-         // Style Calculation
-         const effectiveStart = bStart < startOfMonth ? startOfMonth : bStart;
-         const effectiveEnd = bEnd > endOfMonth ? endOfMonth : bEnd;
-         const startDay = effectiveStart.getDate();
+        // Style Calculation
+        const effectiveStart = bStart < startOfMonth ? startOfMonth : bStart;
+        const effectiveEnd = bEnd > endOfMonth ? endOfMonth : bEnd;
+        const startDay = effectiveStart.getDate();
 
-         const diffTime = Math.abs(effectiveEnd.getTime() - effectiveStart.getTime());
-         const durationDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        const diffTime = Math.abs(effectiveEnd.getTime() - effectiveStart.getTime());
+        const durationDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-         const left = (startDay - 1) * cellWidth;
-         const width = durationDays * cellWidth;
+        const left = (startDay - 1) * cellWidth;
+        const width = durationDays * cellWidth;
 
-         // Color Calculation
-         let colorClass = 'bg-gray-500 text-white';
-         switch (booking.source) {
-            case 'airbnb': colorClass = 'bg-[#ff385c] text-white'; break;
-            case 'booking': colorClass = 'bg-[#003580] text-white'; break;
-            case 'expedia': colorClass = 'bg-[#FFC400] text-black'; break;
-            case 'direct': colorClass = 'bg-[#10b981] text-white'; break;
-            case 'blocked': colorClass = 'bg-gray-400 text-white repeating-linear-gradient(45deg,transparent,transparent_10px,#00000010_10px,#00000010_20px)'; break;
-         }
+        // Color Calculation
+        let colorClass = 'bg-gray-500 text-white';
+        switch (booking.source) {
+          case 'airbnb': colorClass = 'bg-[#ff385c] text-white'; break;
+          case 'booking': colorClass = 'bg-[#003580] text-white'; break;
+          case 'expedia': colorClass = 'bg-[#FFC400] text-black'; break;
+          case 'direct': colorClass = 'bg-[#10b981] text-white'; break;
+          case 'blocked': colorClass = 'bg-gray-400 text-white repeating-linear-gradient(45deg,transparent,transparent_10px,#00000010_10px,#00000010_20px)'; break;
+        }
 
-         renderable.push({
-           booking,
-           style: { left: `${left}px`, width: `${width}px` },
-           colorClass
-         });
+        renderable.push({
+          booking,
+          style: { left: `${left}px`, width: `${width}px` },
+          colorClass
+        });
       }
       result.set(unitId, renderable);
     }
@@ -422,6 +423,17 @@ export class MultiCalendarComponent implements AfterViewInit, OnInit {
 
   goToToday() {
     this.viewDate.set(new Date());
+  }
+
+  toggleFullscreen() {
+    this.isFullscreen.update(v => !v);
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscapeKey() {
+    if (this.isFullscreen()) {
+      this.isFullscreen.set(false);
+    }
   }
 
   navigateToProperty(unitId: string) {
