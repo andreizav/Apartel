@@ -1,4 +1,4 @@
-<div class="flex flex-col h-full animate-fade-in-up pb-8">
+<div class="flex flex-col animate-fade-in-up pb-8">
 
   <!-- Header & Controls -->
   <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
@@ -142,11 +142,11 @@
   </div>
 
   <!-- Main Content: Split View -->
-  <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 flex-1 overflow-hidden">
+  <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
 
     <!-- Left: Category Breakdown -->
     <div
-      class="bg-white dark:bg-[#1c2936] rounded-2xl border border-gray-200 dark:border-[#324d67] shadow-sm flex flex-col overflow-hidden">
+      class="bg-white dark:bg-[#1c2936] rounded-2xl border border-gray-200 dark:border-[#324d67] shadow-sm flex flex-col">
       <div class="px-6 py-5 border-b border-gray-200 dark:border-[#324d67] flex items-center justify-between">
         <h3 class="font-bold text-lg text-[#111418] dark:text-white">Category Breakdown</h3>
 
@@ -180,7 +180,7 @@
         </div>
       </div>
 
-      <div class="flex-1 overflow-y-auto p-2">
+      <div class="p-2">
         <!-- Table Header -->
         <div class="grid grid-cols-12 px-4 py-2 text-xs font-bold text-gray-500 uppercase">
           <div class="col-span-6">Category</div>
@@ -239,12 +239,12 @@
 
     <!-- Right: Recent Transactions -->
     <div
-      class="bg-white dark:bg-[#1c2936] rounded-2xl border border-gray-200 dark:border-[#324d67] shadow-sm flex flex-col overflow-hidden">
+      class="bg-white dark:bg-[#1c2936] rounded-2xl border border-gray-200 dark:border-[#324d67] shadow-sm flex flex-col">
       <div class="px-6 py-5 border-b border-gray-200 dark:border-[#324d67]">
         <h3 class="font-bold text-lg text-[#111418] dark:text-white">Transactions ({{ dateLabel() }})</h3>
       </div>
 
-      <div class="flex-1 overflow-y-auto p-6 space-y-4">
+      <div class="p-6 space-y-4">
         @for (tx of processedTransactions(); track tx.id) {
         <div
           class="flex items-center justify-between p-4 rounded-xl border border-gray-200 dark:border-[#324d67] bg-gray-50/50 dark:bg-[#111a22]/30 hover:border-primary/30 transition-colors">
