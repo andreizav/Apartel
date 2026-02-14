@@ -28,7 +28,7 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
     ScheduleModule.forRoot(),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', '..', '..', 'dist'),
-      exclude: ['/api/(.*)'],
+      exclude: ['/api/{*path}'],
     }),
     SharedModule,
     AuthModule,
