@@ -39,10 +39,13 @@ COPY --from=backend-build /app/server-nest/prisma ./server-nest/prisma
 
 WORKDIR /app/server-nest
 
+# Create persistent data directory for SQLite
+RUN mkdir -p /data
+
 # Defaults (override via docker run -e or docker-compose)
 ENV NODE_ENV=production
 ENV PORT=4000
-ENV DATABASE_URL="file:./prisma/prod.db"
+ENV DATABASE_URL="file:/data/prod.db"
 
 EXPOSE 4000
 
