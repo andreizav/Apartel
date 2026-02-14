@@ -27,7 +27,7 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
     EventEmitterModule.forRoot(),
     ScheduleModule.forRoot(),
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', '..', 'dist'),
+      rootPath: join(__dirname, '..', '..', '..', 'dist'),
       exclude: ['/api/(.*)'],
     }),
     SharedModule,
