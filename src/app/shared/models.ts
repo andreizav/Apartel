@@ -37,6 +37,8 @@ export interface PropertyUnit {
   wifiPassword: string;
   accessCodes: string;
   status: 'Active' | 'Maintenance';
+  airbnbListingId?: string;
+  bookingListingId?: string;
   assignedCleanerId?: string;
   photos: string[];
 }

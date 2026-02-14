@@ -1,6 +1,7 @@
 import { Component, signal, computed, inject, OnInit, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import { Router, ActivatedRoute } from '@angular/router';
 import * as XLSX from 'xlsx';
 import { ApiService } from '../shared/api.service';
@@ -15,6 +16,7 @@ import { PortfolioService, PropertyGroup, PropertyUnit, Booking, InventoryCatego
 export class PropertiesComponent implements OnInit {
   private apiService = inject(ApiService);
   private portfolioService = inject(PortfolioService);
+  private sanitizer = inject(DomSanitizer);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
@@ -25,7 +27,7 @@ export class PropertiesComponent implements OnInit {
 
   importPreview = signal<PropertyGroup[] | null>(null);
   selectedUnitId = signal<string | null>('u1');
-  activeTab = signal<string>('Settings');
+  activeTab = signal<string>('Overview');
 
   constructor() {
     effect(() => {
@@ -254,6 +256,8 @@ export class PropertiesComponent implements OnInit {
       form.wifiSsid !== original.wifiSsid ||
       form.wifiPassword !== original.wifiPassword ||
       form.status !== original.status ||
+      form.airbnbListingId !== original.airbnbListingId ||
+      form.bookingListingId !== original.bookingListingId ||
       JSON.stringify(form.photos) !== JSON.stringify(original.photos);
   });
 
@@ -299,7 +303,14 @@ export class PropertiesComponent implements OnInit {
   showCustomNameInput = signal<boolean>(false);
   editingItemId = signal<string | null>(null);
 
-  tabs = ['Guest History', 'Photos', 'Inventory', 'Finance / P&L', 'Settings'];
+  tabs = ['Overview', 'Guest History', 'Photos', 'Inventory', 'Finance / P&L', 'Settings'];
+
+  airbnbEmbedUrl = computed(() => {
+    const id = this.editForm()?.airbnbListingId;
+    if (!id) return null;
+    const url = `https://www.airbnb.com/embeddable/home?id=${id}&view=home&hide_price=true`;
+    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+  });
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {

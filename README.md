@@ -4,31 +4,34 @@ ApartEl is a modern Property Management System (PMS) designed specifically for a
 
 ## 🚀 Features
 
-- **Multi-Calendar**: Visual management of bookings across all properties.
-- **Channel Manager**: Sync availability and rates with OTAs (Online Travel Agencies). includes a Channel Simulator for testing.
-- **Property Management**: Manage units, inventory, and property details.
+- **Multi-Calendar**: Visual booking management across all properties with fullscreen mode, drag-select date ranges, and real-time occupancy tracking.
+- **Channel Manager**: Sync availability and rates with OTAs (Online Travel Agencies). Includes a Channel Simulator for testing.
+- **Property Management**: Manage units with an Overview dashboard featuring OTA listing embeds (Airbnb, Booking.com), performance stats, inventory tracking, and P&L per unit.
 - **Operations**:
   - **Staff Management**: Track staff tasks and schedules.
-  - **Client Management**: CRM for guest details and history.
-  - **Communications**: Integrated messaging system.
+  - **Client Management**: CRM for guest details, communication history, and booking records.
+  - **Communications**: Integrated messaging system (WhatsApp, Telegram).
 - **Financials**:
-  - **Dashboard**: Real-time overview of occupancy and revenue.
-  - **P&L**: Profit and Loss reporting and analytics.
-- **Authentication**: Secure login and role-based access.
+  - **Dashboard**: Real-time overview of occupancy, revenue, and key metrics with interactive charts.
+  - **P&L**: Profit and Loss reporting with multi-currency support (USD, EUR, UAH) and period-based filtering.
+- **Authentication**: Secure JWT-based login and role-based access.
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: Angular 21 (Standalone Components, Zoneless Change Detection)
-- **Styling**: TailwindCSS
-- **Visualization**: D3.js (for charts and analytics)
-- **Data Handling**: RxJS, XLSX (Excel export/import)
-- **Backend**: NestJS (TypeScript)
-- **Architecture**: Single Page Application (SPA) with server-side data persistence.
+| Layer | Technology |
+|-------|-----------|
+| **Frontend** | Angular 21 (Standalone Components, Zoneless Change Detection) |
+| **Styling** | TailwindCSS 3.4 |
+| **Visualization** | D3.js 7.9 |
+| **Data** | RxJS, XLSX (Excel export/import) |
+| **Backend** | NestJS 11 (TypeScript) |
+| **Database** | SQLite via Prisma ORM |
+| **Architecture** | SPA + REST API |
 
 ## 🏁 Getting Started
 
 ### Prerequisites
-- **Node.js**: Ensure Node.js (Latest LTS recommended) is installed.
+- **Node.js**: Latest LTS recommended
 
 ### Installation
 
@@ -38,82 +41,77 @@ ApartEl is a modern Property Management System (PMS) designed specifically for a
     cd ApartEl
     ```
 
-2.  **Install Application Dependencies:**
+2.  **Install dependencies:**
     ```bash
     npm install
+    cd server-nest && npm install && cd ..
     ```
 
-3.  **Install Backend Dependencies:**
+3.  **Set up the database:**
     ```bash
     cd server-nest
-    npm install
+    cp .env.example .env    # Configure your environment
+    npx prisma generate
+    npx prisma db push      # Sync schema with dev.db
     cd ..
     ```
 
 ### Running Locally
 
-You need to run both the backend API and the frontend application.
-
-#### 1. Start the Backend Server
-The server handles data persistence using Prisma with a local SQLite database.
-
-First, set up your environment:
-1. Create a `.env` file in the `server-nest/` directory (see `.env.example`).
-2. Run database setup:
+**Start both frontend and backend concurrently:**
 ```bash
-cd server-nest
-npx prisma generate
-npx prisma db push # Sync schema with dev.db
+npm start
 ```
 
-Then start the server:
+Or run them separately:
+
 ```bash
-# From the project root
+# Backend API (http://localhost:4000)
 npm run server
-```
-*API runs at `http://localhost:4000`*
 
-#### 2. Start the Frontend Application
-In a new terminal window:
-
-```bash
-# From the project root
+# Frontend (http://localhost:3000)
 npm run dev
 ```
-*App runs at `http://localhost:3000`*
 
 ### Default Login
 - **Email**: `alice@demo.com`
-- **Password**: `password` (if prompted, check `BootstrapService` for demo data)
+- **Password**: `password`
 
 ## 📂 Project Structure
 
 ```
-d:\Projects\ApartEl\
-├── server-nest/            # NestJS Backend API
-│   ├── prisma/             # Prisma Schema & SQLite DB
-│   │   └── schema.prisma   # Database Models
-│   ├── src/                # Source code
-│   │   ├── modules/        # Feature modules
-│   │   └── shared/         # Shared services
-│   └── main.ts             # Server entry point
+ApartEl/
+├── server-nest/              # NestJS Backend API
+│   ├── prisma/               # Prisma Schema & SQLite DB
+│   │   └── schema.prisma     # Database Models
+│   ├── src/                  # Source code
+│   │   ├── modules/          # Feature modules
+│   │   └── shared/           # Shared services
+│   └── main.ts               # Server entry point
 ├── src/
-│   ├── app/                # Angular Application Source
-│   │   ├── channel-manager # Channel management features
-│   │   ├── dashboard       # Analytics dashboard
-│   │   ├── multi-calendar  # Booking calendar
-│   │   ├── properties      # Property management
-│   │   ├── db-simulator    # Real-time DB viewer
-│   │   └── ...             # Other feature modules
-│   ├── environments/       # Environment configurations
-│   └── ...
-└── angular.json            # Angular CLI configuration
+│   ├── app/                  # Angular Application Source
+│   │   ├── channel-manager/  # OTA channel management
+│   │   ├── channel-simulator/# Channel testing simulator
+│   │   ├── clients/          # Client CRM
+│   │   ├── communications/   # Messaging system
+│   │   ├── dashboard/        # Analytics & home dashboard
+│   │   ├── db-simulator/     # Real-time DB viewer
+│   │   ├── inventory/        # Inventory management
+│   │   ├── login/            # Authentication
+│   │   ├── multi-calendar/   # Booking calendar (fullscreen)
+│   │   ├── pnl/              # Profit & Loss reports
+│   │   ├── properties/       # Property & unit management
+│   │   ├── settings/         # App settings
+│   │   ├── staff/            # Staff management
+│   │   └── shared/           # Services, models, pipes
+│   └── environments/         # Environment configurations
+└── angular.json              # Angular CLI configuration
 ```
 
 ## 🔒 Security & Best Practices
 
 - **Environment Variables**: Never commit `.env` files. Use `.env.example` as a template.
-- **Authentication**: JWT-based authentication is handled by the backend.
+- **Authentication**: JWT-based authentication handled by the backend.
 - **Database**: Prisma provides type-safe access to SQLite.
 
 ## 📡 API Endpoints
@@ -121,7 +119,7 @@ d:\Projects\ApartEl\
 The `server-nest/` app provides the following RESTful endpoints:
 
 - **Auth**: `POST /api/auth/login`, `POST /api/auth/register`
-- **Core**: `GET /api/bootstrap`, `POST /api/bootstrap/reset` (Populate demo data)
+- **Core**: `GET /api/bootstrap`, `POST /api/bootstrap/reset`
 - **Properties**: `GET/PUT /api/portfolio`, `DELETE /api/portfolio/units/:id`
 - **Bookings**: `GET/POST /api/bookings`
 - **CRM**: `GET/POST/PATCH/DELETE /api/clients`, `GET/POST/PATCH/DELETE /api/staff`

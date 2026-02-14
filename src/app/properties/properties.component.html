@@ -93,35 +93,6 @@
           <span
             class="px-1.5 py-0.5 bg-[#253545] border border-[#324d67] text-[#92adc9] text-[9px] font-bold uppercase tracking-wider rounded flex-shrink-0">Unit</span>
           <span class="text-[10px] text-gray-400 font-mono hidden md:inline flex-shrink-0">{{ unit.id }}</span>
-
-          <!-- Compact Stats Indicators -->
-          <div
-            class="hidden lg:flex items-center gap-3 ml-2 px-3 py-1 bg-gray-50/50 dark:bg-[#111a22]/50 rounded-full border border-gray-100 dark:border-[#324d67]/50">
-            <div class="flex items-center gap-1" title="Next Arrival">
-              <span class="material-symbols-outlined text-[14px] text-primary">event_upcoming</span>
-              <span class="text-[11px] font-bold text-[#111418] dark:text-white">{{ nextCheckIn() !== null ?
-                nextCheckIn() : '--' }}d</span>
-            </div>
-            <div class="flex items-center gap-1" title="Occupancy (30d)">
-              <span class="material-symbols-outlined text-[14px] text-green-500">analytics</span>
-              <span class="text-[11px] font-bold text-[#111418] dark:text-white">{{ occupancyRate() | number:'1.0-0'
-                }}%</span>
-            </div>
-            <div class="flex items-center gap-1" title="Average Daily Rate">
-              <span class="material-symbols-outlined text-[14px] text-indigo-500">payments</span>
-              <span class="text-[11px] font-bold text-[#111418] dark:text-white">${{ averageDailyRate() | number:'1.0-0'
-                }}</span>
-            </div>
-            <div class="flex items-center gap-1" title="Average Length of Stay">
-              <span class="material-symbols-outlined text-[14px] text-amber-500">nightlight</span>
-              <span class="text-[11px] font-bold text-[#111418] dark:text-white">{{ averageLengthOfStay() |
-                number:'1.1-1' }}</span>
-            </div>
-            <div class="flex items-center gap-1" title="Monthly Revenue">
-              <span class="material-symbols-outlined text-[14px] text-primary">trending_up</span>
-              <span class="text-[11px] font-bold text-primary">${{ monthlyRevenue() | number:'1.0-0' }}</span>
-            </div>
-          </div>
         </div>
 
         <!-- Actions -->
@@ -172,7 +143,132 @@
     <!-- Scrollable Content Area -->
     <div class="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50/50 dark:bg-[#111a22]/30">
 
-      @if (activeTab() === 'Guest History') {
+      @if (activeTab() === 'Overview') {
+      <div class="animate-fade-in space-y-4">
+        <!-- Performance Stats Grid -->
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+          <div class="bg-white dark:bg-[#1c2936] rounded-xl border border-gray-200 dark:border-[#324d67] p-4 shadow-sm">
+            <div class="flex items-center gap-2 mb-2">
+              <div class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-900/10 flex items-center justify-center">
+                <span class="material-symbols-outlined text-[18px] text-primary">event_upcoming</span>
+              </div>
+              <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Next Arrival</span>
+            </div>
+            <div class="text-xl font-bold text-[#111418] dark:text-white">{{ nextCheckIn() !== null ? nextCheckIn() :
+              '--' }}<span class="text-sm font-medium text-gray-400 ml-0.5">days</span></div>
+          </div>
+
+          <div class="bg-white dark:bg-[#1c2936] rounded-xl border border-gray-200 dark:border-[#324d67] p-4 shadow-sm">
+            <div class="flex items-center gap-2 mb-2">
+              <div class="w-8 h-8 rounded-lg bg-green-50 dark:bg-green-900/10 flex items-center justify-center">
+                <span class="material-symbols-outlined text-[18px] text-green-500">analytics</span>
+              </div>
+              <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Occupancy</span>
+            </div>
+            <div class="text-xl font-bold text-[#111418] dark:text-white">{{ occupancyRate() | number:'1.0-0' }}<span
+                class="text-sm font-medium text-gray-400 ml-0.5">%</span></div>
+          </div>
+
+          <div class="bg-white dark:bg-[#1c2936] rounded-xl border border-gray-200 dark:border-[#324d67] p-4 shadow-sm">
+            <div class="flex items-center gap-2 mb-2">
+              <div class="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-900/10 flex items-center justify-center">
+                <span class="material-symbols-outlined text-[18px] text-indigo-500">payments</span>
+              </div>
+              <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">ADR</span>
+            </div>
+            <div class="text-xl font-bold text-[#111418] dark:text-white"><span
+                class="text-sm font-medium text-gray-400 mr-0.5">$</span>{{ averageDailyRate() | number:'1.0-0' }}</div>
+          </div>
+
+          <div class="bg-white dark:bg-[#1c2936] rounded-xl border border-gray-200 dark:border-[#324d67] p-4 shadow-sm">
+            <div class="flex items-center gap-2 mb-2">
+              <div class="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-900/10 flex items-center justify-center">
+                <span class="material-symbols-outlined text-[18px] text-amber-500">nightlight</span>
+              </div>
+              <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Avg Stay</span>
+            </div>
+            <div class="text-xl font-bold text-[#111418] dark:text-white">{{ averageLengthOfStay() | number:'1.1-1'
+              }}<span class="text-sm font-medium text-gray-400 ml-0.5">nights</span></div>
+          </div>
+
+          <div class="bg-white dark:bg-[#1c2936] rounded-xl border border-gray-200 dark:border-[#324d67] p-4 shadow-sm">
+            <div class="flex items-center gap-2 mb-2">
+              <div class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-900/10 flex items-center justify-center">
+                <span class="material-symbols-outlined text-[18px] text-primary">trending_up</span>
+              </div>
+              <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Revenue</span>
+            </div>
+            <div class="text-xl font-bold text-primary"><span class="text-sm font-medium mr-0.5">$</span>{{
+              monthlyRevenue() | number:'1.0-0' }}</div>
+          </div>
+        </div>
+
+        <!-- OTA Listings -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+          <!-- Airbnb Embed -->
+          <div class="bg-white dark:bg-[#1c2936] rounded-xl border border-gray-200 dark:border-[#324d67] p-5 shadow-sm">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-8 h-8 rounded-lg bg-[#ff385c]/10 flex items-center justify-center">
+                <span class="text-[#ff385c] text-sm font-black">A</span>
+              </div>
+              <div>
+                <h3 class="text-sm font-bold text-[#111418] dark:text-white">Airbnb Listing</h3>
+                <p class="text-[10px] text-gray-400">Live embed from Airbnb</p>
+              </div>
+            </div>
+            @if (airbnbEmbedUrl()) {
+            <div class="rounded-lg overflow-hidden border border-gray-100 dark:border-[#324d67]">
+              <iframe [src]="airbnbEmbedUrl()!" style="width: 100%; height: 300px; border: none;" loading="lazy"
+                referrerpolicy="no-referrer" allow="fullscreen"></iframe>
+            </div>
+            } @else {
+            <div class="text-center py-8 text-gray-400">
+              <span class="material-symbols-outlined text-3xl mb-2 opacity-50">link_off</span>
+              <p class="text-xs">No Airbnb listing connected</p>
+              <p class="text-[10px] mt-1">Add a listing ID in the <button (click)="setActiveTab('Settings')"
+                  class="text-primary hover:underline font-bold">Settings</button> tab</p>
+            </div>
+            }
+          </div>
+
+          <!-- Booking.com Placeholder -->
+          <div class="bg-white dark:bg-[#1c2936] rounded-xl border border-gray-200 dark:border-[#324d67] p-5 shadow-sm">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-8 h-8 rounded-lg bg-[#003580]/10 flex items-center justify-center">
+                <span class="text-[#003580] text-sm font-black">B</span>
+              </div>
+              <div>
+                <h3 class="text-sm font-bold text-[#111418] dark:text-white">Booking.com Listing</h3>
+                <p class="text-[10px] text-gray-400">Connected listing preview</p>
+              </div>
+            </div>
+            @if (editForm()?.bookingListingId) {
+            <div
+              class="rounded-lg overflow-hidden border border-gray-100 dark:border-[#324d67] bg-gray-50 dark:bg-[#111a22] p-6 flex flex-col items-center justify-center gap-3"
+              style="height: 300px;">
+              <div class="w-12 h-12 rounded-full bg-[#003580]/10 flex items-center justify-center">
+                <span class="text-[#003580] text-xl font-black">B</span>
+              </div>
+              <p class="text-sm font-bold text-[#111418] dark:text-white">Booking.com Connected</p>
+              <a [href]="'https://www.booking.com/hotel/' + editForm()!.bookingListingId + '.html'" target="_blank"
+                rel="nofollow"
+                class="px-3 py-1.5 bg-[#003580] text-white text-xs font-bold rounded-lg hover:bg-[#00264d] transition-colors">View
+                Listing &rarr;</a>
+            </div>
+            } @else {
+            <div class="text-center py-8 text-gray-400">
+              <span class="material-symbols-outlined text-3xl mb-2 opacity-50">link_off</span>
+              <p class="text-xs">No Booking.com listing connected</p>
+              <p class="text-[10px] mt-1">Add a listing ID in the <button (click)="setActiveTab('Settings')"
+                  class="text-primary hover:underline font-bold">Settings</button> tab</p>
+            </div>
+            }
+          </div>
+        </div>
+      </div>
+      }
+      @else if (activeTab() === 'Guest History') {
       <div class="animate-fade-in">
         <section
           class="bg-white dark:bg-[#1c2936] rounded-lg border border-gray-200 dark:border-[#324d67] overflow-hidden shadow-sm">
@@ -679,6 +775,42 @@
                 <span class="material-symbols-outlined text-[18px]">auto_awesome</span>
                 Generate Welcome Message
               </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- OTA Listing IDs -->
+        <div
+          class="bg-white dark:bg-[#1c2936] rounded-xl border border-gray-200 dark:border-[#324d67] p-6 shadow-sm group hover:border-primary/30 transition-colors">
+          <div class="flex items-center gap-3 mb-6">
+            <div
+              class="w-10 h-10 rounded-lg bg-pink-50 dark:bg-pink-900/10 flex items-center justify-center text-pink-600">
+              <span class="material-symbols-outlined">travel_explore</span>
+            </div>
+            <div>
+              <h3 class="font-bold text-[#111418] dark:text-white">OTA Listings</h3>
+              <p class="text-xs text-gray-500">Connect Airbnb and Booking.com listings</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div class="space-y-1.5">
+              <label
+                class="text-[10px] font-extrabold text-gray-500 uppercase tracking-widest flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-[#ff385c]"></span> Airbnb Listing ID
+              </label>
+              <input type="text" id="airbnbListingId" name="airbnbListingId" [(ngModel)]="form.airbnbListingId"
+                (ngModelChange)="onFormChange()" placeholder="e.g. 1227167578908060997"
+                class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-lg px-4 py-2.5 text-sm text-[#111418] dark:text-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-mono">
+            </div>
+            <div class="space-y-1.5">
+              <label
+                class="text-[10px] font-extrabold text-gray-500 uppercase tracking-widest flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-[#003580]"></span> Booking.com Listing ID
+              </label>
+              <input type="text" id="bookingListingId" name="bookingListingId" [(ngModel)]="form.bookingListingId"
+                (ngModelChange)="onFormChange()" placeholder="e.g. us/my-apartment"
+                class="w-full bg-gray-50 dark:bg-[#111a22] border border-gray-200 dark:border-[#324d67] rounded-lg px-4 py-2.5 text-sm text-[#111418] dark:text-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-mono">
             </div>
           </div>
         </div>
