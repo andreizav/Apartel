@@ -15,6 +15,9 @@ RUN npx ng build --configuration production
 FROM node:22-alpine AS backend-build
 WORKDIR /app/server-nest
 
+# Install native build tools for better-sqlite3
+RUN apk add --no-cache python3 make g++
+
 COPY server-nest/package.json server-nest/package-lock.json ./
 RUN npm ci
 
@@ -25,6 +28,9 @@ RUN npm run build
 # ---------- Stage 3: Production Runtime ----------
 FROM node:22-alpine AS production
 WORKDIR /app
+
+# better-sqlite3 needs these at runtime
+RUN apk add --no-cache libstdc++
 
 # Copy Angular build output
 COPY --from=frontend-build /app/dist ./dist
