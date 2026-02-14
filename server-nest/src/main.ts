@@ -13,7 +13,8 @@ async function bootstrap() {
     origin: process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : ['http://localhost:3000', 'http://localhost:4200', 'http://localhost:4000'],
     credentials: true
   });
-  await app.listen(process.env.PORT || 4000);
-  console.log(`NestJS Server running on port ${process.env.PORT || 4000}`);
+  const port = process.env.PORT || 4000;
+  await app.listen(port, '0.0.0.0');
+  console.log(`NestJS Server running on port ${port}`);
 }
 bootstrap();
