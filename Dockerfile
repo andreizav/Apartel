@@ -47,4 +47,4 @@ ENV DATABASE_URL="file:./prisma/prod.db"
 EXPOSE 4000
 
 # Apply schema + start server
-CMD ["sh", "-c", "npx prisma db push --skip-generate && node dist/main"]
+CMD ["sh", "-c", "npx prisma db push --accept-data-loss && node dist/main"]
