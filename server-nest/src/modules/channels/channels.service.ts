@@ -1,5 +1,4 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
 import { PrismaService } from '../../shared/prisma.service';
 
 @Injectable()
@@ -185,30 +184,21 @@ export class ChannelsService {
             }
         }
 
-        return { channelMappings: updatedMappings, icalConnections: updatedIcals };
-    }
-
-    @Cron('0 */15 * * * *')
-    async handleCron() {
-        console.log('[Channels] Starting scheduled iCal sync...');
-
-        const tenants = await this.prisma.tenant.findMany();
-
-        for (const tenant of tenants) {
-            const connections = await this.getIcal(tenant.id);
-
-            for (const conn of connections) {
-                if (conn.importUrl) {
-                    console.log(`[Channels] Syncing iCal for tenant ${tenant.id}, unit ${conn.unitId} from ${conn.importUrl}`);
-                    // Mock sync: Just update timestamp
-                    await this.prisma.icalConnection.update({
-                        where: { id: conn.id },
-                        data: { lastSync: new Date().toISOString() }
-                    });
-                }
+        // Perform manual sync of content (update timestamps)
+        console.log(`[Channels] Starting manual iCal sync for tenant ${tenantId}...`);
+        for (const conn of updatedIcals) {
+            if (conn.importUrl) {
+                console.log(`[Channels] Syncing iCal for tenant ${tenantId}, unit ${conn.unitId} from ${conn.importUrl}`);
+                // Mock sync: Just update timestamp
+                const now = new Date().toISOString();
+                await this.prisma.icalConnection.update({
+                    where: { id: conn.id },
+                    data: { lastSync: now }
+                });
+                conn.lastSync = now;
             }
         }
 
-        console.log('[Channels] Sync completed.');
+        return { channelMappings: updatedMappings, icalConnections: updatedIcals };
     }
 }
