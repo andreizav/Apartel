@@ -18,6 +18,8 @@ WORKDIR /app/server-nest
 # Install native build tools for better-sqlite3
 RUN apk add --no-cache python3 make g++
 
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+
 COPY server-nest/package.json server-nest/package-lock.json ./
 RUN npm ci
 
@@ -29,8 +31,19 @@ RUN npm run build
 FROM node:22-alpine AS production
 WORKDIR /app
 
-# better-sqlite3 needs these at runtime
-RUN apk add --no-cache libstdc++
+# better-sqlite3 and Puppeteer needs these at runtime
+RUN apk add --no-cache \
+    libstdc++ \
+    chromium \
+    nss \
+    freetype \
+    harfbuzz \
+    ca-certificates \
+    ttf-freefont
+
+# Tell Puppeteer where to find Chromium
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 
 # Copy Angular build output
 COPY --from=frontend-build /app/dist ./dist
