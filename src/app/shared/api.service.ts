@@ -337,4 +337,8 @@ export class ApiService {
   syncUnitIncome(unitId: string): Observable<{ synced: number; transactions: Transaction[] }> {
     return this.http.post<{ synced: number; transactions: Transaction[] }>(`${this.apiUrl}/api/transactions/sync-unit-income/${unitId}`, {});
   }
+
+  scrapeUrl(url: string): Observable<{ title: string; image: string }> {
+    return this.http.get<{ title: string; image: string }>(`${this.apiUrl}/api/scraper`, { params: { url } });
+  }
 }

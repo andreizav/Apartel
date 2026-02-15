@@ -9,6 +9,7 @@ import { AppService } from './app.service';
 import { SharedModule } from './shared/shared.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { BookingsModule } from './modules/bookings/bookings.module';
+import { ScraperModule } from './modules/scraper/scraper.module';
 import { TenantsModule } from './modules/tenants/tenants.module';
 import { ClientsModule } from './modules/clients/clients.module';
 import { StaffModule } from './modules/staff/staff.module';
@@ -33,6 +34,7 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
     SharedModule,
     AuthModule,
     BookingsModule,
+    ScraperModule,
     TenantsModule,
     ClientsModule,
     StaffModule,

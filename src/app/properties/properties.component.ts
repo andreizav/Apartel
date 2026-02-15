@@ -48,6 +48,7 @@ export class PropertiesComponent implements OnInit {
   newEntryUrl = signal('');
   newEntryAirbnbId = signal('');
   newEntryBookingId = signal('');
+  newEntryPhoto = signal('');
 
   editForm = signal<PropertyUnit | null>(null);
   snapshot = signal<PropertyUnit | null>(null);
@@ -914,6 +915,7 @@ export class PropertiesComponent implements OnInit {
     this.newEntryAirbnbId.set('');
     this.newEntryBookingId.set('');
     this.newEntryUrl.set('');
+    this.newEntryPhoto.set('');
     this.isNewModalOpen.set(true);
   }
 
@@ -961,15 +963,32 @@ export class PropertiesComponent implements OnInit {
   private async fetchUnitDetails(id: string) {
     if (id.length > 4 && !this.newEntryName()) {
       this.isFetchingDetails.set(true);
-      // Mock API fetch
-      setTimeout(() => {
-        // Check if input still matches request to avoid race condition
-        // Simplified check
-        if (this.newEntryAirbnbId() === id || this.newEntryUrl().includes(id)) {
-          this.newEntryName.set(`Imported Unit ${id}`);
-        }
+
+      const url = this.newEntryUrl();
+      if (!url) {
         this.isFetchingDetails.set(false);
-      }, 1000);
+        return;
+      }
+
+      this.apiService.scrapeUrl(url).subscribe({
+        next: (data) => {
+          if (data.title) {
+            this.newEntryName.set(data.title.substring(0, 100)); // Limit length
+          } else {
+            this.newEntryName.set(`Imported Unit ${id}`);
+          }
+          if (data.image) {
+            this.newEntryPhoto.set(data.image);
+          }
+          this.isFetchingDetails.set(false);
+        },
+        error: (err) => {
+          console.error('Scraping failed', err);
+          // Fallback
+          this.newEntryName.set(`Imported Unit ${id}`);
+          this.isFetchingDetails.set(false);
+        }
+      });
     }
   }
 
@@ -1003,7 +1022,7 @@ export class PropertiesComponent implements OnInit {
         status: 'Active',
         airbnbListingId: this.newEntryAirbnbId().trim(),
         bookingListingId: this.newEntryBookingId().trim(),
-        photos: []
+        photos: this.newEntryPhoto() ? [this.newEntryPhoto()] : []
       };
 
       this.portfolio.update(groups => groups.map(g => {
